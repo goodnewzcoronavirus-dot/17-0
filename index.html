@@ -90,7 +90,7 @@ kbd{display:inline-block;font-family:'Press Start 2P',monospace;font-size:9px;pa
 #stage.cinema #toast{display:none}
 #crt{position:absolute;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.13) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 58%,rgba(0,0,0,.42) 100%);mix-blend-mode:multiply}
 #stage.cinema #crt{z-index:7}
-#pxc,#pxo{position:absolute;inset:0;width:100%;height:100%;z-index:7;display:block;image-rendering:pixelated}#pxo{z-index:8}#pxc.hidden,#pxo.hidden{display:none}#cine{z-index:6!important;position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;z-index:2}
+#pximg{position:absolute;z-index:9;display:none;object-fit:cover;object-position:50% 20%;box-sizing:border-box;border:2px solid #000;pointer-events:none}#pxc,#pxo{position:absolute;inset:0;width:100%;height:100%;z-index:7;display:block;image-rendering:pixelated}#pxo{z-index:8}#pxc.hidden,#pxo.hidden{display:none}#cine{z-index:6!important;position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;z-index:2}
 #flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}#flash.go{animation:fl .5s ease-out}
 @keyframes fl{0%{opacity:.85}100%{opacity:0}}
 .toast{z-index:4}.ov{z-index:5}
@@ -606,7 +606,7 @@ body.touch #booth{top:calc(env(safe-area-inset-top,0px) + 50px)}
   <p>Load your own teams, players and statistics as JSON. You can paste it, load a .json file, or try a URL. Published claude.ai pages block requests to other sites, so for an API, save its response as a file first.</p>
   <h3>Format</h3>
   <p class="muted">An object with <code>teams</code> and <code>players</code> arrays (and optionally <code>stats</code>). Field names are matched loosely:</p>
-  <p class="muted">Teams: id, city, name, abbr or abbreviation, color and alternateColor (hex). Players: name (or firstName and lastName), position, team (id, abbreviation or name), number, and either overall, ratings (speed, strength, agility, catching, routeRunning, throwPower, throwAccuracy, awareness, passBlock, runBlock, passRush, tackle, coverage, kickPower, kickAccuracy) or stats (passingYards, rushingYards, receivingYards, touchdowns, sacks, tackles, interceptions and so on). Missing ratings are filled in from overall, and a missing overall is estimated from stats, ranked within each position.</p>
+  <p class="muted">Teams: id, city, name, abbr or abbreviation, color and alternateColor (hex). Players: name (or firstName and lastName), position, team (id, abbreviation or name), number, headshot (an image link, shown on the touchdown card), and either overall, ratings (speed, strength, agility, catching, routeRunning, throwPower, throwAccuracy, awareness, passBlock, runBlock, passRush, tackle, coverage, kickPower, kickAccuracy) or stats (passingYards, rushingYards, receivingYards, touchdowns, sacks, tackles, interceptions and so on). Missing ratings are filled in from overall, and a missing overall is estimated from stats, ranked within each position.</p>
   <div class="row"><button class="btn" id="dExample">Show an example</button><input type="file" id="dFile" accept=".json,application/json"></div>
   <textarea id="dJson" rows="12" spellcheck="false" placeholder="Paste JSON here"></textarea>
   <div class="row"><button class="btn primary" id="dImport">Import pasted JSON</button><input id="dUrl" placeholder="https://your-api/players.json" style="flex:1 1 240px"><button class="btn" id="dFetch">Load from URL</button><button class="btn" id="dClear">Clear imported data</button></div>
@@ -812,7 +812,8 @@ function importData(raw){
     const rr=flat(p.ratings||p.attributes||{}),r={};for(const [k,al] of Object.entries(RALIAS)){for(const a of al)if(rr[a]!=null){r[k]=clamp(Math.round(rr[a]),20,99);break}}
     const st=Object.assign({},flat(p.stats||p.statistics||{}),statBy.get(String(p.id??p.playerId??''))||statBy.get(name)||{});
     let ovr=+(p.ovr??p.overall??p.rating??p.overallRating);if(!(ovr>0))ovr=null;
-    players.push({name,pos,team,num:+(p.number??p.jersey??p.jerseyNumber??p.uniformNumber)||null,ovr,r,st,ht:parseHt(p.height??p.ht??p.displayHeight)||undefined});
+    const ph0=p.headshot?.href||p.headshot||p.headshotUrl||p.photo||p.image||p.img||p.picture,photo=typeof ph0==='string'&&/^https?:\/\//.test(ph0)?ph0:undefined;
+    players.push({name,pos,team,num:+(p.number??p.jersey??p.jerseyNumber??p.uniformNumber)||null,ovr,r,st,ht:parseHt(p.height??p.ht??p.displayHeight)||undefined,photo});
   }
   estimate(players);
   if(teams.length<2)throw new Error('Need at least 2 teams.');if(!players.length)throw new Error('No players with recognizable positions were found.');
@@ -2806,11 +2807,16 @@ function pxPortrait(g,x,y,s,p,pal,k){const R=(a,b,w,h,c)=>{g.fillStyle=c;g.fillR
   if(k<1){const oy=Math.round(-k*k*20);if(oy>-20){const H=(a,b,w,h,c)=>R(a,b+oy,w,h,c);H(4,1,14,14,'#000');H(5,2,12,12,pal.helm);H(5,2,12,2,shade(pal.helm,.3));H(10,1,2,13,pal.stripe);H(12,7,6,7,'#000');H(13,8,1,5,pal.mask);H(13,8,5,1,pal.mask);H(13,11,5,1,pal.mask);H(6,7,4,3,shade(pal.helm,-.3))}}}
 function pxCard(o,Z,t){if(!Z.card)return;const C=Z.card,ct=t-C.t0;if(ct<0||ct>C.dur)return;const g=o,inK=Math.min(1,ct/.25),outK=Math.min(1,(C.dur-ct)/.25),k=Math.min(inK,outK),e=1-(1-k)*(1-k),x=Math.round(-190+(196)*e),y=PXH-60;
   const t1=C.team,p=C.p;g.fillStyle='#000';g.fillRect(x-2,y-2,186,56);g.fillStyle=t1.c1;g.fillRect(x,y,182,52);g.fillStyle=t1.c2;g.fillRect(x,y+48,182,4);g.fillStyle='rgba(0,0,0,.28)';g.fillRect(x+52,y+4,126,40);
+  const im=C.photo?pxPhotoEl():null,useP=im&&im.dataset.bad!==C.photo&&im.complete&&im.naturalWidth>0;
+  if(im){if(im.getAttribute('src')!==C.photo){im.dataset.bad='';im.src=C.photo}const show=useP&&ct>.6;im.style.display=show?'block':'none';if(show){im.style.left=((x+4)/PXW*100)+'%';im.style.top=((y+4)/PXH*100)+'%';im.style.width=(44/PXW*100)+'%';im.style.height=(44/PXH*100)+'%';im.style.background=t1.c1}}
   pxPortrait(g,x+4,y+4,2,p,C.pal,clamp((ct-.45)/.6,0,1));g.strokeStyle='#000';g.lineWidth=2;g.strokeRect(x+4,y+4,44,44);
   g.textAlign='left';g.textBaseline='top';const nm=String(p.name||'').split(' '),last=(nm.slice(-1)[0]||'').toUpperCase(),first=(nm.slice(0,-1).join(' ')||'').toUpperCase();
   const tx=(s,xx,yy,sz,col)=>{g.font=sz+'px "Press Start 2P", monospace';g.fillStyle='#000';g.fillText(s,xx+1,yy+1);g.fillStyle=col;g.fillText(s,xx,yy)};
   tx(first.slice(0,14),x+56,y+7,6,'#ffffff');tx(last.slice(0,10),x+56,y+16,last.length>8?8:10,'#ffffff');tx('#'+(p.num??'')+'  '+(C.pos||''),x+56,y+30,6,teamText(t1)==='#ffffff'?'#ffd23f':'#ffffff');tx(C.line,x+56,y+40,5,'#ffffff');
   if(ct<.4){g.fillStyle=`rgba(255,255,255,${(.4-ct)*1.5})`;g.fillRect(x,y,182,52)}}
+let PHMAP=null,PHREV=null;
+function photoFor(p){if(!p)return null;if(p.photo)return p.photo;if(typeof DATA==='undefined'||!DATA||!DATA.players)return null;if(PHREV!==DATA.at){PHREV=DATA.at;PHMAP=new Map();for(const q of DATA.players)if(q.photo)PHMAP.set(normN(q.name),q.photo)}return PHMAP.get(normN(p.name||''))||null}
+function pxPhotoEl(){let im=$('#pximg');if(!im){im=document.createElement('img');im.id='pximg';im.alt='';im.referrerPolicy='no-referrer';im.onerror=()=>{im.dataset.bad=im.src;im.style.display='none'};$('#stage').appendChild(im)}return im}
 function pxStatLine(e){const s=(G.gst&&G.gst.get(e.p))||{},td=(s.rtd||0)+(s.ctd||0)+(s.ptd||0),parts=[];
   if(s.py)parts.push((s.py|0)+' PASS YDS');if(s.rec)parts.push(s.rec+' REC');const yd=(s.cy||0)+(s.ry||0);if(yd)parts.push(yd+' YDS');parts.push(Math.max(1,td)+' TD');return parts.slice(0,3).join(' · ')}
 // scene
@@ -2829,7 +2835,7 @@ function pxBegin(opt={}){
     render(dt){Z.P.update(dt);cam.position.copy(Z.cp);if(Z.shake>0){Z.shake-=dt;const s=Z.shake*.5;cam.position.x+=(Math.random()-.5)*s;cam.position.y+=(Math.random()-.5)*s}cam.lookAt(Z.lk);cam.updateMatrixWorld();pxSync(Z.actors,cam);PXR.render(S,cam);
       const o=Z.o;o.clearRect(0,0,PXW,PXH);if(Z.flash>0){o.fillStyle=`rgba(255,255,255,${Math.min(1,Z.flash*2)})`;o.fillRect(0,0,PXW,PXH);Z.flash-=dt}if(Z.bars){o.fillStyle='#000';o.fillRect(0,0,PXW,Z.bars);o.fillRect(0,PXH-Z.bars,PXW,Z.bars)}
       pxCard(o,Z,Z.t);if(Z.overlay)Z.overlay(o);o.globalAlpha=.7;o.font='6px "Press Start 2P", monospace';o.textAlign='right';o.textBaseline='alphabetic';o.fillStyle='#fff';o.fillText(TOUCH?'TAP TO SKIP':'SPACE TO SKIP',PXW-6,PXH-6);o.globalAlpha=1},
-    end(){S.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&!o.isSprite){if(o.material.map)o.material.map.dispose();o.material.dispose()}});cv.classList.add('hidden');ov.classList.add('hidden')}};
+    end(){const im=$('#pximg');if(im)im.style.display='none';S.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&!o.isSprite){if(o.material.map)o.material.map.dispose();o.material.dispose()}});cv.classList.add('hidden');ov.classList.add('hidden')}};
   return Z}
 const ss01=f=>{f=clamp(f,0,1);return f*f*(3-2*f)};
 // ================= touchdown celebrations =================
@@ -2841,7 +2847,7 @@ function pxCeleb(c){
     const type=G.forcePXC||pick(PXCEL),hx=113,z0=0,gold=['#ffd23f','#ffe58a','#ffb020','#ffffff'],tc=[T.c1,T.c2,'#ffffff','#ffd23f'];
     const hero=Z.actor(pal(c));const mates=G.ents.filter(e=>e.side==='O'&&e!==c&&e.p).sort((a,b)=>dist(a,c)-dist(b,c)).slice(0,type==='bowling'?6:4).map(e=>Z.actor(pal(e)));
     const grp=ROLEGRP[c.role]||c.p.pos||'';
-    Object.assign(Z,{type,hero,mates,hx,z0,gold,tc,team:T,dur:6.2,card:{t0:.9,dur:3.6,p:c.p,team:T,pal:pal(c),pos:grp,line:pxStatLine(c)}});
+    Object.assign(Z,{type,hero,mates,hx,z0,gold,tc,team:T,dur:6.2,card:{t0:.9,dur:3.6,p:c.p,team:T,pal:pal(c),pos:grp,line:pxStatLine(c),photo:photoFor(c.p)}});
     hero.s.position.set(hx-8,0,z0);
     mates.forEach((m,i)=>m.s.position.set(hx-14-i*1.4,0,z0+(i%2?3:-3)));
     PXSETUP[type]&&PXSETUP[type](Z);if(Z.pinSpots)mates.forEach((m,i)=>{const sp=Z.pinSpots[i];if(sp)m.s.position.set(sp[0],0,sp[1])});
