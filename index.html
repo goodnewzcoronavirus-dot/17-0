@@ -58,11 +58,11 @@ td.n,th.n{text-align:right}.w{color:var(--turf)}.l{color:var(--accent)}
 #bug{display:flex;align-items:stretch;margin:0 auto 6px;width:min(100%,760px);background:#0e1328;border:3px solid #000;color:#fff;font-family:'Press Start 2P',monospace;font-size:10px}
 #bug .tm{display:flex;align-items:center;gap:6px;padding:6px 8px;border-right:2px solid #000;min-width:0}
 #bug .tm b{font-weight:400;padding:4px 5px;border:2px solid #000}
-#bug .tm .s{font-size:22px;color:#ffc93c;min-width:30px;text-align:center}
+#bug .tm .s{font-size:16px;color:#ffc93c;min-width:30px;text-align:center}
 #bug .pos{width:8px;color:#ffc93c}
 #bug .pips{display:flex;gap:2px;flex-direction:column}#bug .pips i{display:block;width:6px;height:3px;background:#ffc93c}#bug .pips i.off{background:#3a4060}
 #bug .clk{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:4px 8px;border-right:2px solid #000;color:#ffc93c}
-#bug .dd{flex:1;display:flex;align-items:center;justify-content:center;padding:4px 8px;font-size:9px;color:#eef0e2;text-align:center;line-height:1.5}
+#bug .dd{flex:1;display:flex;align-items:center;justify-content:center;padding:4px 8px;font-size:9px;color:#eef0e2;text-align:center;line-height:1.5;white-space:nowrap}
 #stage{position:relative;margin:0 auto;width:min(100%,calc((100vh - 130px) * 16 / 9));width:min(100%,calc((100dvh - 130px) * 16 / 9));min-width:300px;aspect-ratio:16/9;border:3px solid #000;background:#1d4d22;overflow:hidden}
 #cv{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none;cursor:crosshair}
 .ov{position:absolute;left:0;right:0;display:flex;justify-content:center;padding:8px;pointer-events:none}
@@ -293,9 +293,9 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:15px}
 body.touch #game{position:fixed;inset:0;z-index:20;background:radial-gradient(ellipse at 50% 120%,#18361f,#070a14 60%);overflow:hidden}
 body.touch #game .wrap{height:100%;padding:0;display:flex;align-items:center;justify-content:center;position:relative}
 body.touch #stage{width:min(100vw,calc(100dvh * 16 / 9));width:min(100vw,calc(100dvh * 16 / 9));min-width:0;border:0;box-shadow:0 0 0 1px rgba(255,255,255,.06)}
-body.touch #bug{position:absolute;top:calc(env(safe-area-inset-top,0px) + 6px);left:50%;transform:translateX(-50%);z-index:6;width:auto;max-width:86vw;margin:0;font-size:10px;border-width:3px;opacity:.96}
+body.touch #bug{position:absolute;top:calc(env(safe-area-inset-top,0px) + 4px);left:calc(env(safe-area-inset-left,0px) + 6px);transform:none;z-index:6;width:auto;max-width:60vw;margin:0;font-size:7px;border-width:2px;border-radius:4px;background:rgba(8,12,28,.72);opacity:.92;pointer-events:none;white-space:nowrap}
 body.touch #bug{transition:opacity .25s}body.touch #bug.hl{opacity:0}
-body.touch #bug .tm{padding:4px 8px;gap:6px}body.touch #bug .tm .s{font-size:18px;min-width:30px}body.touch #bug .clk{padding:3px 10px;gap:3px}body.touch #bug .clk #cc{font-size:15px}body.touch #bug .dd{font-size:10px;padding:3px 10px}
+body.touch #bug .tm{padding:2px 5px;gap:4px;border-right-width:1px}body.touch #bug .tm b{padding:2px 3px;border-width:1px;font-size:7px}body.touch #bug .tm .s{font-size:11px;min-width:16px}body.touch #bug .pos{width:5px}body.touch #bug .pips i{width:4px;height:2px}body.touch #bug .clk{flex-direction:row;gap:5px;padding:2px 6px;border-right-width:1px;font-size:7px}body.touch #bug .clk #cc{font-size:9px}body.touch #bug .dd{font-size:7px;padding:2px 6px;line-height:1;white-space:nowrap}body.touch #bug .dd:empty{display:none}
 body.touch #controls{display:none!important;position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);transform:translateX(-50%);z-index:6;width:auto;max-width:40vw;margin:0;pointer-events:none}
 body.touch #keys{display:none}
 body.touch #hint{font-size:13px;min-height:0;color:#fff;background:rgba(8,12,28,.55);padding:0 8px;border-radius:8px}body.touch #hint:empty{display:none}
@@ -1234,7 +1234,7 @@ function updateBoard(){
     $('#p'+p).textContent=(G.poss==='U')===isUser&&G.poss?'\u25B8':'';$('#to'+p).innerHTML=isUser?[0,1,2].map(i=>`<i class="${i<G.timeouts?'':'off'}"></i>`).join(''):''};
   set('A',awayT,G.userHome?G.so:G.su,!G.userHome);set('H',homeT,G.userHome?G.su:G.so,G.userHome);
   const q=G.c.q;$('#qq').textContent=q>=5?'OT':['1ST','2ND','3RD','4TH'][q-1];$('#cc').textContent=fmtClock(G.c.clock)+(G.pending?' \u25B6':'');
-  $('#dd').textContent=G.poss==='U'&&G.down?(G.twoPt?'2-point try':downTxt()+' at '+spotTxt(G.yard)):'';
+  $('#dd').textContent=G.poss==='U'&&G.down?(G.twoPt?'2-point try':downTxt()+' \u00B7 '+spotTxt(G.yard)):'';
 }
 function nextDrive(){if(!G)return;if(G.poss==='O')oppDrive();else userDrive()}
 function endPossession(who,r){
@@ -1320,7 +1320,7 @@ function openPlaybook(){
   G.phase='pre';G.draw=null;
   if(!G.pb)G.pb={cat:'coach',q:'',sel:0};G.pb.cat='coach';
   const pb=G.pb;pb.sel=0;
-  overlay(`<div class="pbtop"><input id="pbq" placeholder="Type to search plays" autocomplete="off" spellcheck="false" aria-label="Search plays" value="${esc(pb.q)}"><div class="pbtabs" id="pbtabs" role="tablist"></div></div><p class="kicker" style="margin:4px 0">${G.twoPt?'Two-point try from the 2':downTxt()+' at '+spotTxt(G.yard)}${G.pending?', clock running':''}.</p><p class="coach"><b>Coach:</b> ${esc(sitCoach().tip)} <button class="btn" id="pbPeek">Hold to see the defense</button></p>${objHTML()}<div class="pbgrid" id="pbgrid"></div>`,[],'pbook');
+  overlay(`<div class="pbtop"><input id="pbq" placeholder="Type to search plays" autocomplete="off" spellcheck="false" aria-label="Search plays" value="${esc(pb.q)}"><div class="pbtabs" id="pbtabs" role="tablist"></div></div><p class="kicker" style="margin:4px 0">${G.twoPt?'Two-point try from the 2':downTxt()+' \u00B7 '+spotTxt(G.yard)}${G.pending?', clock running':''}.</p><p class="coach"><b>Coach:</b> ${esc(sitCoach().tip)} <button class="btn" id="pbPeek">Hold to see the defense</button></p>${objHTML()}<div class="pbgrid" id="pbgrid"></div>`,[],'pbook');
   const inp=$('#pbq');
   inp.oninput=()=>{pb.q=inp.value;pb.sel=0;renderPB()};
   inp.onkeydown=pbKey;
