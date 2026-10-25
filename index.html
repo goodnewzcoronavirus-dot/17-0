@@ -282,7 +282,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:15px}
 .tb.rcv.open{box-shadow:0 3px 0 rgba(0,0,0,.5),0 0 0 3px var(--rc),0 0 16px var(--rc)}
 .tb.rcv.done{opacity:.55}
 .tb.rcv::after{content:'';position:absolute;inset:-6px;border-radius:50%;background:conic-gradient(var(--rc) calc(var(--h,0)*1turn),transparent 0);-webkit-mask:radial-gradient(circle,transparent 62%,#000 63%);mask:radial-gradient(circle,transparent 62%,#000 63%);opacity:0;pointer-events:none}
-.tb.rcv.hold::after{opacity:1;animation:tbhold .55s linear forwards}
+.tb.rcv.hold::after{opacity:1;animation:tbhold .12s linear forwards}
 @property --h{syntax:'<number>';inherits:false;initial-value:0}
 @keyframes tbhold{to{--h:1}}
 .tb.rcv .tt{position:absolute;top:-15px;font-size:6px;color:var(--rc);text-shadow:0 1px 0 #000;opacity:0}
@@ -290,7 +290,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:15px}
 #tmini{position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:calc(env(safe-area-inset-right,0px) + 10px);display:flex;gap:8px;pointer-events:none}
 .tm2{pointer-events:auto;touch-action:manipulation;font-family:inherit;font-size:7px;color:#fff;min-width:40px;height:34px;padding:0 10px;border-radius:17px;background:rgba(8,12,28,.55);border:2px solid rgba(255,255,255,.3);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 @media (prefers-reduced-motion:reduce){.tb.rcv.hold::after{animation:none;--h:1}}
-body.touch #game{position:fixed;inset:0;z-index:20;background:radial-gradient(ellipse at 50% 120%,#18361f,#070a14 60%);overflow:hidden}
+body.touch,body.touch *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}body.touch input,body.touch textarea,body.touch select{-webkit-user-select:text;user-select:text}body.touch #game{position:fixed;inset:0;z-index:20;background:radial-gradient(ellipse at 50% 120%,#18361f,#070a14 60%);overflow:hidden}
 body.touch #game .wrap{height:100%;padding:0;display:flex;align-items:center;justify-content:center;position:relative}
 body.touch #stage{width:min(100vw,calc(100dvh * 16 / 9));width:min(100vw,calc(100dvh * 16 / 9));min-width:0;border:0;box-shadow:0 0 0 1px rgba(255,255,255,.06)}
 body.touch #bug{position:absolute;top:calc(env(safe-area-inset-top,0px) + 4px);left:calc(env(safe-area-inset-left,0px) + 6px);transform:none;z-index:6;width:auto;max-width:60vw;margin:0;font-size:7px;border-width:2px;border-radius:4px;background:rgba(8,12,28,.72);opacity:.92;pointer-events:none;white-space:nowrap}
@@ -1466,6 +1466,14 @@ function chase(d,c,dt,sp){
   const tk=G.tokD;if(tk&&tk!==d&&(tk.wind>0||tk.dive>0)){const dx=d.x-c.x,dy=d.y-c.y,dl=Math.hypot(dx,dy)||1;if(dl<1.7){tx=c.x+dx/dl*1.7+.6;ty=c.y+dy/dl*1.7}} // not your turn: hold a step off
   moveTo(d,tx,clamp(ty,.5,52.8),sp,dt)}
 function histAt(r,t){const h=r.hist;for(let i=h.length-1;i>=0;i--)if(h[i][0]<=t)return{x:h[i][1],y:h[i][2]};return h.length?{x:h[0][1],y:h[0][2]}:{x:r.x,y:r.y}}
+// where a receiver will be T seconds from now if he keeps running his route (cuts included)
+function predictRoute(e,T){let x=e.x,y=e.y,t=T,i=e.wi|0,brk=Math.max(0,e.brk||0),dx=e.vx,dy=e.vy;const sp=e.spd;
+  if(e.wps&&e.down<=0&&!e.eng&&e!==G.carrier){while(t>1e-3&&i<e.wps.length){const w=e.wps[i],lx=w.x-x,ly=w.y-y,l=Math.hypot(lx,ly);const v=brk>0?sp*.62:sp;
+      if(l<.45){i++;brk=.14;continue}const st=brk>0?Math.min(t,brk):t,need=(l-.44)/v;dx=lx/l;dy=ly/l;
+      if(need<=st){x+=dx*(l-.44);y+=dy*(l-.44);t-=need;if(brk>0)brk-=need;i++;brk=.14}else{x+=dx*v*st;y+=dy*v*st;t-=st;if(brk>0)brk-=st}}
+    if(t>1e-3&&i>=e.wps.length&&!STOPR.has(e.route)){const v=Math.hypot(dx,dy)||1;x+=dx/v*sp*t;y+=dy/v*sp*t}}
+  else{x+=e.vx*T;y+=e.vy*T}
+  const v=Math.hypot(dx,dy)||1;return{x:Math.min(119,x),y:clamp(y,.8,52.5),dx:dx/v,dy:dy/v}}
 function runRoute(e,dt){
   let sp=e.spd;if(e.brk>0){e.brk-=dt;sp*=.62}if(G.t<.2)sp*=.55;
   if(e.wi<e.wps.length){const w=e.wps[e.wi];moveTo(e,w.x,w.y,sp,dt);if(Math.hypot(w.x-e.x,w.y-e.y)<.45){e.wi++;e.brk=.14;if(e.wi<e.wps.length)fxDust(e.x,e.y,2);if(e.side==='O'&&G.phase==='live')routeBreak(e)}}
@@ -1545,9 +1553,9 @@ const TTM={bullet:.82,touch:1.1,lob:1.3,aim:1};
 function throwTo(r,tt){
   if(typeof tt!=='string')tt=tt?'lob':'aim';const lob=tt==='lob',mul=TTM[tt];
   const q=G.qb;let tx=r.x,ty=r.y,T=0;
-  for(let i=0;i<3;i++){T=flightT(Math.hypot(tx-q.x,ty-q.y))*mul;tx=r.x+r.vx*T;ty=r.y+r.vy*T}
-  if(tt==='touch'){const v=Math.hypot(r.vx,r.vy);if(v>1){tx+=r.vx/v*1.1;ty+=r.vy/v*.5}}
-  if(lob){const v=Math.hypot(r.vx,r.vy)||1;tx+=r.vx/v*2.6+1.2;ty+=r.vy/v*1.3;for(let i=0;i<2;i++){T=flightT(Math.hypot(tx-q.x,ty-q.y))*1.3;tx=r.x+r.vx*T+(r.vx/v)*2.6+1.2;ty=r.y+r.vy*T+(r.vy/v)*1.3}}
+  let P_=null;for(let i=0;i<4;i++){T=flightT(Math.hypot(tx-q.x,ty-q.y))*mul;P_=predictRoute(r,T);tx=P_.x;ty=P_.y}
+  if(tt==='touch'&&P_){tx+=P_.dx*1.1;ty+=P_.dy*.5}
+  if(lob){for(let i=0;i<3;i++){T=flightT(Math.hypot(tx-q.x,ty-q.y))*1.3;P_=predictRoute(r,T);tx=P_.x+P_.dx*1.6+.6;ty=P_.y+P_.dy*.9}}
   throwBall(tx,ty,lob,r,tt);
 }
 function throwBall(tx,ty,lob,rec,tt){
@@ -1557,7 +1565,7 @@ function throwBall(tx,ty,lob,rec,tt){
   const fr=freeRushers(),pr=fr.length?Math.min(...fr.map(r=>dist(r,q))):99,press=pr<2.5;
   const err=d*.026*(1.5-(acc-60)/45)*(press?1.8-rf(poc)*.7:1)*(tt==='bullet'?1.12:lob?1.15:1)*(q.ab.has('dime')?.5:1);tx+=gauss(0,err*.6);ty+=gauss(0,err*.6);
   const T=flightT(d)*mul;
-  const px=rec.x+rec.vx*T,py=rec.y+rec.vy*T,best=Math.hypot(px-tx,py-ty);
+  const PR=predictRoute(rec,T),px=PR.x,py=PR.y,best=Math.hypot(px-tx,py-ty);
   let sep=9;for(const c of G.ents){if(c.side!=='D'||c.rush)continue;const cx=c.x+c.vx*T*.6,cy=c.y+c.vy*T*.6;sep=Math.min(sep,Math.hypot(cx-tx,cy-ty))}
   const qual=clamp(.12+.45*clamp(1-best/3,0,1)+.3*clamp((sep-.5)/4,0,1)+.15*rf(Rt(rec.p,'hnd'))-(press?.15*(1.2-rf(poc)*.6):0)+(lob&&d>18?.08:0)+(tt==='touch'&&d>9&&d<26?.06:0)+(tt==='bullet'&&d<14?.05:0),.04,1);
   G.ball={x0:q.x,y0:q.y,x1:tx,y1:ty,x:q.x,y:q.y,h:0,t:0,T,peak:clamp(d*.11,1.2,6)*(lob?1.8:tt==='bullet'?.6:tt==='touch'?1.3:1),rec,lob,qual,tt};
@@ -1610,8 +1618,8 @@ function startRun(c,rusher){startRunReset();if(rusher&&!G.demo&&rusher!=='QB')tr
   for(const e of G.engs)e.pass=false;
 }
 function scramble(){if(G&&G.phase==='live'&&G.play.kind==='pass'&&G.qb.hasBall){G.play.kind='scramble';startRun(G.qb,'QB');toast('QB TAKES OFF');try{voEv('scramble')}catch(e){}}}
-const CHG_LOB=.2,CHG_FULL=.55;
-function chgBand(sec){return sec<CHG_LOB?'lob':sec<CHG_FULL?'touch':'bullet'}
+const CHG_LOB=.12,CHG_FULL=.12;
+function chgBand(sec){return sec<CHG_LOB?'lob':'bullet'}
 function chgStart(r,id,b){if(!canAim()||!r||!r.wps||r.down>0)return false;G.chg={r,id,b,t0:performance.now()};if(navigator.vibrate)try{navigator.vibrate(6)}catch(_){}return true}
 function chgRelease(cancel){const C=G&&G.chg;if(!C)return;G.chg=null;if(C.b){C.b.classList.remove('hold')}if(cancel||!canAim())return;const tt=chgBand((performance.now()-C.t0)/1000);throwTo(C.r,tt);if(navigator.vibrate)try{navigator.vibrate(tt==='bullet'?16:9)}catch(_){}}
 function throwRole(role,tt){if(!canAim())return;const r=G.R[role];if(!r||!r.wps||r.down>0)return;throwTo(r,tt)}
@@ -1741,7 +1749,7 @@ function step(rdt){
   if(G.hstop>0){G.hstop-=rdt;return}
   if(G.slowT>0){G.slowT-=rdt;if(G.slowT<=0)G.ts=1}
   const dt=rdt*G.ts*.74;
-  G.anim+=dt;if(G.wv)G.wv=G.wv.filter(w=>(w.t+=rdt)<w.dur);if(G.teach&&(G.teach.t-=rdt)<=0)G.teach=null;for(const k of['jFlash','jPop','rFlash'])if(G[k]>0)G[k]-=rdt;if(G.cheer>0)G.cheer-=rdt;if(G.hlT>0){G.hlT-=rdt;const bg=$('#bug');if(bg)bg.classList.toggle('hl',G.hlT>0)}if(G.shake>0)G.shake=Math.max(0,G.shake-rdt*14);
+  if(G.chg&&(performance.now()-G.chg.t0)/1000>=CHG_FULL)chgRelease();G.anim+=dt;if(G.wv)G.wv=G.wv.filter(w=>(w.t+=rdt)<w.dur);if(G.teach&&(G.teach.t-=rdt)<=0)G.teach=null;for(const k of['jFlash','jPop','rFlash'])if(G[k]>0)G[k]-=rdt;if(G.cheer>0)G.cheer-=rdt;if(G.hlT>0){G.hlT-=rdt;const bg=$('#bug');if(bg)bg.classList.toggle('hl',G.hlT>0)}if(G.shake>0)G.shake=Math.max(0,G.shake-rdt*14);
   G.zoom+=(G.zoomT-G.zoom)*Math.min(1,rdt*(G.zfE?2.6:4));if(G.mvCD>0)G.mvCD-=dt;
   if(G.cuPend){const P=G.cuPend;P.t+=rdt;const k=Math.min(1,P.t/.6),e=k*k*k;G.zoom=G.zoomT=1+3.6*e;G.zf={x:P.a.x,y:P.a.y};if(k>=1){G.cuPend=null;realStartCU(P.type,P.a,P.b)}return}
   if(G.zfE&&!G.cu){G.zf={x:G.zfE.x,y:G.zfE.y};if(G.zoom<1.03){G.zf=G.zfE=null;G.zoom=1}}
@@ -2870,6 +2878,7 @@ addEventListener('pointerdown',e=>{if(G&&G.aim&&G.sling&&e.pointerId!==G.slingId
 cv.addEventListener('pointermove',e=>{if(G&&G.sling&&e.pointerId!==G.slingId)return;const pp=toInt(e);P.x=pp.x;P.y=pp.y;P.shift=e.shiftKey;if(G&&G.aim){if(!canAim()){G.aim=false;return}G.aimP=aimWorld();return}if(!G||!G.draw||!G.draw.on)return;const p=toWorld(toInt(e)),l=G.draw.pts.at(-1);if(Math.hypot(p.x-l.x,p.y-l.y)>.6)G.draw.pts.push(p)});
 cv.addEventListener('pointercancel',()=>{if(G){G.aim=false;G.sling=null;if(G.chg&&!G.chg.b)chgRelease(true)}});
 cv.addEventListener('contextmenu',e=>e.preventDefault());
+for(const ev of['contextmenu','selectstart'])document.addEventListener(ev,e=>{if(TOUCH&&!(e.target.closest&&e.target.closest('input,textarea,select')))e.preventDefault()});
 cv.addEventListener('pointerup',e=>{if(G&&G.chg&&!G.chg.b&&G.chg.id===e.pointerId){chgRelease();return}if(G&&G.sling&&e.pointerId!==G.slingId)return;if(G&&G.aim){G.aim=false;if(!canAim()){G.sling=null;return}if(G.sling){const pw=slingPow(),t=aimWorld();G.sling=null;const lob=P.shift;P.shift=false;if(pw<14)return;if(t.x<G.qb.x-1.2){scramble();return}const ar=aimRec(t),d=Math.hypot(t.x-G.qb.x,t.y-G.qb.y);if(ar.r)throwBall(t.x,t.y,lob,ar.r,lob?'lob':'bullet');return}P.shift=e.shiftKey;const t=aimWorld(),ar=aimRec(t);if(ar.r)throwBall(t.x,t.y,e.shiftKey||P.lob,ar.r);return}if(G&&G.draw&&G.draw.on){G.draw.on=false;G.draw.pts.shift();finishDraw()}});
 const RK={};let SPR=false;
 const roleFor=code=>{const m=/^(Digit|Numpad)([1-5])$/.exec(code);return m?RCV[+m[2]-1]:null};
@@ -2905,7 +2914,7 @@ addEventListener('blur',()=>{K.up=K.down=K.left=K.right=0});
 let keysHTML='';
 function keyGuide(){
   const kb=(k,l)=>`<span><kbd>${k}</kbd> ${l}</span>`;
-  if(TOUCH){const t=x=>`<span>${x}</span>`;switch(G.phase){case'pre':return t('Tap a play to call it. Then snap and hold a receiver to throw.');case'set':return G.draw?t(G.draw.stage==='pick'?'Tap the receiver whose route you want to change.':'Drag on the field to draw the route.'):t('Snap when ready. Route lets you redraw a receiver.');case'live':return G.play&&G.play.kind==='pass'&&G.qb.hasBall?t('Hold a receiver, let go to throw. Quick tap lobs it, longer hold fires a bullet.'):t('');case'air':return t('Tap CATCH (or anywhere) right before he catches it.');case'run':return t('Stick steers, push right to burst. Tap a move as a defender closes in.');case'cine':return t('Tap SKIP to skip the replay.');default:return''}}
+  if(TOUCH){const t=x=>`<span>${x}</span>`;switch(G.phase){case'pre':return t('Tap a play to call it. Then snap and hold a receiver to throw.');case'set':return G.draw?t(G.draw.stage==='pick'?'Tap the receiver whose route you want to change.':'Drag on the field to draw the route.'):t('Snap when ready. Route lets you redraw a receiver.');case'live':return G.play&&G.play.kind==='pass'&&G.qb.hasBall?t('Tap a receiver to lob it. Press and hold for a bullet.'):t('');case'air':return t('Tap CATCH (or anywhere) right before he catches it.');case'run':return t('Stick steers, push right to burst. Tap a move as a defender closes in.');case'cine':return t('Tap SKIP to skip the replay.');default:return''}}
   switch(G.phase){
     case'pre':return kb('Type','search')+kb('Tab','category')+kb('Arrows','choose')+kb('Enter','call play');
     case'set':if(G.draw)return G.draw.stage==='pick'?kb('1-5','pick receiver')+kb('Esc','cancel'):'<span>Drag on the field with the mouse</span>'+kb('Esc','cancel');
@@ -3009,7 +3018,7 @@ const FTIPS={
   pbook:{tag:'PLAYBOOK',t:'Call a play',b:()=>`<p>The <b>Coach</b> tab stars the best calls for this down, distance and clock. Tap any play to run it.</p><ul><li>Plays go on cooldown after you use them, so mix it up.</li><li>Hold <b>Hold to see the defense</b> to peek at their shell before you pick.</li><li>The 3 objectives at the top pay coins after the game.</li></ul>`,sel:'#pbPeek',low:false},
   snap:{tag:'PRE-SNAP',t:'Read it, then snap',b:()=>`<p>Before the snap, look at the safeties. Two deep means Cover 2 or 4, one deep in the middle means Cover 3 or Man, nobody deep means Cover 0, so take a shot.</p><p>${T_('Put a finger on the field and drag back to snap. You can also hit SNAP.','Press <kbd>Space</kbd> or the SNAP button to snap.')} Players with a ring and a star at their feet are your stars.</p>`,sel:'#tbtns [data-act="snap"]',low:true},
   zbadge:{tag:'X-FACTOR',t:'The Zone meter',b:()=>`<p>See the little badge with a bar above your ★ player? That's his <b>Zone meter</b>. Catches, big runs, broken tackles, highlights and TDs fill it.</p><p>When it fills he goes <b>In the Zone</b>: he catches fire, his moves land way more often, and his highlight cinematic is guaranteed until the drive ends. Feed him the ball.</p>`,ent:()=>G.ents.find(e=>e.side==='O'&&e.p&&e.p.sig),low:true},
-  pass:{tag:'PASSING',t:'Hold to throw',b:()=>`<p>${T_('Press and hold a receiver (on the field or his button). Let go to throw.','Drag with the mouse to aim and let go to throw, or press <kbd>1</kbd> to <kbd>5</kbd> to throw to a receiver.')}</p><ul><li>${T_('Quick tap is a lob, a medium hold is touch, hold till the ring fills for a bullet.','Hold <kbd>Shift</kbd> for a lob. Tap a number for a bullet, hold it for touch.')}</li><li>Look for the <b>OPEN!</b> bubble over a receiver.</li><li>${T_('Tap RUN to take off.','Press <kbd>X</kbd> to throw it away.')}</li><li>Watch the ring at his feet. When it goes red, the rush is coming.</li></ul>`,ent:()=>G.qb,low:false},
+  pass:{tag:'PASSING',t:'Hold to throw',b:()=>`<p>${T_('Tap a receiver on the field to throw to him.','Drag with the mouse to aim and let go to throw, or press <kbd>1</kbd> to <kbd>5</kbd> to throw to a receiver.')}</p><ul><li>${T_('Quick tap is a lob. Press and hold and a bullet fires right away.','Hold <kbd>Shift</kbd> for a lob. Tap a number for a bullet, hold it for touch.')}</li><li>Look for the <b>OPEN!</b> bubble over a receiver.</li><li>${T_('Tap RUN to take off.','Press <kbd>X</kbd> to throw it away.')}</li><li>Watch the ring at his feet. When it goes red, the rush is coming.</li></ul>`,ent:()=>G.qb,low:false},
   catch:{tag:'CATCHING',t:'Time the catch',b:()=>`<p>The bar over your receiver is the <b>catch meter</b>. ${T_('Tap CATCH','Press the catch key')} when the marker is in the <b style="color:#2fae4e">green</b> for a sure catch and extra yards. Yellow is risky, red usually gets broken up.</p><p>Elite receivers get a bigger green window, and a contested deep catch can trigger a <b>Mossed</b> highlight.</p>`,sel:'#tbtns [data-act="catch"]',ent:()=>G.ball&&G.ball.rec,low:false},
   run:{tag:'RUNNING',t:'Take it yourself',b:()=>`<p>He runs forward on his own. ${T_('Touch the joystick to steer anywhere, even backward. Let go and he keeps that direction.','Use <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to steer.')}</p><p>${T_('The 5 buttons on the right are your moves: juke up, juke down, spin, hurdle, and stiff arm in the middle.','J juke, K spin, L hurdle, H stiff arm. Hold W or S with J to pick the juke side.')} You pick, nothing is chosen for you.</p>`,sel:'#joy',ent:()=>G.carrier,low:false},
   move:{tag:'MOVES',t:'Beat the tackle',b:()=>`<p>One defender tackles at a time. His tag says <b>how</b> he's tackling, and the matching color move beats it.</p><ul><li><b style="color:#ffd23f">LOW</b> = hurdle. <b style="color:#ff5a47">HIGH</b> = spin. <b style="color:#c07bff">ARM</b> = stiff arm. <b style="color:#4fd8ff">SQUARE</b> = juke.</li><li>Hit it as the white ring lands on the green ring for a <b>Perfect</b>. Wrong move or bad timing and he gets you.</li><li>The pips under your runner are <b>juice</b>. Every move costs one. A Perfect gives it back, and juice refills slowly while you just run. Spam and you run dry.</li><li>${T_('Moves','Moves (J juke, K spin, L hurdle, H stiff arm)')} chain after a Perfect for a bonus.</li></ul>`,sel:'#tbtns [data-act="mv:stiff"]',ent:()=>G.carrier,low:true},
