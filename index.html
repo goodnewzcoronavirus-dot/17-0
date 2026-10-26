@@ -606,7 +606,7 @@ body.touch #booth{top:calc(env(safe-area-inset-top,0px) + 50px)}
   <p>Load your own teams, players and statistics as JSON. You can paste it, load a .json file, or try a URL. Published claude.ai pages block requests to other sites, so for an API, save its response as a file first.</p>
   <h3>Format</h3>
   <p class="muted">An object with <code>teams</code> and <code>players</code> arrays (and optionally <code>stats</code>). Field names are matched loosely:</p>
-  <p class="muted">Teams: id, city, name, abbr or abbreviation, color and alternateColor (hex). Players: name (or firstName and lastName), position, team (id, abbreviation or name), number, headshot (an image link, shown on the touchdown card), and either overall, ratings (speed, strength, agility, catching, routeRunning, throwPower, throwAccuracy, awareness, passBlock, runBlock, passRush, tackle, coverage, kickPower, kickAccuracy) or stats (passingYards, rushingYards, receivingYards, touchdowns, sacks, tackles, interceptions and so on). Missing ratings are filled in from overall, and a missing overall is estimated from stats, ranked within each position.</p>
+  <p class="muted">Teams: id, city, name, abbr or abbreviation, color and alternateColor (hex). Players: name (or firstName and lastName), position, team (id, abbreviation or name), number, headshot (an image link, shown on the touchdown card), celebration (a signature touchdown celebration: dunk, dj, bowling, fly, crown or knight; dunk only happens for players given it), and either overall, ratings (speed, strength, agility, catching, routeRunning, throwPower, throwAccuracy, awareness, passBlock, runBlock, passRush, tackle, coverage, kickPower, kickAccuracy) or stats (passingYards, rushingYards, receivingYards, touchdowns, sacks, tackles, interceptions and so on). Missing ratings are filled in from overall, and a missing overall is estimated from stats, ranked within each position.</p>
   <div class="row"><button class="btn" id="dExample">Show an example</button><input type="file" id="dFile" accept=".json,application/json"></div>
   <textarea id="dJson" rows="12" spellcheck="false" placeholder="Paste JSON here"></textarea>
   <div class="row"><button class="btn primary" id="dImport">Import pasted JSON</button><input id="dUrl" placeholder="https://your-api/players.json" style="flex:1 1 240px"><button class="btn" id="dFetch">Load from URL</button><button class="btn" id="dClear">Clear imported data</button></div>
@@ -843,8 +843,8 @@ function importData(raw){
     const rr=flat(p.ratings||p.attributes||{}),r={};for(const [k,al] of Object.entries(RALIAS)){for(const a of al)if(rr[a]!=null){r[k]=clamp(Math.round(rr[a]),20,99);break}}
     const st=Object.assign({},flat(p.stats||p.statistics||{}),statBy.get(String(p.id??p.playerId??''))||statBy.get(name)||{});
     let ovr=+(p.ovr??p.overall??p.rating??p.overallRating);if(!(ovr>0))ovr=null;
-    const ph0=p.headshot?.href||p.headshot||p.headshotUrl||p.photo||p.image||p.img||p.picture,photo=typeof ph0==='string'&&/^https?:\/\//.test(ph0)?ph0:undefined;
-    players.push({name,pos,team,num:+(p.number??p.jersey??p.jerseyNumber??p.uniformNumber)||null,ovr,r,st,ht:parseHt(p.height??p.ht??p.displayHeight)||undefined,photo});
+    const ph0=p.headshot?.href||p.headshot||p.headshotUrl||p.photo||p.image||p.img||p.picture,photo=typeof ph0==='string'&&/^https?:\/\//.test(ph0)?ph0:undefined,celeb=typeof p.celebration==='string'?p.celebration.toLowerCase().trim():undefined;
+    players.push({celeb,name,pos,team,num:+(p.number??p.jersey??p.jerseyNumber??p.uniformNumber)||null,ovr,r,st,ht:parseHt(p.height??p.ht??p.displayHeight)||undefined,photo});
   }
   estimate(players);
   if(teams.length<2)throw new Error('Need at least 2 teams.');if(!players.length)throw new Error('No players with recognizable positions were found.');
@@ -1715,7 +1715,7 @@ function resolveCatch(){
 }
 function startRunReset(){if(G){G.freeRun=false;G.runDir=null}}
 function startRun(c,rusher){startRunReset();if(rusher&&!G.demo&&rusher!=='QB')try{voEv('handoff',{c,rusher})}catch(e){}
-  G.carrier=c;G.qb.hasBall=false;G.phase='run';G.runT=0;G.ball=null;G.mv=null;c.pinN=0;c.abUsed=0;c.burnT=0;c.freeBeat=0;setTimeout(()=>{if(G&&G.carrier===c&&G.phase==='run')xfTry(c,'run')},0);G.jmax=jMax(c);G.juice=G.jmax;G.jReg=0;G.hot=0;G.fb=null;G.wv=[];G.teach=null;G.jFlash=0;G.jPop=0;G.rFlash=0;
+  G.carrier=c;G.qb.hasBall=false;G.phase='run';G.runT=0;G.chT=0;G.chasers=null;G.ball=null;G.mv=null;c.pinN=0;c.abUsed=0;c.burnT=0;c.freeBeat=0;setTimeout(()=>{if(G&&G.carrier===c&&G.phase==='run')xfTry(c,'run')},0);G.jmax=jMax(c);G.juice=G.jmax;G.jReg=0;G.hot=0;G.fb=null;G.wv=[];G.teach=null;G.jFlash=0;G.jPop=0;G.rFlash=0;
   if(rusher){G.play.rusher=rusher;stat(c.p,'ra')}
   for(const e of G.engs)e.pass=false;
 }
@@ -1991,7 +1991,7 @@ function sack(d){
   endPlay('sack',q.x,'SACKED by '+nm(d.p));
 }
 function findThreat(c){if(!G.demo){let best=null;
-  for(const d of G.ents){if(d.side!=='D'||d.eng||d.down>0||d.stun>0)continue;let ttc;
+  for(const d of G.ents){if(d.side!=='D'||d.eng||d.down>0||d.stun>0)continue;if(!G.demo&&d.x<c.x-.3&&!(d.dive>0))continue;let ttc;
     if(d.dive>0&&d.lgT!=null)ttc=-d.lgT;else if(d.wind>0)ttc=d.wind;
     else{if(d.tryCD>0)continue;const dx=d.x-c.x,dy=d.y-c.y,dd=Math.hypot(dx,dy)||.01;if(dd>6.5||dx<-1.5)continue;const cl=-(dx*(d.vx-c.vx)+dy*(d.vy-c.vy))/dd;if(cl<.6&&dd>2.6)continue;ttc=Math.max(0,(dd-2.6)/Math.max(cl,.6))+WIND}
     if(!best||ttc<best.ttc)best={d,ttc}}
@@ -2014,7 +2014,8 @@ function runStep(dt){
   if(!G.demo&&c.p&&c.p.abil==='afterburner'&&!c.abUsed&&G.runT>.8&&!G.ents.some(d=>d.side==='D'&&d.down<=0&&d.x>c.x-.5&&dist(d,c)<5)){c.abUsed=1;c.burnT=2.2;abCine('afterburner',c,null)}if(!G.demo&&G.juice<G.jmax&&!mvActive()){G.jReg+=dt;if(G.jReg>=2.4){G.jReg=0;G.juice++}}steer(c,dt);updateEngs(dt);if(G.perfT>0)G.perfT-=dt;
   if(G.whiffT>0)G.whiffT-=dt;
   if(!G.demo){if(G.tokD&&(G.tokD.eng||G.tokD.down>0||G.tokD.stun>0||!(G.tokD.wind>0||G.tokD.dive>0))){G.tokD.wind=0;G.tokD=null;G.tokCD=.18}if(G.tokCD>0)G.tokCD-=dt;
-    G.tokCand=null;if(!G.tokD&&!(G.tokCD>0)){let be=WIND+.05;for(const d of G.ents){if(d.side!=='D'||d.eng||d.down>0||d.stun>0||d.dive>0||d.tryCD>0)continue;if(G.runT<d.readT&&d.asg)continue;const rx=d.x-c.x,ry=d.y-c.y,dd=Math.hypot(rx,ry)||.01;if(dd>6.5)continue;const front=d.x>c.x-.3,cr=(c.vx*rx+c.vy*ry)/dd,cl=cr+d.spd*(front?.4:.9),eta=dd<1.8?0:(dd-1.5)/Math.max(cl,.4);if(!(front||cl>1))continue;if(eta<=be){be=eta;G.tokCand=d}}}}
+    G.tokCand=null;if(!G.tokD&&!(G.tokCD>0)){let be=WIND+.05;for(const d of G.ents){if(d.side!=='D'||d.eng||d.down>0||d.stun>0||d.dive>0||d.tryCD>0)continue;if(G.runT<d.readT&&d.asg)continue;const rx=d.x-c.x,ry=d.y-c.y,dd=Math.hypot(rx,ry)||.01;if(dd>6.5)continue;const front=d.x>c.x-.3,cr=(c.vx*rx+c.vy*ry)/dd,cl=cr+d.spd*(front?.4:.9),eta=dd<1.8?0:(dd-1.5)/Math.max(cl,.4);if(!front)continue;if(eta<=be){be=eta;G.tokCand=d}}}}
+  if(!G.demo&&(!G.chT||(G.chT-=dt)<=0)){G.chT=.2;const cand=G.ents.filter(d=>d.side==='D'&&!d.eng&&d.down<=0&&d.stun<=0).map(d=>{const dd=dist(d,c),front=d.x>c.x-.3,eta=dd/Math.max(1,d.spd)+(front?0:.9);return{d,eta}}).sort((a,b)=>a.eta-b.eta);G.chasers=new Set(cand.slice(0,3).map(o=>o.d));if(G.tokD)G.chasers.add(G.tokD);G.laneOf=new Map(cand.slice(3).map((o,i)=>[o.d,i%4]))}
   G.threat=findThreat(c);
   if(G.mvQ){const Q=G.mvQ;if(G.demo){if(G.runT-Q.t>1.6||G.mv&&mvActive())G.mvQ=null;else if(!G.threat||G.threat.ttc<=.42)startMove(Q.type,Q.dir,'good')}
     else if(G.runT-Q.t>.5)G.mvQ=null;else if(Q.buf){if(G.mvCD<=0)startMove(Q.type,Q.dir,perfWin(G.threat)?'perfect':'free')}else if(!G.threat||G.threat.ttc<=PERF_HI-.06)startMove(Q.type,Q.dir,'good')}
@@ -2038,13 +2039,14 @@ function runStep(dt){
     if(!G.demo){if(d===G.tokCand){d.wind=WIND;G.tokD=d;G.tokCand=null;const R=phys(c.p,c.p.pos||'RB'),Dp=phys(d.p,d.p.pos||'LB');d.low=Math.random()<clamp((DL.includes(d.role)?.4:.28)+(Dp.ht-R.ht)*.03+rf(Rt(d.p,'tak'))*.1,.1,.7);
       if(d.low)d.tt='low';else{const ax=d.x-c.x,ay=Math.abs(d.y-c.y);d.tt=ax<ay*.8?'arm':Math.random()<clamp(.35+(Rt(d.p,'str')-72)*.012,.2,.6)?'high':'sq'}continue}}
     else if(d.tryCD<=0&&dd>1.4&&dd<2.6&&d.x>c.x-.5&&!G.noDive&&Math.random()<dt*1.1*Rt(d.p,'tak')/80){const lx=c.x+c.vx*.3-d.x,ly=c.y+c.vy*.3-d.y,l=Math.hypot(lx,ly)||1,s=d.spd*1.45;d.dive=.42;d.dvx=lx/l*s;d.dvy=ly/l*s;continue}
-    (G.demo?pursue:chase)(d,c,dt,d.spd*(d.moveT>0?.75:1)*(1+(1-(G.covM||1))*.35));
+    {const sp=d.spd*(d.moveT>0?.75:1)*(1+(1-(G.covM||1))*.35);if(G.demo)pursue(d,c,dt,sp);else if(G.chasers&&!G.chasers.has(d)){const ahead=d.x>c.x-1,lane=G.laneOf.get(d)||0,tx=ahead?Math.max(c.x+3+lane*1.4,Math.min(d.x,c.x+9)):c.x-3-lane,ty=c.y+clamp(d.y-c.y,-7,7)*.5;if(dist(d,c)<3.2){d.vx*=.85;d.vy*=.85}else moveTo(d,Math.min(119,tx),clamp(ty,.5,52.8),sp*.95,dt)}else chase(d,c,dt,sp)}
   }
   if(c.x>=110)return endPlay('td',110,'TOUCHDOWN!');
   if(c.y<0||c.y>53.3)return endPlay(c.x<10?'safety':'oob',c.x,c.x<10?'SAFETY':'OUT OF BOUNDS');
   const airborne=mvActive()&&G.mv.type==='hurdle';
   for(const d of G.ents){
     if(d.side!=='D'||d.down>0||d.stun>0||d.tryCD>0)continue;
+    const chaseT=!G.demo&&!d.eng&&!(d.dive>0)&&d.x<c.x-.2&&dist(d,c)<.7&&d.tryCD<=0&&d.spd>Math.hypot(c.vx,c.vy)*.97;if(chaseT){d.tryCD=.8;if(Math.random()<.04+(Rt(c.p,'str')-Rt(d.p,'tak'))*.004){beat(d,'broken',c);continue}if(tackleAnim(d,c,'shoestring')||G.cu)return;continue}
     if(!G.demo&&!d.eng&&!(d.dive>0))continue;const reach=d.eng?.55:d.dive>0?1.2:.95;if(dist(d,c)>reach)continue;
     if(d.eng&&Math.random()>(G.demo?.35:.2)){d.tryCD=.6;continue}
     if(G.demo&&airborne&&d.dive>0){beat(d,'hurdle',c);continue}
@@ -2862,16 +2864,37 @@ function pxPortrait(g,x,y,s,p,pal,k){const R=(a,b,w,h,c)=>{g.fillStyle=c;g.fillR
   if(sty===0){R(6,3,10,3,hair)}else if(sty===1){R(6,1,10,4,hair);R(5,2,12,2,'#000')}else if(sty===2){R(6,3,10,3,hair);for(let i=0;i<5;i++)R(5+i*2+1,4,1,5,hair)}else{R(7,3,8,1,hair)}
   R(8,8,2,1,'#000');R(12,8,2,1,'#000');R(8,9,2,1,'#111');R(12,9,2,1,'#111');R(10,10,2,1,sks);R(9,12,4,1,'#000');R(10,12,2,1,'#fff');
   if(k<1){const oy=Math.round(-k*k*20);if(oy>-20){const H=(a,b,w,h,c)=>R(a,b+oy,w,h,c);H(4,1,14,14,'#000');H(5,2,12,12,pal.helm);H(5,2,12,2,shade(pal.helm,.3));H(10,1,2,13,pal.stripe);H(12,7,6,7,'#000');H(13,8,1,5,pal.mask);H(13,8,5,1,pal.mask);H(13,11,5,1,pal.mask);H(6,7,4,3,shade(pal.helm,-.3))}}}
-function pxCard(o,Z,t){if(!Z.card)return;const C=Z.card,ct=t-C.t0;if(ct<0||ct>C.dur)return;const g=o,inK=Math.min(1,ct/.25),outK=Math.min(1,(C.dur-ct)/.25),k=Math.min(inK,outK),e=1-(1-k)*(1-k),x=Math.round(-190+(196)*e),y=PXH-60;
-  const t1=C.team,p=C.p;g.fillStyle='#000';g.fillRect(x-2,y-2,186,56);g.fillStyle=t1.c1;g.fillRect(x,y,182,52);g.fillStyle=t1.c2;g.fillRect(x,y+48,182,4);g.fillStyle='rgba(0,0,0,.28)';g.fillRect(x+52,y+4,126,40);
-  const im=C.photo?pxPhotoEl():null,useP=im&&im.dataset.bad!==C.photo&&im.complete&&im.naturalWidth>0;
-  if(im){if(im.getAttribute('src')!==C.photo){im.dataset.bad='';im.src=C.photo}const show=useP&&ct>.6;im.style.display=show?'block':'none';if(show){im.style.left=((x+4)/PXW*100)+'%';im.style.top=((y+4)/PXH*100)+'%';im.style.width=(44/PXW*100)+'%';im.style.height=(44/PXH*100)+'%';im.style.background=t1.c1}}
-  pxPortrait(g,x+4,y+4,2,p,C.pal,clamp((ct-.45)/.6,0,1));g.strokeStyle='#000';g.lineWidth=2;g.strokeRect(x+4,y+4,44,44);
-  g.textAlign='left';g.textBaseline='top';const nm=String(p.name||'').split(' '),last=(nm.slice(-1)[0]||'').toUpperCase(),first=(nm.slice(0,-1).join(' ')||'').toUpperCase();
-  const tx=(s,xx,yy,sz,col)=>{g.font=sz+'px "Press Start 2P", monospace';g.fillStyle='#000';g.fillText(s,xx+1,yy+1);g.fillStyle=col;g.fillText(s,xx,yy)};
-  tx(first.slice(0,14),x+56,y+7,6,'#ffffff');tx(last.slice(0,10),x+56,y+16,last.length>8?8:10,'#ffffff');tx('#'+(p.num??'')+'  '+(C.pos||''),x+56,y+30,6,teamText(t1)==='#ffffff'?'#ffd23f':'#ffffff');tx(C.line,x+56,y+40,5,'#ffffff');
-  if(ct<.4){g.fillStyle=`rgba(255,255,255,${(.4-ct)*1.5})`;g.fillRect(x,y,182,52)}}
-let PHMAP=null,PHREV=null;
+function pxChips(e){const s=(G.gst&&G.gst.get(e.p))||{},td=(s.rtd||0)+(s.ctd||0)+(s.ptd||0),out=[];if(s.py)out.push([(s.py|0),'PASS YDS']);if(s.rec)out.push([s.rec,'REC']);const yd=(s.cy||0)+(s.ry||0);if(yd)out.push([yd,'YDS']);out.push([Math.max(1,td),'TD']);return out.slice(-3)}
+function pxCard(o,Z,t){if(!Z.card)return;const C=Z.card,ct=t-C.t0;const im=C.photo?pxPhotoEl():null;if(ct<0||ct>C.dur){if(im)im.style.display='none';return}
+  const g=o,T1=C.team,p=C.p,BH=74,y0=PXH-BH-6,inK=ss01(ct/.28),outK=ss01((C.dur-ct)/.3),k=Math.min(inK,outK),slide=Math.round((1-k)*(ct<C.dur/2?-PXW:PXW)),x0=slide;
+  // speed streaks while it slams in
+  if(ct<.35){for(let i=0;i<10;i++){g.fillStyle=i%2?T1.c2:'#ffffff';g.globalAlpha=.6*(1-ct/.35);g.fillRect(x0+PXW*.1+i*22,y0+6+i*6,PXW*.8,2)}g.globalAlpha=1}
+  // banner body
+  g.fillStyle='#000';g.fillRect(x0,y0-2,PXW,BH+4);g.fillStyle=T1.c1;g.fillRect(x0,y0,PXW,BH);
+  g.save();g.beginPath();g.rect(x0,y0,PXW,BH);g.clip();const sh=(ct*40)%24;g.fillStyle=shade(T1.c1,.18);for(let xx=-40;xx<PXW+40;xx+=24){g.beginPath();g.moveTo(x0+xx+sh,y0);g.lineTo(x0+xx+sh+10,y0);g.lineTo(x0+xx+sh-18,y0+BH);g.lineTo(x0+xx+sh-28,y0+BH);g.fill()}
+  g.globalAlpha=.22;g.font='64px "Press Start 2P", monospace';g.textAlign='right';g.textBaseline='middle';g.fillStyle=T1.c2;g.fillText(String(p.num??''),x0+PXW-6,y0+BH/2+4);g.globalAlpha=1;g.restore();
+  g.fillStyle=T1.c2;g.fillRect(x0,y0+BH-5,PXW,5);g.fillStyle='rgba(0,0,0,.25)';g.fillRect(x0,y0,PXW,3);
+  // TOUCHDOWN tab
+  const tabW=106;g.fillStyle='#000';g.fillRect(x0+6,y0-14,tabW+4,16);g.fillStyle=Math.floor(ct*8)%2?'#ffd23f':'#ffe58a';g.fillRect(x0+8,y0-12,tabW,12);g.font='8px "Press Start 2P", monospace';g.textAlign='left';g.textBaseline='middle';g.fillStyle='#1b0d00';g.fillText('TOUCHDOWN',x0+14,y0-5);
+  // portrait box
+  const bx=x0+8,by=y0+6,bs=60;g.fillStyle='#000';g.fillRect(bx-2,by-2,bs+4,bs+4);g.fillStyle=shade(T1.c1,-.4);g.fillRect(bx,by,bs,bs);
+  const useP=im&&im.dataset.bad!==C.photo&&im.complete&&im.naturalWidth>0;
+  if(im){if(im.getAttribute('src')!==C.photo){im.dataset.bad='';im.src=C.photo}const show=useP&&ct>.5&&ct<C.dur-.3;im.style.display=show?'block':'none';if(show){im.style.left=(bx/PXW*100)+'%';im.style.top=(by/PXH*100)+'%';im.style.width=(bs/PXW*100)+'%';im.style.height=(bs/PXH*100)+'%';im.style.background=shade(T1.c1,-.4)}}
+  if(!(useP&&ct>.5))pxPortrait(g,bx+(bs-66)/2+3,by-3,3,p,C.pal,clamp((ct-.35)/.5,0,1));
+  // name
+  const nm=String(p.name||'').split(' '),last=(nm.slice(-1)[0]||'').toUpperCase(),first=(nm.slice(0,-1).join(' ')||'').toUpperCase(),tx=bx+bs+10;
+  const txt=(s2,xx,yy,sz,col)=>{g.font=sz+'px "Press Start 2P", monospace';g.textAlign='left';g.textBaseline='top';g.fillStyle='#000';g.fillText(s2,xx+2,yy+2);g.fillStyle=col;g.fillText(s2,xx,yy)};
+  txt(first.slice(0,16),tx,y0+8,7,'#ffffff');txt(last.slice(0,13),tx,y0+19,last.length>10?12:last.length>7?14:16,'#ffffff');
+  txt('#'+(p.num??'')+'  '+(C.pos||'')+'  '+(T1.abbr||''),tx,y0+38,6,teamText(T1)==='#ffffff'?'#ffd23f':'#ffffff');
+  // stat chips pop in one by one
+  const chips=C.chips||[];let cx=tx;g.font='7px "Press Start 2P", monospace';
+  chips.forEach((ch,i)=>{const t0=.55+i*.22;if(ct<t0)return;const pk=Math.min(1,(ct-t0)/.15),sc=pk<1?.6+pk*.6:1+Math.max(0,.1-(ct-t0-.15))*1.5,lab=ch[0]+' '+ch[1],w=g.measureText(lab).width+10,h=12,yy=y0+50;
+    g.save();g.translate(cx+w/2,yy+h/2);g.scale(sc,sc);g.fillStyle='#000';g.fillRect(-w/2-1,-h/2-1,w+2,h+2);g.fillStyle='#ffd23f';g.fillRect(-w/2,-h/2,w,h);g.fillStyle='#1b0d00';g.textAlign='center';g.textBaseline='middle';g.fillText(lab,0,1);g.restore();cx+=w+6});
+  // sparks along the edges
+  for(let i=0;i<6;i++){const sx=x0+((ct*160+i*67)%PXW),sy=i%2?y0-1:y0+BH-1;g.fillStyle=pick(['#ffd23f','#ffffff','#ffe58a']);g.fillRect(Math.round(sx),sy,2,2)}
+  if(ct<.25){g.fillStyle=`rgba(255,255,255,${(.25-ct)*3})`;g.fillRect(x0,y0,PXW,BH)}}
+let PHMAP=null,PHREV=null,CLMAP=null;
+function celebFor(p){if(!p)return null;if(p.celeb)return p.celeb;if(typeof DATA==='undefined'||!DATA||!DATA.players)return null;if(!CLMAP||CLMAP.rev!==DATA.at){CLMAP=new Map();CLMAP.rev=DATA.at;for(const q of DATA.players)if(q.celeb)CLMAP.set(normN(q.name),q.celeb)}return CLMAP.get(normN(p.name||''))||null}
 function photoFor(p){if(!p)return null;if(p.photo)return p.photo;if(typeof DATA==='undefined'||!DATA||!DATA.players)return null;if(PHREV!==DATA.at){PHREV=DATA.at;PHMAP=new Map();for(const q of DATA.players)if(q.photo)PHMAP.set(normN(q.name),q.photo)}return PHMAP.get(normN(p.name||''))||null}
 function pxPhotoEl(){let im=$('#pximg');if(!im){im=document.createElement('img');im.id='pximg';im.alt='';im.referrerPolicy='no-referrer';im.onerror=()=>{im.dataset.bad=im.src;im.style.display='none'};$('#stage').appendChild(im)}return im}
 function pxStatLine(e){const s=(G.gst&&G.gst.get(e.p))||{},td=(s.rtd||0)+(s.ctd||0)+(s.ptd||0),parts=[];
@@ -2896,15 +2919,15 @@ function pxBegin(opt={}){
   return Z}
 const ss01=f=>{f=clamp(f,0,1);return f*f*(3-2*f)};
 // ================= touchdown celebrations =================
-const PXCEL=['dj','bowling','dunk','fly','crown','knight'];
+const PXCEL=['dj','bowling','fly','crown','knight'],PXSIG=['dj','bowling','dunk','fly','crown','knight'];
 function pxCeleb(c){
   try{
     if(!window.THREE||!c||!c.p)return false;
     const Z=pxBegin(),T=G.userT,home=G.userHome,pal=e=>palFor(T,home,e.skin);
-    const type=G.forcePXC||pick(PXCEL),hx=113,z0=0,gold=['#ffd23f','#ffe58a','#ffb020','#ffffff'],tc=[T.c1,T.c2,'#ffffff','#ffd23f'];
+    const sigc=celebFor(c.p),type=G.forcePXC||(sigc&&PXSIG.includes(sigc)&&Math.random()<.85?sigc:pick(PXCEL)),hx=113,z0=0,gold=['#ffd23f','#ffe58a','#ffb020','#ffffff'],tc=[T.c1,T.c2,'#ffffff','#ffd23f'];
     const hero=Z.actor(pal(c));const mates=G.ents.filter(e=>e.side==='O'&&e!==c&&e.p).sort((a,b)=>dist(a,c)-dist(b,c)).slice(0,type==='bowling'?6:4).map(e=>Z.actor(pal(e)));
     const grp=ROLEGRP[c.role]||c.p.pos||'';
-    Object.assign(Z,{type,hero,mates,hx,z0,gold,tc,team:T,dur:6.2,card:{t0:.9,dur:3.6,p:c.p,team:T,pal:pal(c),pos:grp,line:pxStatLine(c),photo:photoFor(c.p)}});
+    Object.assign(Z,{type,hero,mates,hx,z0,gold,tc,team:T,dur:6.2,card:{t0:.8,dur:4,p:c.p,team:T,pal:pal(c),pos:grp,line:pxStatLine(c),chips:pxChips(c),photo:photoFor(c.p)}});
     hero.s.position.set(hx-8,0,z0);
     mates.forEach((m,i)=>m.s.position.set(hx-14-i*1.4,0,z0+(i%2?3:-3)));
     PXSETUP[type]&&PXSETUP[type](Z);if(Z.pinSpots)mates.forEach((m,i)=>{const sp=Z.pinSpots[i];if(sp)m.s.position.set(sp[0],0,sp[1])});
@@ -3661,7 +3684,7 @@ const PROGRAMS={
  feared:{n:'Most Feared',d:'Defensive stars, 6 over baseline.',w:.45,rw:60000},
  icon:{n:'Icon',d:'Elite players, 8 over baseline.',w:.3,rw:90000},
  peak:{n:'Peak Form',d:'A superstar at his ceiling. The rarest cards in the game.',w:.12,rw:150000},
- power:{n:'Power Up',d:'Draft only. Starts about 16 below baseline but levels all the way to his ceiling.',w:0,rw:0}};
+ power:{n:'Power Up',d:'Starts well below his baseline and climbs to his potential only through Path to Peak. High-potential Power Ups are very rare.',w:0,rw:0}};
 const PROG_ORDER=Object.keys(PROGRAMS),progKey=n=>PROG_ORDER.find(k=>PROGRAMS[k].n===n)||null;
 const OFFG=['QB','RB','WR','TE','OL','K','P'];
 function mulberry(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -3693,7 +3716,7 @@ function buildCatalog(){
       let pv=0;if(B>=84){pv=bump(6);add(OFFG.includes(pl.pos)?'prime':'feared',pv)}
       if(B>=88)add('icon',Math.min(99,Math.max(pv+1,bump(8))));
       if(B>=91)add('peak',cap);
-      if(B>=80&&Math.random()<.45)add('power',clamp(B-16,60,75));
+      if(B>=80&&Math.random()<.45){add('power',clamp(B-16,60,75));out[out.length-1].pot=Math.min(99,B+ri(-3,6))}
     });
     // signatures: every team's best skill player, plus every skill star 90+
     SIGMAP={};const bestT={},SK=['RB','WR','TE'];
@@ -3712,7 +3735,8 @@ function genCard(pos,tier,lo,hi){
   else{pool=cat.filter(t=>!t.pu&&t.ovr>=lo&&t.ovr<=hi&&(!pos||t.pos===pos));if(!pool.length)pool=cat.filter(t=>!t.pu&&(!pos||t.pos===pos)).sort((a,b)=>Math.abs(a.ovr-(lo+hi)/2)-Math.abs(b.ovr-(lo+hi)/2)).slice(0,8)}
   return inst(wpick(pool.map(t=>[t,PROGRAMS[t.p].w||.01])));
 }
-function genPower(pos){const cat=buildCatalog();let pool=cat.filter(t=>t.p==='power'&&t.pos===pos);if(!pool.length)pool=cat.filter(t=>t.p==='power');return inst(pick(pool))}
+const puW=t=>t.pot>=95?.02:t.pot>=90?.09:t.pot>=85?.45:1;
+function genPower(pos){const cat=buildCatalog();let pool=cat.filter(t=>t.p==='power'&&t.pos===pos);if(!pool.length)pool=cat.filter(t=>t.p==='power');return inst(wpick(pool.map(t=>[t,puW(t)])))}
 function genPowerOld(pos){
   const ovr=ri(66,73);let pot=ri(86,95),[a,z]=GRPNUM[pos],n=pick(FIRST)+' '+pick(LAST),team=pick(TEAM_BASE)[2],num=ri(a,z),r=null,st=null;
   const pool=dataPlayers(null,pos).filter(p=>p.ovr>=82);
@@ -3927,7 +3951,7 @@ const TABICO={play:'\u{1F3C8}',season:'\u{1F3C6}',lineup:'\u{1F4CB}',coll:'\u{1F
 const UTTABS=[['play','Play'],['season','Season'],['lineup','Lineup'],['coll','Collection'],['cat','Catalog'],['packs','Packs'],['market','Market'],['path','Path to Peak'],['upgrade','Upgrade'],['abil','Abilities'],['club','Club']];
 function renderUT(){
   const c=UT.club,o=teamOvr();
-  $('#utHead').innerHTML=`<div class="hubhead" style="--c1:${c.c1};--c2:${c.c2}"><div class="crest">${esc(c.abbr)}</div><div><p class="kicker">Ultimate Team</p><h1>${esc(c.city)} ${esc(c.name)}</h1><p class="rec">OVR ${o.all} <span class="muted">OFF ${o.o}, DEF ${o.d}, record ${UT.rec.w}-${UT.rec.l}${UT.rec.t?'-'+UT.rec.t:''}</span></p></div><div class="wallet"><span><b>${fmtN(UT.coins)}</b> coins</span><span><b>${fmtN(UT.tp)}</b> training</span><span><b>${UT.packs.length}</b> packs</span></div><button class="hubhelp" id="hubHelp" title="Tutorial" aria-label="Replay the tutorial">?</button></div>`;
+  $('#utHead').innerHTML=`<div class="hubhead" style="--c1:${c.c1};--c2:${c.c2}"><div class="crest">${esc(c.abbr)}</div><div><p class="kicker">Ultimate Team</p><h1>${esc(c.city)} ${esc(c.name)}</h1><p class="rec">OVR ${o.all} <span class="muted">OFF ${o.o}, DEF ${o.d}, record ${UT.rec.w}-${UT.rec.l}${UT.rec.t?'-'+UT.rec.t:''}</span></p></div><div class="wallet"><span><b>${fmtN(UT.coins)}</b> coins</span><span><b>${UT.packs.length}</b> packs</span></div><button class="hubhelp" id="hubHelp" title="Tutorial" aria-label="Replay the tutorial">?</button></div>`;
   $('#hubHelp').onclick=()=>tourStart(0);
   $('#utTabs').innerHTML=UTTABS.map(([k,l])=>`<button class="tab${k===utTab?' on':''}" data-k="${k}"><i>${TABICO[k]||''}</i><span>${l}${k==='packs'&&UT.packs.length?` (${UT.packs.length})`:''}</span></button>`).join('');
   document.querySelectorAll('#utTabs .tab').forEach(b=>b.onclick=()=>{utTab=b.dataset.k;renderUT()});
@@ -3956,8 +3980,8 @@ function bCat(){
   document.querySelectorAll('[data-claim]').forEach(b=>b.onclick=()=>{const pk=b.dataset.claim;UT.claimed=UT.claimed||{};if(UT.claimed[pk])return;UT.claimed[pk]=1;UT.coins+=PROGRAMS[pk].rw;utSave();renderUT();toastUT(`${PROGRAMS[pk].n} complete: +${fmtN(PROGRAMS[pk].rw)} coins`)});
   document.querySelectorAll('#utBody .cgrid .ucard[data-tid]').forEach(b=>b.onclick=()=>examineTpl(b.dataset.tid));
 }
-const dreamNeed=t=>Math.round(60*Math.pow(1.12,Math.max(0,t.ovr-70)));
-function dreamPanel(){const D=UT.dream,t=D&&buildCatalog().find(x=>x.tid===D.tid);if(!t)return`<div class="dreamp dempty"><b>Dream Card</b><p class="muted">Pick any card in the Catalog and set it as your Dream Card. Every game, win, objective and pack adds Dream points until you earn it.</p></div>`;
+const dreamNeed=t=>Math.round(96*Math.pow(1.12,Math.max(0,(t.pot||t.ovr)-70)));
+function dreamPanel(){const D=UT.dream,t=D&&buildCatalog().find(x=>x.tid===D.tid);if(!t)return`<div class="dreamp dempty"><b>Dream Card</b><p class="muted">Pick any Power Up in the Catalog and set it as your Dream Card. The higher his potential, the more points he costs. Every game, win, objective and pack adds Dream points until you earn it.</p></div>`;
   const need=dreamNeed(t),pts=Math.min(need,D.pts||0),ok=pts>=need;
   return`<div class="dreamp"><div class="dcard">${cardHTML(tplCard(t),{sm:true,tid:t.tid})}</div><div class="dbody"><b>Dream Card</b><p>${esc(t.n)}, ${PROGRAMS[t.p].n} ${t.ovr}</p><div class="dbar"><i style="width:${Math.round(pts/need*100)}%"></i></div><p class="muted">${fmtN(pts)} of ${fmtN(need)} points. Game +25, win +15, each objective +20, each pack +5.</p>${ok?'<button class="btn primary" id="dreamClaim">Claim your Dream Card</button>':''}<button class="btn" id="dreamClear">Change</button></div></div>`}
 function bindDream(){const c=$('#dreamClaim');if(c)c.onclick=()=>{const t=buildCatalog().find(x=>x.tid===UT.dream.tid);if(!t)return;const card=inst(t);UT.cards.push(card);UT.dream=null;utSave();renderUT();toastUT('Dream Card earned: '+card.n);cardDetail(card.id)};
@@ -3970,7 +3994,7 @@ function examineTpl(tid){
     <p>${esc(P.n)} version. ${esc(P.d)}</p><p>${esc(c.team)}, #${c.num}. Baseline ${t.B}, can be upgraded to ${t.pot}.</p>
     ${sg?`<p class="bsig">\u2605 Signature: ${ABDEF[sg].n}</p>`:''}<p><b>Abilities</b></p>${abInfoHTML(ab,sg)}
     <p><b>${n?`You own ${n===1?'this card':n+' copies'}.`:'You don\'t own this card yet.'}</b></p>${(()=>{if(n)return'';const mine=UT.cards.filter(x=>x.pid===t.pid&&x.ovr<t.ovr).sort((a,b)=>b.ovr-a.ovr)[0];return mine?`<p class="pathbox">You can reach this card through <b>Path to Peak</b> from your ${esc(mine.prog)} ${mine.ovr}. <button class="btn primary" data-goto="${mine.id}">Open his card</button></p>`:''})()}
-    <p>${UT.dream&&UT.dream.tid===tid?'<b class="dreamtag">★ This is your Dream Card</b>':`<button class="btn primary" id="setDream">Make this my Dream Card (${fmtN(dreamNeed(t))} points)</button>`}</p>
+    <p>${UT.dream&&UT.dream.tid===tid?'<b class="dreamtag">★ This is your Dream Card</b>':t.p==='power'?`<button class="btn primary" id="setDream">Make this my Dream Card (${fmtN(dreamNeed(t))} points)</button>`:'<span class="muted">Only Power Ups can be Dream Cards.</span>'}</p>
     <p><b>Other versions:</b></p><div class="cgrid pick" style="max-height:none">${vs.filter(x=>x.tid!==tid).map(x=>cardHTML(tplCard(x),{sm:true,tid:x.tid,ghost:!own.has(x.tid)})).join('')||'<span class="muted">Only this version exists.</span>'}</div></div></div>`,[['Close',closeModal,'alt']]);
   bindFlip($('#utm'));
   document.querySelectorAll('#utm .cgrid .ucard[data-tid]').forEach(b=>b.onclick=()=>examineTpl(b.dataset.tid));
@@ -4002,8 +4026,8 @@ function utMatch(opp,label,info){
     const ups=[];
     for(const c of starters){const a=snap.get(c.id)||{},b=c.s||{},dlt=k=>(b[k]||0)-(a[k]||0);
       let xp=20+(win?15:0)+Math.round(dlt('py')/10+dlt('ptd')*15+dlt('ry')/4+dlt('cy')/4+(dlt('rtd')+dlt('ctd'))*20+dlt('tkl')*5+dlt('sck')*20+dlt('dint')*25+dlt('fgm')*10+dlt('rec')*3);
-      if(c.pu)xp=Math.round(xp*1.5);c.xp=(c.xp||0)+xp;
-      while(c.xp>=100+25*c.up){if(c.ovr+c.up<xpCeil(c)&&c.up<capUp(c)){c.xp-=100+25*c.up;c.up++;ups.push(c)}else{c.xp=Math.min(c.xp,99+25*c.up);break}}}
+      xp=0;
+      while(false){if(c.ovr+c.up<xpCeil(c)&&c.up<capUp(c)){c.xp-=100+25*c.up;c.up++;ups.push(c)}else{c.xp=Math.min(c.xp,99+25*c.up);break}}}
     for(const c of starters){c.s=c.s||{};c.s.gp=(c.s.gp||0)+1;if(win)c.s.w=(c.s.w||0)+1}
     const pathDone=starters.filter(c=>c.path&&pathReady(c));
     refreshMarket();recalcChem();utSave();
@@ -4058,10 +4082,9 @@ function bColl(){
 function cardDetail(id){
   const c=cardById(id);if(!c)return;const st=starterSlot(id),T=TIERS[c.tier],cost=trainCost(c),canUp=c.up<capUp(c),ab=cAbil(c);
   const btns=[];
-  if(canUp)btns.push([`Train +1 OVR (${cost} TP)`,()=>{if(UT.tp<cost)return toastUT('Not enough training points');UT.tp-=cost;c.up++;utSave();cardDetail(id);renderUT()}]);
-  if(canUp&&c.pid)for(const f of UT.cards.filter(x=>x.pid===c.pid&&x.id!==id&&!starterSlot(x.id)))btns.push([`Merge ${f.prog} ${f.ovr} (+${Math.min(capUp(c)-c.up,mergeGain(c,f))})`,()=>{c.up=Math.min(capUp(c),c.up+mergeGain(c,f));UT.cards=UT.cards.filter(x=>x!==f);utSave();toastUT(`Merged: ${c.n} is now ${effOvr(c)}`);cardDetail(id);renderUT()}]);
+  if(false)for(const f of UT.cards.filter(x=>x.pid===c.pid&&x.id!==id&&!starterSlot(x.id)))btns.push([`Merge ${f.prog} ${f.ovr} (+${Math.min(capUp(c)-c.up,mergeGain(c,f))})`,()=>{c.up=Math.min(capUp(c),c.up+mergeGain(c,f));UT.cards=UT.cards.filter(x=>x!==f);utSave();toastUT(`Merged: ${c.n} is now ${effOvr(c)}`);cardDetail(id);renderUT()}]);
   for(const k of SLOTK.filter(k=>SLOTGRP[k]===c.pos&&UT.lineup[k]!==id))btns.push([`Start at ${k} (over ${effOvr(cardById(UT.lineup[k]))})`,()=>{setSlot(k,id);closeModal();renderUT()},'alt']);
-  if(!st){btns.push([`Quick sell +${fmtN(qsCoins(c))} coins`,()=>sellCard(c,'coins'),'alt']);btns.push([`Convert +${qsTP(c)*(c.pu?3:1)} TP`,()=>sellCard(c,'tp'),'alt'])}
+  if(!st){btns.push([`Quick sell +${fmtN(qsCoins(c))} coins`,()=>sellCard(c,'coins'),'alt']);0}
   btns.push(['Close',closeModal,'alt']);
   const next=Object.keys(ABDEF).filter(k=>!ab.includes(k)).map(k=>{for(const add of [1,2,3,4,5,6,8,10,12,15,20,25]){const r={};for(const rk of RSET[c.pos])r[rk]=clamp(cRat(c,rk)+add,20,99);if(abilities(c.pos,r).includes(k))return[k,add]}return null}).filter(Boolean).sort((a,b)=>a[1]-b[1]).slice(0,3);
   const stl=c.st&&Object.keys(c.st).length?`<p class="muted">Imported stats: ${Object.entries(c.st).slice(0,6).map(([k,v])=>`${k} ${v}`).join(', ')}</p>`:'';
@@ -4149,7 +4172,7 @@ function bPacks(){
 function openPackFromInv(i){const k=UT.packs.splice(i,1)[0];if(k)openPack(k)}
 function rollPack(type){
   const P=PACKS[type],out=[];
-  for(let i=0;i<P.cards;i++){const tier=wpick(Object.entries(P.odds)),pos=P.groups?pick(P.groups):wpick(POSW);out.push(genCard(pos,tier))}
+  for(let i=0;i<P.cards;i++){const tier=wpick(Object.entries(P.odds)),pos=P.groups?pick(P.groups):wpick(POSW);out.push(type!=='bronze'&&Math.random()<.02&&['QB','RB','WR','TE'].includes(pos)?genPower(pos):genCard(pos,tier))}
   if(P.guar){const gi=TORD.indexOf(P.guar);if(!out.some(c=>TORD.indexOf(c.tier)>=gi)){const c=out.pop();out.push(genCard(c.pos,P.guar))}}
   return out.sort((a,b)=>a.ovr-b.ovr);
 }
@@ -4213,7 +4236,7 @@ function uUpgrade(){
   const ex=EXCH.map((e,i)=>{const pool=UT.cards.filter(c=>c.tier===e.need&&!starterSlot(c.id));return`<div class="solo"><div><b>${e.n}</b><span class="muted">${e.cnt} bench ${TIERS[e.need].n.toLowerCase()} cards for a ${PACKS[e.pack].n}</span></div><div class="muted">You have ${pool.length}</div><button class="btn${pool.length>=e.cnt?' primary':''}" data-ex="${i}" ${pool.length>=e.cnt?'':'disabled'}>Exchange</button></div>`}).join('');
   const byT={};for(const c of UT.cards)if(!starterSlot(c.id)&&!c.pu)(byT[c.team]=byT[c.team]||[]).push(c);
   const sets=Object.entries(byT).sort((a,b)=>b[1].length-a[1].length).slice(0,8).map(([tm,arr])=>{const rw=setReward(tm),n=arr.length,ok=n>=5;return`<div class="solo"><div><b>${esc(tm)} team set</b><span class="muted">Turn in 5 bench ${esc(tm)} cards. Reward: ${rw?esc(rw.n)+', '+PROGRAMS[rw.p].n+' '+rw.ovr+(rw.sig?', '+ABDEF[rw.sig].n+' signature':''):'a Gold pack'}</span></div><div class="muted">${Math.min(n,5)} of 5</div><button class="btn${ok?' primary':''}" data-set="${esc(tm)}" ${ok?'':'disabled'}>Complete</button></div>`}).join('')||'<p class="muted">Bench cards from the same team build toward a team set. Open packs to start one.</p>';
-  return`<h3>Team sets</h3><p class="muted">Five bench cards from one team trade in for that team's best special card, usually its signature star.</p><div class="solos">${sets}</div><h3>Training</h3><p class="muted">You have ${fmtN(UT.tp)} training points. Earn them by converting bench cards in your collection. Training adds +1 overall, up to each card's potential. Power Ups also grow on their own through game experience. Your starters, weakest first:</p><div class="cgrid">${starters.map(c=>cardHTML(c,{sm:true})).join('')}</div><h3>Exchanges</h3><div class="solos">${ex}</div>`;
+  return`<h3>Team sets</h3><p class="muted">Five bench cards from one team trade in for that team's best special card, usually its signature star.</p><div class="solos">${sets}</div>`;
 }
 function setReward(tm){const cat=buildCatalog().filter(t=>t.team===tm&&!t.pu&&['ignition','throwback','breakout','prime','feared'].includes(t.p));if(!cat.length)return null;cat.sort((a,b)=>(b.sig?10:0)+b.ovr-((a.sig?10:0)+a.ovr));const ok=cat.filter(t=>t.ovr<=88);return(ok[0]||cat.at(-1))}
 function bUpgrade(){
@@ -4229,29 +4252,33 @@ function pathTasks(pos,pk,sig){const f=PDIFF[pk]||1,n=(v,m=1)=>Math.max(m,Math.r
   const T={RB:{ry:n(150,50),btk:n(3),rtd:n(1.5)},WR:{cy:n(150,50),rec:n(8,3),ctd:n(1.5)},TE:{cy:n(110,40),rec:n(7,3),ctd:n(1.2)},QB:{py:n(400,150),ptd:n(3),w:n(1.5)},
     DL:{tkl:n(6,2),sck:n(1.5)},LB:{tkl:n(9,3),sck:n(.8)},CB:{tkl:n(5,2),dint:n(.7)},S:{tkl:n(6,2),dint:n(.7)},OL:{gp:n(2.5,2),w:n(1.5)},K:{fgm:n(3),w:n(1.2)},P:{gp:n(2.5,2),w:n(1.2)}}[pos]||{gp:n(3),w:n(2)};
   if(pk==='peak'&&sig&&['RB','WR','TE'].includes(pos))T.hl=2;return T}
-function pathLadder(c){if(!c.pid)return[];const cat=buildCatalog().filter(t=>t.pid===c.pid&&t.p!=='power').sort((a,b)=>a.ovr-b.ovr||PROG_ORDER.indexOf(a.p)-PROG_ORDER.indexOf(b.p));return cat}
-function pathNext(c){const L=pathLadder(c),i=L.findIndex(t=>t.tid===c.tid);if(i>=0)return L[i+1]||null;return L.find(t=>t.ovr>c.ovr)||null}
+function puLadder(c){const L=[],top=c.pot||c.ovr;for(let v=c.ovr;v<top;v+=4)L.push({tid:'pu|'+v,p:'power',ovr:v,pu:1});L.push({tid:'pu|'+top,p:'power',ovr:top,pu:1});return L}
+function pathTo(c){return c.path&&(c.pu?{tid:c.path.to,p:'power',ovr:c.path.toOvr,pu:1}:pathTo(c))}
+function pathLadder(c){if(c.pu)return puLadder(c);return[];const cat=buildCatalog().filter(t=>t.pid===c.pid&&t.p!=='power').sort((a,b)=>a.ovr-b.ovr||PROG_ORDER.indexOf(a.p)-PROG_ORDER.indexOf(b.p));return cat}
+function pathNext(c){if(!c.pu)return null;const cur=c.ovr+(c.up||0);return puLadder(c).find(t=>t.ovr>cur)||null;const L=pathLadder(c),i=L.findIndex(t=>t.tid===c.tid);if(i>=0)return L[i+1]||null;return L.find(t=>t.ovr>c.ovr)||null}
 const pathProg=(c,k)=>Math.max(0,((c.s||{})[k]||0)-((c.path.base||{})[k]||0));
 const pathReady=c=>c.path&&Object.entries(c.path.need).every(([k,v])=>pathProg(c,k)>=v);
 const pathPct=c=>{const e=Object.entries(c.path.need);return Math.round(e.reduce((a,[k,v])=>a+Math.min(1,pathProg(c,k)/v),0)/e.length*100)};
 const activePaths=()=>UT.cards.filter(c=>c.path);
-function startPath(c){const t=pathNext(c);if(!t)return;if(activePaths().length>=3&&!c.path)return toastUT('You can run 3 paths at once');c.s=c.s||{};const base={};for(const k of Object.keys(PSTAT))base[k]=c.s[k]||0;c.path={to:t.tid,base,need:pathTasks(c.pos,t.p,t.sig||sigOf(c))};utSave()}
-function finishPath(c){const t=buildCatalog().find(x=>x.tid===c.path.to);if(!t||!pathReady(c))return;const old=c.ovr;
+function startPath(c){const t=pathNext(c);if(!t)return;if(activePaths().length>=3&&!c.path)return toastUT('You can run 3 paths at once');c.s=c.s||{};const base={};for(const k of Object.keys(PSTAT))base[k]=c.s[k]||0;const lv=Math.max(0,Math.round((c.up||0)/4)),pk=['core','breakout','ignition','prime','icon','peak'][Math.min(5,lv)];c.path={to:t.tid,toOvr:t.ovr,pk,base,need:pathTasks(c.pos,pk,null)};utSave()}
+function finishPath(c){if(c.pu){if(!pathReady(c))return;const old=effOvrSafe(c);c.up=Math.min(capUp(c),c.path.toOvr-c.ovr);c.tier=tierOf(c.ovr+c.up);delete c.path;const nx=pathNext(c);if(nx)startPath(c);utSave();recalcChem();renderUT();
+    utModal(`<div class="detail"><div style="flex:0 0 auto">${flipHTML(c,{big:true})}</div><div><p class="kicker">Path to Peak</p><h2>${esc(c.n)} is now ${c.ovr+c.up}</h2><p>Up from ${old}.</p>${nx?`<p>Next stop: <b>${nx.ovr}</b>. His new tasks have started.</p>`:`<p><b>He has reached his potential.</b></p>`}</div></div>`,[['Nice',closeModal]]);bindFlip($('#utm'));return}
+  const t=pathTo(c);if(!t||!pathReady(c))return;const old=c.ovr;
   Object.assign(c,{tid:t.tid,ovr:t.ovr,B:t.B,pot:t.pot,r:Object.assign({},t.r),spd:t.spd,tier:tierOf(t.ovr),prog:PROGRAMS[t.p].n,pk:t.p,sig:t.sig||c.sig});c.up=Math.min(c.up||0,capUp(c));delete c.path;
   const nx=pathNext(c);if(nx)startPath(c);utSave();recalcChem();renderUT();
-  utModal(`<div class="detail"><div style="flex:0 0 auto">${flipHTML(c,{big:true})}</div><div><p class="kicker">Path to Peak</p><h2>${esc(c.n)} is now ${esc(c.prog)} ${c.ovr}</h2><p>Up from ${old}. He kept his stats and training.</p>${nx?`<p>Next stop: <b>${PROGRAMS[nx.p].n} ${nx.ovr}</b>. His new tasks have started.</p>`:`<p><b>He has reached the top of his path.</b></p>`}</div></div>`,[['Nice',closeModal]]);bindFlip($('#utm'))}
+  utModal(`<div class="detail"><div style="flex:0 0 auto">${flipHTML(c,{big:true})}</div><div><p class="kicker">Path to Peak</p><h2>${esc(c.n)} is now ${esc(c.prog)} ${c.ovr}</h2><p>Up from ${old}. He kept his stats and training.</p>${nx?`<p>Next stop: <b>${nx.pu?'':PROGRAMS[nx.p].n+' '}${nx.ovr}</b>. His new tasks have started.</p>`:`<p><b>He has reached the top of his path.</b></p>`}</div></div>`,[['Nice',closeModal]]);bindFlip($('#utm'))}
 function pathTasksHTML(c){return`<div class="ptasks">${Object.entries(c.path.need).map(([k,v])=>{const pv=Math.min(v,pathProg(c,k));return`<div class="ptask${pv>=v?' done':''}"><span>${pv>=v?'\u2713 ':''}${PSTAT[k]}</span><i><u style="width:${Math.round(pv/v*100)}%"></u></i><em>${pv} / ${v}</em></div>`}).join('')}</div>`}
 function ladderHTML(c){const L=pathLadder(c);return`<div class="ladder">${L.map(t=>`<span class="lstep${t.tid===c.tid?' cur':L.indexOf(t)<L.findIndex(x=>x.tid===c.tid)?' past':''}${c.path&&c.path.to===t.tid?' next':''}">${PROGRAMS[t.p].n}<b>${t.ovr}</b></span>`).join('<i>\u203A</i>')}</div>`}
-function pathSection(c){const nx=pathNext(c);if(!c.pid)return'';if(!nx)return`<h3>Path to Peak</h3>${ladderHTML(c)}<p class="muted">This is his best version. He is at the top of his path.</p>`;
-  if(!c.path)return`<h3>Path to Peak</h3>${ladderHTML(c)}<p>Start his path and his next version is <b>${PROGRAMS[nx.p].n} ${nx.ovr}</b>. Tasks only count while he is in your starting lineup.</p><p class="muted">Tasks: ${Object.entries(pathTasks(c.pos,nx.p,nx.sig||sigOf(c))).map(([k,v])=>v+' '+PSTAT[k]).join(', ')}.</p><button class="btn primary" data-pstart="${c.id}" ${activePaths().length>=3?'disabled':''}>${activePaths().length>=3?'3 paths already running':'Start his path'}</button>`;
-  return`<h3>Path to Peak: ${PROGRAMS[buildCatalog().find(t=>t.tid===c.path.to).p].n} ${buildCatalog().find(t=>t.tid===c.path.to).ovr}</h3>${ladderHTML(c)}${pathTasksHTML(c)}${pathReady(c)?`<button class="btn primary" data-pdone="${c.id}">Upgrade him now</button>`:`<p class="muted">${starterSlot(c.id)?'He is starting, so every game counts.':'He is on the bench. Put him in your lineup so his tasks count.'}</p>`}<button class="btn" data-pstop="${c.id}">Stop this path</button>`}
+function pathSection(c){const nx=pathNext(c);if(!c.pu)return`<h3>Path to Peak</h3><p class="muted">Path to Peak is only for Power Ups. Every other card stays at its rating.</p>`;if(!nx)return`<h3>Path to Peak</h3>${ladderHTML(c)}<p class="muted">This is his best version. He is at the top of his path.</p>`;
+  if(!c.path)return`<h3>Path to Peak</h3>${ladderHTML(c)}<p>Start his path and his next version is <b>${nx.pu?'':PROGRAMS[nx.p].n+' '}${nx.ovr}</b>. Tasks only count while he is in your starting lineup.</p><p class="muted">Tasks: ${Object.entries(pathTasks(c.pos,['core','breakout','ignition','prime','icon','peak'][Math.min(5,Math.round((c.up||0)/4))],null)).map(([k,v])=>v+' '+PSTAT[k]).join(', ')}.</p><button class="btn primary" data-pstart="${c.id}" ${activePaths().length>=3?'disabled':''}>${activePaths().length>=3?'3 paths already running':'Start his path'}</button>`;
+  return`<h3>Path to Peak: ${PROGRAMS[pathTo(c).p].n} ${pathTo(c).ovr}</h3>${ladderHTML(c)}${pathTasksHTML(c)}${pathReady(c)?`<button class="btn primary" data-pdone="${c.id}">Upgrade him now</button>`:`<p class="muted">${starterSlot(c.id)?'He is starting, so every game counts.':'He is on the bench. Put him in your lineup so his tasks count.'}</p>`}<button class="btn" data-pstop="${c.id}">Stop this path</button>`}
 function bindPath(root){root=root||document;root.querySelectorAll('[data-pstart]').forEach(b=>b.onclick=e=>{e.stopPropagation();const c=cardById(+b.dataset.pstart);startPath(c);if($('#utm')&&!$('#utm').classList.contains('hidden')&&root.id==='utm')cardDetail(c.id);renderUT()});
   root.querySelectorAll('[data-pdone]').forEach(b=>b.onclick=e=>{e.stopPropagation();finishPath(cardById(+b.dataset.pdone))});
   root.querySelectorAll('[data-pstop]').forEach(b=>b.onclick=e=>{e.stopPropagation();const c=cardById(+b.dataset.pstop);delete c.path;utSave();if(root.id==='utm')cardDetail(c.id);renderUT()})}
 function uPath(){const act=activePaths(),cand=UT.cards.filter(c=>!c.path&&pathNext(c)).sort((a,b)=>(starterSlot(b.id)?1:0)-(starterSlot(a.id)?1:0)||pathLadder(b).at(-1).ovr-pathLadder(a).at(-1).ovr).slice(0,12);
-  return`<p class="muted">Pick a player, finish his tasks while he starts for you, and his card upgrades into his next version, all the way to Peak Form. You can run 3 paths at once.</p>
-  <h3>Active paths (${act.length} of 3)</h3>${act.length?act.map(c=>{const t=buildCatalog().find(x=>x.tid===c.path.to);return`<div class="pathrow"><div class="pcard">${cardHTML(c,{sm:true})}</div><div class="pbody"><b>${esc(c.n)}</b> <span class="muted">to ${PROGRAMS[t.p].n} ${t.ovr}${starterSlot(c.id)?'':', on the bench, tasks paused'}</span>${ladderHTML(c)}${pathTasksHTML(c)}${pathReady(c)?`<button class="btn primary" data-pdone="${c.id}">Upgrade to ${PROGRAMS[t.p].n} ${t.ovr}</button>`:''}</div><div class="pnext">${cardHTML(tplCard(t),{sm:true})}</div></div>`}).join(''):'<p class="muted">No paths running yet. Start one below.</p>'}
-  <h3>Start a path</h3><p class="muted">Players you own who can still climb, starters first.</p><div class="cgrid">${cand.map(c=>`<div class="pcand">${cardHTML(c,{sm:true})}<small>Tops out at ${PROGRAMS[pathLadder(c).at(-1).p].n} ${pathLadder(c).at(-1).ovr}</small><button class="btn${act.length<3?' primary':''}" data-pstart="${c.id}" ${act.length>=3?'disabled':''}>Start path</button></div>`).join('')||'<p class="muted">Open packs to find players with higher versions.</p>'}</div>`}
+  return`<p class="muted">Path to Peak is how Power Ups grow, and the only way. Finish his tasks while he starts for you and he climbs about 4 overall, step by step, up to his potential. You can run 3 paths at once.</p>
+  <h3>Active paths (${act.length} of 3)</h3>${act.length?act.map(c=>{const t=pathTo(c);return`<div class="pathrow"><div class="pcard">${cardHTML(c,{sm:true})}</div><div class="pbody"><b>${esc(c.n)}</b> <span class="muted">to ${PROGRAMS[t.p].n} ${t.ovr}${starterSlot(c.id)?'':', on the bench, tasks paused'}</span>${ladderHTML(c)}${pathTasksHTML(c)}${pathReady(c)?`<button class="btn primary" data-pdone="${c.id}">Upgrade to ${PROGRAMS[t.p].n} ${t.ovr}</button>`:''}</div><div class="pnext">${cardHTML(t.pu?Object.assign({},c,{id:-2,up:t.ovr-c.ovr}):tplCard(t),{sm:true})}</div></div>`}).join(''):'<p class="muted">No paths running yet. Start one below.</p>'}
+  <h3>Start a path</h3><p class="muted">Players you own who can still climb, starters first.</p><div class="cgrid">${cand.map(c=>`<div class="pcand">${cardHTML(c,{sm:true})}<small>Potential ${pathLadder(c).at(-1).ovr}</small><button class="btn${act.length<3?' primary':''}" data-pstart="${c.id}" ${act.length>=3?'disabled':''}>Start path</button></div>`).join('')||'<p class="muted">Draft or pull a Power Up to start a path.</p>'}</div>`}
 function bPathTab(){bindPath($('#utBody'));document.querySelectorAll('#utBody .ucard[data-id]').forEach(b=>b.onclick=()=>{const id=+b.dataset.id;if(cardById(id))cardDetail(id)})}
 function uAbil(){const groups={};for(const [k,v] of Object.entries(ABINFO))(groups[v.g]=groups[v.g]||[]).push(k);
   const have=new Set();for(const kk of SLOTK){const c=cardById(UT.lineup[kk]);if(c)for(const a of cAbil(c))have.add(a)}
