@@ -88,8 +88,9 @@ kbd{display:inline-block;font-family:'Press Start 2P',monospace;font-size:9px;pa
 #hint{text-align:center;color:var(--muted);font-size:18px;min-height:22px}
 #stage.cinema::before,#stage.cinema::after{content:'';position:absolute;left:0;right:0;height:9%;background:#000;z-index:3;pointer-events:none}#stage.cinema::before{top:0}#stage.cinema::after{bottom:0}
 #stage.cinema #toast{display:none}
-#crt{position:absolute;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.13) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 58%,rgba(0,0,0,.42) 100%);mix-blend-mode:multiply}
+#crt{position:absolute;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.13) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 58%,rgba(0,0,0,.42) 100%)}
 #stage.cinema #crt{z-index:7}
+#stage.cinema #tc{visibility:hidden}
 .ucard .uab{position:absolute;right:4px;top:34px;z-index:3;max-width:64%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:1px solid #ffd23f;border-radius:3px;margin:0}.ucard .usig{position:absolute!important;left:4px;top:34px;margin:0!important;border-radius:3px;font-size:7px!important;padding:2px 4px!important}.ucard .usig u{display:none!important}#pximg{position:absolute;z-index:9;display:none;object-fit:cover;object-position:50% 20%;box-sizing:border-box;border:2px solid #000;pointer-events:none}#pxc,#pxo{position:absolute;inset:0;width:100%;height:100%;z-index:7;display:block;image-rendering:pixelated}#pxo{z-index:8}#pxc.hidden,#pxo.hidden{display:none}#cine{z-index:6!important;position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;z-index:2}
 #flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}#flash.go{animation:fl .5s ease-out}
 @keyframes fl{0%{opacity:.85}100%{opacity:0}}
@@ -1124,7 +1125,8 @@ function nextSeason(){
 
 // ================= sprites =================
 const SPW=20,SPH=28,AX=10,AY=26,sprCache=new Map();
-function palFor(t,home,skin){return{helm:t.c1,helmS:shade(t.c1,-.35),hi:shade(t.c1,.5),stripe:t.c2,mask:'#b8bec8',jer:home?t.c1:'#f2f2ee',jerS:home?shade(t.c1,-.3):'#c3c6cc',num:home?t.c2:t.c1,pants:home?'#e6e1d2':t.c1,pantsS:home?'#b9b3a2':shade(t.c1,-.3),sock:t.c1,shoe:'#1b1b1f',glove:'#f1f1f1',skin:SKINS[skin][0],skinS:SKINS[skin][1]}}
+const PALC=new Map();function palFor(t,home,skin){const k=t.c1+t.c2+(home?1:0)+'|'+skin;let r=PALC.get(k);if(!r){r=palRaw(t,home,skin);PALC.set(k,r)}return r}
+function palRaw(t,home,skin){return{helm:t.c1,helmS:shade(t.c1,-.35),hi:shade(t.c1,.5),stripe:t.c2,mask:'#b8bec8',jer:home?t.c1:'#f2f2ee',jerS:home?shade(t.c1,-.3):'#c3c6cc',num:home?t.c2:t.c1,pants:home?'#e6e1d2':t.c1,pantsS:home?'#b9b3a2':shade(t.c1,-.3),sock:t.c1,shoe:'#1b1b1f',glove:'#f1f1f1',skin:SKINS[skin][0],skinS:SKINS[skin][1]}}
 function poseData(pose,fr){
   const P={dy:0,kb:[8,21],fb:[8,25],kf:[12,21],ff:[12,25],eb:[6,14],hb:[6,16],ef:[14,14],hf:[14,16],ball:null};
   const ph=fr/6*Math.PI*2,s=Math.sin(ph),c=Math.cos(ph);
@@ -1155,7 +1157,7 @@ function poseData(pose,fr){
   return P;
 }
 function buildSprite(pal,pose,fr,ball){
-  const cv=document.createElement('canvas');cv.width=SPW;cv.height=SPH;const g=cv.getContext('2d');
+  const cv=document.createElement('canvas');cv.width=SPW;cv.height=SPH;const g=cv.getContext('2d',{willReadFrequently:true});
   const R=(x,y,w,h,col)=>{g.fillStyle=col;g.fillRect(Math.round(x),Math.round(y),w,h)};
   const LN=(a,b,col,w=2)=>{const n=Math.max(Math.abs(b[0]-a[0]),Math.abs(b[1]-a[1]),1);for(let i=0;i<=n;i++)R(a[0]+(b[0]-a[0])*i/n,a[1]+(b[1]-a[1])*i/n,w,1,col)};
   const drawBall=(x,y)=>{R(x,y,4,2,'#7a3f14');R(x+1,y,2,1,'#a65a22');R(x+1,y,1,1,'#fff')};
@@ -1324,7 +1326,7 @@ function startMatch(o){
      su:0,so:0,timeouts:3,pending:0,ot:null,phase:'idle',ents:[],engs:[],camX:60,anim:0,cheer:0,down:0,poss:null,meter:null,ball:null,carrier:null,
      parts:[],sparts:[],ghosts:[],trail:[],zoom:1,zoomT:1,shake:0,ts:1,slowT:0,mvCD:0,pb:null};
   G.dplan=defPlan(o.oppT);G.box=newBox();G.zone=new Map();G.cool={};G.pre=new Map([...new Set(Object.values(o.userT.roster))].filter(Boolean).map(p=>[p,Object.assign({},p.s||{})]));if(!o.noObj)G.objs=pickObjs();
-  buildField();loadThree().catch(()=>{});
+  buildField();loadThree().then(()=>pxWarm(G)).catch(()=>{});
   const win=Math.random()<.5;G.openRecv=win?'U':'O';G.poss=G.openRecv;G.yard=kickStart();
   show('game');updateBoard();hint('');
   const away=o.userHome?o.oppT:o.userT,home=o.userHome?o.userT:o.oppT;
@@ -2900,13 +2902,23 @@ function pxPhotoEl(){let im=$('#pximg');if(!im){im=document.createElement('img')
 function pxStatLine(e){const s=(G.gst&&G.gst.get(e.p))||{},td=(s.rtd||0)+(s.ctd||0)+(s.ptd||0),parts=[];
   if(s.py)parts.push((s.py|0)+' PASS YDS');if(s.rec)parts.push(s.rec+' REC');const yd=(s.cy||0)+(s.ry||0);if(yd)parts.push(yd+' YDS');parts.push(Math.max(1,td)+' TD');return parts.slice(0,3).join(' · ')}
 // scene
+// stadium is built once per matchup and reused by every zoom scene (was rebuilt + re-uploaded each time)
+let PXSTAD=null;function pxStadium(){const T3=THREE,k=G.userT.c1+G.oppT.c1+(G.userHome?1:0);if(PXSTAD&&PXSTAD.userData.k===k){if(PXSTAD.parent)PXSTAD.parent.remove(PXSTAD);return PXSTAD}
+  if(PXSTAD)PXSTAD.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(o.material.map)o.material.map.dispose();o.material.dispose()}});
+  const g=new T3.Group();buildStadium(g);g.traverse(o=>{o.userData.keep=1;const m=o.material;if(m&&m.map){m.map.magFilter=m.map.minFilter=T3.NearestFilter;m.map.generateMipmaps=false;m.map.needsUpdate=true}});g.userData.k=k;PXSTAD=g;return g}
+// warm up during the intro: renderer, shaders, stadium and sprite frames, so the first ability doesn't hitch
+function pxWarm(g0){const idle=window.requestIdleCallback||(f=>setTimeout(()=>f({timeRemaining:()=>8}),30));const jobs=[];
+  jobs.push(()=>{if(G!==g0||G.cu||CINE)return;const Z=pxBegin();for(const e of G.ents||[]){const a=Z.actor(palFor(e.side==='O'?G.userT:G.oppT,e.side==='O'?G.userHome:!G.userHome,e.skin));a.s.position.set(e.x,0,e.y-MID)}Z.cp=new THREE.Vector3(60,24,30);Z.lk=new THREE.Vector3(60,0,0);Z.render(0);Z.end()});
+  const poses=['ready','run','carry','stumble','down','lunge','catch','reach','hold','onehand'];
+  const seen=new Set();for(const e of g0.ents||[]){const off=e.side==='O',k=(off?1:0)+'|'+e.skin;if(seen.has(k))continue;seen.add(k);const t=off?g0.userT:g0.oppT,h=off?g0.userHome:!g0.userHome,sk=e.skin;for(const ps of poses)jobs.push(()=>{const pal=palFor(t,h,sk);const up=x=>{if(PXR&&PXR.initTexture)PXR.initTexture(x)};for(let f=0;f<6;f++){up(pxTex(pal,ps,f,false));if(ps==='carry'||ps==='run'||ps==='reach'||ps==='onehand'||ps==='catch')up(pxTex(pal,ps,f,true))}})}
+  const run=d=>{while(jobs.length&&d.timeRemaining()>2){if(G!==g0)return;try{jobs.shift()()}catch(e){console.warn(e)}}if(jobs.length)idle(run)};idle(run)}
 function pxBegin(opt={}){
   const T3=THREE,st=$('#stage');let cv=$('#pxc'),ov=$('#pxo');
   if(!cv){cv=document.createElement('canvas');cv.id='pxc';cv.width=PXW;cv.height=PXH;st.appendChild(cv);ov=document.createElement('canvas');ov.id='pxo';ov.width=PXW;ov.height=PXH;st.appendChild(ov);ov.addEventListener('pointerdown',()=>{if(G&&G.cu)return endCU();if(CINE&&CINE.px)finishCine()})}
   if(!PXR){PXR=new T3.WebGLRenderer({canvas:cv,antialias:false});PXR.setPixelRatio(1);PXR.setSize(PXW,PXH,false)}
   cv.classList.remove('hidden');ov.classList.remove('hidden');
   const S=new T3.Scene();S.background=new T3.Color('#0a0f22');S.add(new T3.HemisphereLight(0xffffff,0x405040,1));
-  buildStadium(S);S.traverse(o=>{const m=o.material;if(m&&m.map){m.map.magFilter=m.map.minFilter=T3.NearestFilter;m.map.generateMipmaps=false;m.map.needsUpdate=true}});
+  S.add(pxStadium());
   const cam=new T3.PerspectiveCamera(opt.fov||34,PXW/PXH,.1,400);
   const Z={px:1,S,cam,cv,ov,o:ov.getContext('2d'),P:pxParticles(S),actors:[],t:0,ev:{},shake:0,shot:null,cp:null,lk:null,fw:0,
     actor(pal,sc){const v=pxBB(S,pal,sc);Z.actors.push(v);return v},
@@ -2915,7 +2927,7 @@ function pxBegin(opt={}){
     render(dt){Z.P.update(dt);cam.position.copy(Z.cp);if(Z.shake>0){Z.shake-=dt;const s=Z.shake*.5;cam.position.x+=(Math.random()-.5)*s;cam.position.y+=(Math.random()-.5)*s}cam.lookAt(Z.lk);cam.updateMatrixWorld();pxSync(Z.actors,cam);PXR.render(S,cam);
       const o=Z.o;o.clearRect(0,0,PXW,PXH);if(Z.flash>0){o.fillStyle=`rgba(255,255,255,${Math.min(1,Z.flash*2)})`;o.fillRect(0,0,PXW,PXH);Z.flash-=dt}if(Z.bars){o.fillStyle='#000';o.fillRect(0,0,PXW,Z.bars);o.fillRect(0,PXH-Z.bars,PXW,Z.bars)}
       pxCard(o,Z,Z.t);if(Z.overlay)Z.overlay(o);o.globalAlpha=.7;o.font='6px "Press Start 2P", monospace';o.textAlign='right';o.textBaseline='alphabetic';o.fillStyle='#fff';o.fillText(TOUCH?'TAP TO SKIP':'SPACE TO SKIP',PXW-6,PXH-6);o.globalAlpha=1},
-    end(){const im=$('#pximg');if(im)im.style.display='none';S.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&!o.isSprite){if(o.material.map)o.material.map.dispose();o.material.dispose()}});cv.classList.add('hidden');ov.classList.add('hidden')}};
+    end(){const im=$('#pximg');if(im)im.style.display='none';S.traverse(o=>{if(o.userData.keep)return;if(o.geometry)o.geometry.dispose();if(o.material&&!o.isSprite&&o.material.map)o.material.map.dispose()});cv.classList.add('hidden');ov.classList.add('hidden')}};
   return Z}
 const ss01=f=>{f=clamp(f,0,1);return f*f*(3-2*f)};
 // ================= touchdown celebrations =================
@@ -3322,6 +3334,7 @@ function drawBlocks(g){const R=G.R,pass=G.play&&G.play.kind==='pass',L=G.los;g.l
     const rb=R.RB,r=G.play.run,ty={iz:MID+.5,counter:MID+5,tossL:MID-12,tossR:MID+14,sneak:MID}[r]||MID,tx=L+5;if(r!=='sneak'){const pts=[[rb.x,rb.y],[L-2.5,r==='counter'?MID-2:(rb.y+ty)/2],[tx,ty]];g.strokeStyle='#000';g.lineWidth=5;g.beginPath();pts.forEach(([x,y],j)=>j?g.lineTo(sxW(x),syW(y)):g.moveTo(sxW(x),syW(y)));g.stroke();g.strokeStyle='#ffd23f';g.lineWidth=3;g.beginPath();pts.forEach(([x,y],j)=>j?g.lineTo(sxW(x),syW(y)):g.moveTo(sxW(x),syW(y)));g.stroke()}}
   g.lineWidth=1}
 function render(rdt){
+  if(G.cu&&G.cu.px2&&G.cu.px&&G.cu.px.t>.05)return; // 3D zoom scene covers the field; don't draw the 2D game under it
   const g=bx;g.imageSmoothingEnabled=false;
   let fx;
   if(G.hl)fx=G.hl.fx;else if(!G.ents.length)fx=60;else if(G.phase==='pre'||G.phase==='set')fx=G.los+10;else if(G.phase==='air'&&G.ball)fx=G.ball.x+4;else if(G.carrier)fx=G.carrier.x+(G.celeb?0:8);else fx=G.los+8;
