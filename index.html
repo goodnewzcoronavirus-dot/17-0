@@ -1446,15 +1446,15 @@ function runSVG(k){const X=x=>10+x*1.5,Y=y=>2+y*.78;let s=`<svg viewBox="0 0 80 
   return s+`<polyline points="${p}" fill="none" stroke="#ffd23f" stroke-width="2"/></svg>`}
 function spSVG(){return`<svg viewBox="0 0 80 46" aria-hidden="true"><rect x="36" y="8" width="3" height="30" fill="#ffd23f"/><rect x="24" y="8" width="27" height="3" fill="#ffd23f"/><ellipse cx="40" cy="40" rx="6" ry="3.5" fill="#7a3f14"/></svg>`}
 const COACH={
- c2:{tip:'Cover 2 leaves holes at the sideline behind the corners and down the middle between the two safeties.',picks:{'Smash':'The corner route sits over the cornerback and under the safety.','Four verts':'Two seams split the safeties.','Flood':'Three levels to one side stress the corner.','Curl flat':'Curls settle in the holes between the underneath defenders.'}},
- c3:{tip:'Cover 3 has three deep defenders, so the flats and the seams are open.',picks:{'Curl flat':'The flat route outnumbers the outside defender.','Four verts':'Four deep routes against three deep defenders.','Flood':'High, middle and low routes to one side, one of them is open.','Stick':'Quick hitters underneath the deep thirds.'}},
- c4:{tip:'Cover 4 drops four deep, so everything underneath is soft.',picks:{'Curl flat':'Plenty of room in front of the deep defenders.','Stick':'Quick, easy completions underneath.','Mesh':'Crossers run under the deep zones.','HB screen':'Four deep means fewer people near the line.'}},
- man:{tip:'Man coverage: every receiver has a defender on him. Crossing routes and picks beat it.',picks:{'Mesh':'Crossers rub defenders off each other.','Slant flat':'Slants win inside leverage fast.','PA crossers':'Play action freezes the linebackers, then crossers run away from them.','HB wheel':'A linebacker usually cannot run with the back.'}},
- blitz:{tip:'They are bringing extra rushers. Get the ball out fast or screen it.',picks:{'HB screen':'Let the rush through, then dump it to the back.','Bubble screen':'Instant throw to the outside.','Slant flat':'Quick slants beat the blitz before it gets home.','Stick':'Three-step drop, ball out on time.'}},
- c0:{tip:'Cover 0: everyone is blitzing or in man with no deep help. Throw hot or take a shot.',picks:{'Bubble screen':'Nobody is left to cover the flat.','HB screen':'The rush runs right past the back.','Four verts':'No safety deep, one beat defender is a touchdown.','Slant flat':'Hot throw before the pressure arrives.'}}};
+ c2:{tip:'Cover 2 leaves holes at the sideline behind the corners and down the middle between the two safeties.',picks:{'Smash':'The corner route sits over the cornerback and under the safety.','Four verts':'Two seams split the safeties.','Flood':'Three levels to one side stress the corner.','Curl flat':'Curls settle in the holes between the underneath defenders.','Dagger':'The seam clears the safety and the dig sits behind the linebackers.','Sail':'Three levels to the sideline, the corner route lands in the hole.','Post wheel':'The wheel runs up the sideline behind the corner.'}},
+ c3:{tip:'Cover 3 has three deep defenders, so the flats and the seams are open.',picks:{'Curl flat':'The flat route outnumbers the outside defender.','Four verts':'Four deep routes against three deep defenders.','Flood':'High, middle and low routes to one side, one of them is open.','Stick':'Quick hitters underneath the deep thirds.','Levels':'Two in-breakers at different depths stretch the underneath zones.','Y cross':'The tight end crosses under the deep thirds.','Texas':'The back angles inside where the hook defender just left.','Sail':'Flat, out and corner overload one side.'}},
+ c4:{tip:'Cover 4 drops four deep, so everything underneath is soft.',picks:{'Curl flat':'Plenty of room in front of the deep defenders.','Stick':'Quick, easy completions underneath.','Mesh':'Crossers run under the deep zones.','HB screen':'Four deep means fewer people near the line.','Spacing':'Five short routes spread the underneath defenders thin.','Snag':'The snag sits in the soft spot in front of the safeties.','Shallow cross':'The shallow runs under everything.','Drive':'Drag and dig in front of the deep zones.'}},
+ man:{tip:'Man coverage: every receiver has a defender on him. Crossing routes and picks beat it.',picks:{'Mesh':'Crossers rub defenders off each other.','Slant flat':'Slants win inside leverage fast.','PA crossers':'Play action freezes the linebackers, then crossers run away from them.','HB wheel':'A linebacker usually cannot run with the back.','Shallow cross':'The crosser runs away from his man.','Drive':'Drag and dig crossers rub defenders.','Quick outs':'Outs at five yards win before the defender recovers.','Texas':'The back on a linebacker is a mismatch.','Slot fade':'One-on-one with the slot defender.'}},
+ blitz:{tip:'They are bringing extra rushers. Get the ball out fast or screen it.',picks:{'HB screen':'Let the rush through, then dump it to the back.','Bubble screen':'Instant throw to the outside.','Slant flat':'Quick slants beat the blitz before it gets home.','Stick':'Three-step drop, ball out on time.','WR screen':'Instant throw outside, blockers out front.','Quick outs':'Three-step drop, ball out before they get home.','RPO bubble':'Read the blitzer and throw the bubble.','Spacing':'Short hot routes everywhere.'}},
+ c0:{tip:'Cover 0: everyone is blitzing or in man with no deep help. Throw hot or take a shot.',picks:{'Bubble screen':'Nobody is left to cover the flat.','HB screen':'The rush runs right past the back.','Four verts':'No safety deep, one beat defender is a touchdown.','Slant flat':'Hot throw before the pressure arrives.','WR screen':'No one left in the flat.','Slot fade':'No safety help over the top.','Quick outs':'Hot throws before the pressure arrives.','Hail Mary':'Nobody deep. Throw it up.'}}};
 function coachPicks(){const C=COACH[G.dcall]||{picks:{}},out={...C.picks};const R=G.userT.roster,O=G.oppT.roster;
   const ol=['LT','LG','C','RG','RT'].reduce((a,k)=>a+Rt(R[k],'rbk'),0)/5,dl=['DE1','DT1','DT2','DE2'].reduce((a,k)=>a+Rt(O[k],'str'),0)/4;
-  if(ol-dl>=3)out['Inside zone']='Your line is stronger than theirs, so expect running lanes.';
+  if(ol-dl>=3){out['Inside zone']='Your line is stronger than theirs, so expect running lanes.';out['Power']='Your line can move theirs. Run behind it.'}
   return{tip:C.tip,picks:out,line:ol-dl}}
 function pbItems(){
   const it=[],CP=coachPicks();
@@ -2753,24 +2753,24 @@ function boxPlay(r){if(!G.box||!G.play)return;const B=G.box.u,pl=G.play;B.plays+
   {const ol=(run&&gain>=4)?.25:(!run&&r.kind!=='sack'&&pl.rec)?.2:0;if(ol)for(const k of['LT','LG','C','RG','RT','TE'])zoneAdd(G.userT.roster[k],ol)}
   objTick(e)}
 function sitCoachBase(){const d=G.fd-G.yard,dn=G.down,diff=G.su-G.so,q=G.c.q,cl=G.c.clock,late=(q>=4&&cl<=180)||(q===2&&cl<=90),rz=G.yard>=80,gl=G.yard>=93;let tip,picks;
-  if(G.twoPt){tip='Two-point try: quick throws or a QB sneak.';picks=['Slant flat','Stick','QB sneak','PA crossers']}
-  else if(late&&diff<0){tip=`Down ${-diff} with ${fmtClock(cl)} left. Throw outside and get out of bounds to stop the clock.`;picks=['Deep outs','Smash','Flood','Curl flat','Four verts']}
-  else if(late&&diff>0){tip=`Up ${diff}. Run it, stay in bounds and burn the clock.`;picks=['Inside zone','Counter','Toss left','Toss right','Stick']}
-  else if(gl){tip='Goal line: power runs and quick fades.';picks=['QB sneak','Inside zone','Fade corner','Slant flat','PA crossers']}
-  else if(rz){tip='Red zone: the field shrinks. Fades, slants and play action work best.';picks=['Fade corner','Slant flat','PA post','Smash','Inside zone']}
-  else if(dn===4){tip=`4th and ${d}. Take the sure yards to move the chains.`;picks=d<=2?['QB sneak','Inside zone','Stick']:['Flood','Curl flat','Deep outs','Mesh']}
-  else if(dn===3&&d>=7){tip=`3rd and ${d}: you need a chunk past the sticks.`;picks=['Flood','Deep outs','Post dig','Mesh','PA crossers']}
-  else if(dn===3&&d<=3){tip=`3rd and ${d}: short yardage. Run it or hit a quick throw.`;picks=['Inside zone','QB sneak','Stick','Slant flat','RPO slant']}
-  else if(dn===3){tip=`3rd and ${d}: throw past the sticks.`;picks=['Curl flat','Smash','Mesh','RPO glance','Stick']}
-  else if(dn===2&&d>=8){tip=`2nd and ${d}: get half of it back, don't force it.`;picks=['HB screen','Curl flat','RPO slant','Counter','Bubble screen']}
-  else if(dn===2&&d<=3){tip=`2nd and ${d}: free shot downfield.`;picks=['PA shot','PA post','Four verts','Double post']}
-  else{tip='Early down: take what they give. A good run or quick throw sets up an easy 2nd down.';picks=['Inside zone','RPO slant','Stick','Curl flat','HB screen']}
+  if(G.twoPt){tip='Two-point try: quick throws or a QB sneak.';picks=['Slant flat','Stick','QB sneak','PA crossers','Snag','Slot fade','Quick outs']}
+  else if(late&&diff<0){tip=`Down ${-diff} with ${fmtClock(cl)} left. Throw outside and get out of bounds to stop the clock.`;picks=['Deep outs','Smash','Flood','Curl flat','Four verts','Quick outs','Sail','Levels','Dagger'].concat(cl<=8&&G.yard<=70?['Hail Mary']:[])}
+  else if(late&&diff>0){tip=`Up ${diff}. Run it, stay in bounds and burn the clock.`;picks=['Inside zone','Counter','Toss left','Toss right','Stick','Power','Dive','Stretch left','Stretch right']}
+  else if(gl){tip='Goal line: power runs and quick fades.';picks=['QB sneak','Inside zone','Fade corner','Slant flat','PA crossers','Power','Dive','Slot fade','Snag']}
+  else if(rz){tip='Red zone: the field shrinks. Fades, slants and play action work best.';picks=['Fade corner','Slant flat','PA post','Smash','Inside zone','Snag','Slot fade','Spacing','Power']}
+  else if(dn===4){tip=`4th and ${d}. Take the sure yards to move the chains.`;picks=d<=2?['QB sneak','Inside zone','Stick','Dive','Power','Quick outs','Levels','Y cross','Sail']:['Flood','Curl flat','Deep outs','Mesh']}
+  else if(dn===3&&d>=7){tip=`3rd and ${d}: you need a chunk past the sticks.`;picks=['Flood','Deep outs','Post dig','Mesh','PA crossers','Dagger','Levels','Y cross','Sail','Drive']}
+  else if(dn===3&&d<=3){tip=`3rd and ${d}: short yardage. Run it or hit a quick throw.`;picks=['Inside zone','QB sneak','Stick','Slant flat','RPO slant','Dive','Power','Quick outs','Spacing']}
+  else if(dn===3){tip=`3rd and ${d}: throw past the sticks.`;picks=['Curl flat','Smash','Mesh','RPO glance','Stick','Snag','Spacing','Levels','Shallow cross','Texas']}
+  else if(dn===2&&d>=8){tip=`2nd and ${d}: get half of it back, don't force it.`;picks=['HB screen','Curl flat','RPO slant','Counter','Bubble screen','WR screen','RPO bubble','Draw','Shallow cross']}
+  else if(dn===2&&d<=3){tip=`2nd and ${d}: free shot downfield.`;picks=['PA shot','PA post','Four verts','Double post','Mills','Dagger','PA deep cross','Post wheel','PA boot']}
+  else{tip='Early down: take what they give. A good run or quick throw sets up an easy 2nd down.';picks=['Inside zone','RPO slant','Stick','Curl flat','HB screen','Dive','Power','Spacing','Quick outs','RPO bubble']}
   return{tip,picks}}
 const CTIPS={
   early:['Early down: take what they give. A good run or quick throw sets up an easy 2nd down.','1st down is free. Stay ahead of the chains with something safe.','Set the tone early: lean on the run or a quick timing throw.','Mix it up on 1st down so they can\'t sit on anything.'],
   shot:['Short to go means a free shot. Take the top off.','You can afford a miss here. Go deep.','They\'re expecting a run. Play action could be wide open.']};
-const CPOOL={early:['Inside zone','Counter','Toss left','Toss right','RPO slant','RPO glance','Stick','Curl flat','Slant flat','HB screen','Bubble screen','Mesh','PA crossers'],
-  shot:['PA shot','PA post','Four verts','Double post','Post dig','Fade corner']};
+const CPOOL={early:['Inside zone','Counter','Toss left','Toss right','RPO slant','RPO glance','Stick','Curl flat','Slant flat','HB screen','Bubble screen','Mesh','PA crossers','Dive','Power','Draw','Stretch left','Stretch right','Spacing','Snag','Quick outs','Shallow cross','Levels','Drive','WR screen','RPO bubble','PA boot'],
+  shot:['PA shot','PA post','Four verts','Double post','Post dig','Fade corner','Dagger','Mills','Post wheel','PA deep cross','Sail']};
 const DNAME={c2:'two deep',c3:'three deep',c4:'quarters',man:'man',blitz:'the blitz',c0:'all-out pressure'};
 function sitCoach(){
   if(G.coachC&&G.coachC.k===G.pbN)return G.coachC.v;
@@ -2781,12 +2781,12 @@ function sitCoach(){
   if(shot){tip=pick(CTIPS.shot);pool=[...new Set([...pool,...CPOOL.shot])]}
   // read what has happened this game
   const notes=[],runs=R.filter(x=>x.k==='run').slice(-3),passes=R.filter(x=>x.k!=='run').slice(-3);
-  if(runs.length>=2&&runs.slice(-2).every(x=>x.g<3)){notes.push('The run is getting stuffed. Throw to open it back up.');pool=pool.filter(n=>!RUNPLAYS.some(r=>r.n===n)).concat(['Slant flat','Stick','HB screen'])}
-  else if(runs.length&&runs.at(-1).g>=8){notes.push('That run hit big. Come back to it, or fake it and throw.');pool=pool.concat(['Inside zone','PA post','PA crossers'])}
-  if(passes.length>=2&&passes.slice(-2).every(x=>x.res==='inc'||x.res==='sack')){notes.push('Two misses in a row. Get an easy completion to reset.');pool=pool.concat(['Bubble screen','HB screen','Stick','Slant flat'])}
-  else if(passes.length&&passes.at(-1).g>=18){notes.push('They just gave up a big one. Expect them to play deeper, so attack underneath.');pool=pool.concat(['Curl flat','Mesh','Stick'])}
+  if(runs.length>=2&&runs.slice(-2).every(x=>x.g<3)){notes.push('The run is getting stuffed. Throw to open it back up.');pool=pool.filter(n=>!RUNPLAYS.some(r=>r.n===n)).concat(['Slant flat','Stick','HB screen','Quick outs','WR screen'])}
+  else if(runs.length&&runs.at(-1).g>=8){notes.push('That run hit big. Come back to it, or fake it and throw.');pool=pool.concat(['Inside zone','PA post','PA crossers','PA boot','Power'])}
+  if(passes.length>=2&&passes.slice(-2).every(x=>x.res==='inc'||x.res==='sack')){notes.push('Two misses in a row. Get an easy completion to reset.');pool=pool.concat(['Bubble screen','HB screen','Stick','Slant flat','Spacing','WR screen','Quick outs'])}
+  else if(passes.length&&passes.at(-1).g>=18){notes.push('They just gave up a big one. Expect them to play deeper, so attack underneath.');pool=pool.concat(['Curl flat','Mesh','Stick','Snag','Spacing'])}
   const dh=(G.dHist||[]).slice(-5);if(dh.length>=4){const cnt={};for(const k of dh)cnt[k]=(cnt[k]||0)+1;const [top,n]=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
-    if(n>=3){notes.push(`They've shown ${DNAME[top]} on ${n} of the last ${dh.length} snaps.`);if(top==='blitz'||top==='c0')pool=pool.concat(['HB screen','Bubble screen','Slant flat']);else if(top==='c2')pool=pool.concat(['Four verts','Post dig']);else if(top==='c3')pool=pool.concat(['Flood','Curl flat']);else if(top==='man')pool=pool.concat(['Mesh','Slant flat']);else pool=pool.concat(['Inside zone','Stick'])}}
+    if(n>=3){notes.push(`They've shown ${DNAME[top]} on ${n} of the last ${dh.length} snaps.`);if(top==='blitz'||top==='c0')pool=pool.concat(['HB screen','Bubble screen','Slant flat','WR screen','Quick outs']);else if(top==='c2')pool=pool.concat(['Four verts','Post dig','Dagger','Sail']);else if(top==='c3')pool=pool.concat(['Flood','Curl flat','Levels','Texas']);else if(top==='man')pool=pool.concat(['Mesh','Slant flat','Shallow cross','Drive']);else pool=pool.concat(['Inside zone','Stick','Spacing','Snag'])}}
   {const xf=G.ents&&G.ents.find(e=>e.side==='O'&&e.p&&e.p.sig&&G.zone&&G.zone.get(e.p)&&!G.zone.get(e.p).on&&G.zone.get(e.p).m>=.5);if(xf)notes.push(`${nm(xf.p)} is close to the Zone. Feed him.`)}
   if(notes.length&&(G.pbN%2||!early))tip=tip+' '+pick(notes);else if(notes.length)tip=pick(notes);
   // rotate picks: skip cooldowns and the last two calls, then shuffle
