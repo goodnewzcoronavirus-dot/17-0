@@ -2135,7 +2135,7 @@ function nextTackler(c,dt){if(G.demo||!c||(G.traffic&&(c.stuffT>0||!G.gaps||!G.g
   if(best&&(!N||(N.d!==best&&be<N.eta-.35&&!(N.d.wind>0||N.d.dive>0)))){if(N&&N.d.tt&&!(N.d.wind>0||N.d.dive>0))N.d.tt=null;if(!best.tt)best.tt=ttFor(best,c);G.next={d:best,eta:be,tN:be,T0:Math.max(.8,be),pd:dist(best,c),cl:null}}
   {const N2=G.next;if(N2){const d=N2.d;if(!pre&&!G.tokD&&!(d.wind>0)&&!(d.dive>0)&&d.tryCD<=0&&d.x>c.x-.3&&dist(d,c)<=COMMIT){d.wind=WIND;G.tokD=d;G.tokCand=null;d.low=d.tt==='low'}
     // bullet-time read: slow down while he closes in so you see it coming, back to full speed the moment you move
-    if(!mvActive()&&!(d.dive>0)&&N2.tN<2.6&&!(G.mv&&G.runT-G.mv.t0<.6)){G.ts=Math.min(G.ts,.38);G.slowT=Math.max(G.slowT||0,.08)}}}}
+    }}}
 function drawNext(g){const N=G.next,c=G.carrier;if(!N||!c||G.phase!=='run'||G.hl||G.demo)return;const d=N.d;if(!d.tt)return;const T=TKT[d.tt],col=T.c,ic=MVICO[T.m];
   const th=G.threat,perf=th&&th.d===d&&perfWin(th),late=d.dive>0&&!perf,x=sxW(c.x),y=syW(c.y)-12-Math.round(c.z||0),dx=sxW(d.x),dy=syW(d.y)-AY-14,k=clamp(N.tN/Math.max(.6,N.T0),0,1);
   // dotted line from the tackler to you
@@ -2143,7 +2143,7 @@ function drawNext(g){const N=G.next,c=G.carrier;if(!N||!c||G.phase!=='run'||G.hl
   // badge over the tackler: the move that beats him
   const r=8+(d.wind>0?Math.sin(G.anim*24)*1.2:0);g.fillStyle='#000';g.beginPath();g.arc(dx,dy,r+2,0,7);g.fill();g.fillStyle=col;g.beginPath();g.arc(dx,dy,r,0,7);g.fill();g.font='bold 11px system-ui, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#10142a';g.fillText(ic,dx,dy+1);
   // timing: a ring closes in on your runner and turns green on NOW
-  const T0=10,rr=perf?T0:T0+k*30;g.lineWidth=5;g.strokeStyle='rgba(0,0,0,.6)';g.beginPath();g.ellipse(x+.5,y,T0,T0*.8,0,0,7);g.stroke();g.lineWidth=2;g.strokeStyle=perf?'#6cff8a':'#ffffff';g.beginPath();g.ellipse(x+.5,y,T0,T0*.8,0,0,7);g.stroke();
+  const T0=9,rr=perf?T0:T0+k*12;g.lineWidth=5;g.strokeStyle='rgba(0,0,0,.6)';g.beginPath();g.ellipse(x+.5,y,T0,T0*.8,0,0,7);g.stroke();g.lineWidth=2;g.strokeStyle=perf?'#6cff8a':'#ffffff';g.beginPath();g.ellipse(x+.5,y,T0,T0*.8,0,0,7);g.stroke();
   if(!perf&&!late){g.lineWidth=5;g.strokeStyle='rgba(0,0,0,.55)';g.beginPath();g.ellipse(x+.5,y,rr,rr*.8,0,0,7);g.stroke();g.lineWidth=3;g.strokeStyle=col;g.beginPath();g.ellipse(x+.5,y,rr,rr*.8,0,0,7);g.stroke()}
   if(perf){g.globalAlpha=Math.floor(G.anim*16)%2?.5:.3;g.fillStyle='#6cff8a';g.beginPath();g.ellipse(x+.5,y,T0,T0*.8,0,0,7);g.fill();g.globalAlpha=1;g.font='10px "Press Start 2P", monospace';g.fillStyle='#000';g.fillText('NOW!',x+1,y-24);g.fillStyle='#6cff8a';g.fillText('NOW!',x,y-25)}
   else if(N.tN<1.6&&!late){g.font='8px "Press Start 2P", monospace';g.fillStyle='#000';g.fillText(ic,x+1,y-21);g.fillStyle=col;g.fillText(ic,x,y-22)}}
