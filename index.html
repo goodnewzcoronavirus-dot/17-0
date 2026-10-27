@@ -1590,7 +1590,7 @@ function makeGaps(){const R=G.R,rb=k=>Rt(R[k].p,'rbk'),st=k=>Rt(R[k].p,'str'),te
   G0.forEach((g,i)=>{g.design=DES.includes(i);g.p=clamp(.3+(g.ol-g.dl)*.022+(g.design?.22:0),.05,.92);g.open=Math.random()<g.p});
   if(!G0.some(g=>g.open)){const b=G0.reduce((a,g)=>g.p>a.p?g:a);b.open=true}
   // each open hole has a window (seconds after the handoff): better blocking keeps it open longer
-  for(const g of G0){g.can=g.open;g.tInit=0}
+  {const best=G0.filter(g=>g.open).reduce((a,g)=>!a||g.p+(g.design?.05:0)>a.p+(a.design?.05:0)?g:a,null);for(const g of G0){g.can=g===best;g.open=g===best}}
   G.gaps=G0;const n=G0.filter(g=>g.open).length;}
 const openGapNear=y=>{if(!G.gaps)return null;let b=null,bd=3.2;for(const g of G.gaps){if(!g.open)continue;const d=Math.abs(g.y-y);if(d<bd){bd=d;b=g}}return b};
 function updateEngs(dt){
@@ -1750,7 +1750,7 @@ function startMove(type,dirO,q){
 }
 function holeTick(c){if(!G.gaps||!G.play||G.play.kind!=='run')return;const t=G.phase==='run'?G.runT:-1;
   // windows are timed to when the back would reach the line going straight at it: hesitate and they close
-  if(t>=0&&!G.gaps.tInit){G.gaps.tInit=1;const tr=Math.max(.3,(G.los+.6-c.x)/Math.max(4,c.spd||6));for(const g of G.gaps){if(!g.can)continue;g.tO=tr*rnd(.15,.55);g.tC=tr+clamp(.3+(g.ol-g.dl)*.012+(g.design?.25:0)+rnd(-.15,.2),.08,.95)}}
+  if(t>=0&&!G.gaps.tInit){G.gaps.tInit=1;const tr=Math.max(.3,(G.los+.6-c.x)/Math.max(4,c.spd||6));for(const g of G.gaps){if(!g.can)continue;g.tO=0;g.tC=tr+clamp(.3+(g.ol-g.dl)*.012+(g.design?.25:0)+rnd(-.15,.2),.08,.95)}}
   for(const g of G.gaps){if(!g.can){g.open=false;continue}g.open=t<0?true:t>=g.tO&&t<g.tC;g.closing=g.open&&t>=0&&g.tC-t<.25}
   if(G.phase!=='run'||c.holeDone||c.x<G.los+.6||c.x>G.los+3)return;c.holeDone=1;
   let best=null,bd=9;for(const g of G.gaps){const dd=Math.abs(g.y-c.y);if(dd<bd){bd=dd;best=g}}
@@ -3571,14 +3571,10 @@ function drawBlocks(g){const R=G.R,pass=G.play&&G.play.kind==='pass',L=G.los;g.l
     const rb=R.RB,r=G.play.run,ty={iz:MID+.5,counter:MID+5,tossL:MID-12,tossR:MID+14,sneak:MID}[r]||MID,tx=L+5;if(r!=='sneak'){const pts=[[rb.x,rb.y],[L-2.5,r==='counter'?MID-2:(rb.y+ty)/2],[tx,ty]];g.strokeStyle='#000';g.lineWidth=5;g.beginPath();pts.forEach(([x,y],j)=>j?g.lineTo(sxW(x),syW(y)):g.moveTo(sxW(x),syW(y)));g.stroke();g.strokeStyle='#ffd23f';g.lineWidth=3;g.beginPath();pts.forEach(([x,y],j)=>j?g.lineTo(sxW(x),syW(y)):g.moveTo(sxW(x),syW(y)));g.stroke()}}
   g.lineWidth=1}
 // hole lanes at the line: green open, yellow closing, dim outline opening soon, red X blocked
-function drawHoles(g){const t=G.phase==='run'?G.runT:-1,x0=sxW(G.los-2.6),x1=sxW(G.los+3.4),w=x1-x0,bl=Math.floor(G.anim*8)%2;
-  for(const gp of G.gaps){const ya=syW(gp.y-.7),yb=syW(gp.y+.7),h=yb-ya,ym=Math.round((ya+yb)/2);
-    let st;if(t<0)st=gp.can?'pre':'shut';else if(!gp.can||t>=(gp.tC||0))st='shut';else if(t<(gp.tO||0))st='soon';else st=gp.closing?'closing':'open';
-    if(st==='shut'){g.globalAlpha=t<0?.45:.75;const cx=x0+Math.round(w/2);for(let i=-3;i<=3;i++){AP(g,cx+i-1,ym+i-1,3,3,'#000');AP(g,cx+i-1,ym-i-1,3,3,'#000')}for(let i=-3;i<=3;i++){AP(g,cx+i,ym+i,1,1,'#ff5a47');AP(g,cx+i,ym-i,1,1,'#ff5a47')}g.globalAlpha=1;continue}
-    if(st==='pre'||st==='soon'){g.globalAlpha=st==='pre'?.6:.8;const c=st==='pre'?'#6cff8a':'#ffffff';for(let x=x0;x<x1;x+=4){AP(g,x,ya,2,1,c);AP(g,x,yb-1,2,1,c)}AP(g,x0,ya,1,h,c);AP(g,x1-1,ya,1,h,c);g.globalAlpha=1;continue}
-    const col=st==='closing'?(bl?'#ffd23f':'#ff8a3a'):(gp.design?'#6cff8a':'#9dffb4');
-    g.globalAlpha=.3;AP(g,x0,ya,w,h,col);g.globalAlpha=1;AP(g,x0-1,ya-1,w+2,1,'#000');AP(g,x0-1,yb,w+2,1,'#000');AP(g,x0,ya,w,1,col);AP(g,x0,yb-1,w,1,col);
-    for(let k=0;k<4;k++){const x=x0+4+((k*14+Math.floor(G.anim*36))%(w-10));g.fillStyle='#000';g.beginPath();g.moveTo(x-2,ym-6);g.lineTo(x+6,ym);g.lineTo(x-2,ym+6);g.lineTo(x+1,ym);g.closePath();g.fill();g.fillStyle=col;g.beginPath();g.moveTo(x-1,ym-4.5);g.lineTo(x+4.5,ym);g.lineTo(x-1,ym+4.5);g.lineTo(x+1.2,ym);g.closePath();g.fill()}}}
+function drawHoles(g){const gp=G.gaps.find(q=>q.can&&q.open);if(!gp)return;const x0=sxW(G.los-2.6),x1=sxW(G.los+3.4),w=x1-x0,ya=syW(gp.y-.7),yb=syW(gp.y+.7),h=yb-ya,ym=Math.round((ya+yb)/2);
+  const col=gp.closing?(Math.floor(G.anim*8)%2?'#ffd23f':'#ff8a3a'):'#6cff8a';
+  g.globalAlpha=.3;AP(g,x0,ya,w,h,col);g.globalAlpha=1;AP(g,x0,ya,w,1,col);AP(g,x0,yb-1,w,1,col);
+  for(let k=0;k<4;k++){const x=x0+4+((k*14+Math.floor(G.anim*36))%(w-10));g.fillStyle='#000';g.beginPath();g.moveTo(x-2,ym-6);g.lineTo(x+6,ym);g.lineTo(x-2,ym+6);g.lineTo(x+1,ym);g.closePath();g.fill();g.fillStyle=col;g.beginPath();g.moveTo(x-1,ym-4.5);g.lineTo(x+4.5,ym);g.lineTo(x-1,ym+4.5);g.lineTo(x+1.2,ym);g.closePath();g.fill()}}
 function render(rdt){
   if(G.cu&&G.cu.px2&&G.cu.px&&G.cu.px.t>.05)return; // 3D zoom scene covers the field; don't draw the 2D game under it
   const g=bx;g.imageSmoothingEnabled=false;afxTick(rdt);
