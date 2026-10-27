@@ -1325,7 +1325,7 @@ function startMatch(o){
   G={intM:D.intM,covM:D.covM,rushM:D.rush||1,simB:D.sim||0,m:o.m,userT:o.userT,oppT:o.oppT,userHome:o.userHome,playoff:o.playoff,onEnd:o.onEnd,customFn:o.custom,saveFn:o.save,c:{q:1,clock:qLen,qLen},otLen:Math.round(qLen*2/3),
      su:0,so:0,timeouts:3,pending:0,ot:null,phase:'idle',ents:[],engs:[],camX:60,anim:0,cheer:0,down:0,poss:null,meter:null,ball:null,carrier:null,
      parts:[],sparts:[],ghosts:[],trail:[],zoom:1,zoomT:1,shake:0,ts:1,slowT:0,mvCD:0,pb:null};
-  G.dplan=defPlan(o.oppT);G.box=newBox();G.zone=new Map();for(const p0 of new Set(Object.values(o.userT.roster||{})))if(p0&&p0.tst&&p0.xf)G.zone.set(p0,{on:true,m:1});G.cool={};G.pre=new Map([...new Set(Object.values(o.userT.roster))].filter(Boolean).map(p=>[p,Object.assign({},p.s||{})]));if(!o.noObj)G.objs=pickObjs();
+  G.dplan=defPlan(o.oppT);G.box=newBox();G.zone=new Map();G.cool={};G.pre=new Map([...new Set(Object.values(o.userT.roster))].filter(Boolean).map(p=>[p,Object.assign({},p.s||{})]));if(!o.noObj)G.objs=pickObjs();
   buildField();loadThree().then(()=>pxWarm(G)).catch(()=>{});
   const win=Math.random()<.5;G.openRecv=win?'U':'O';G.poss=G.openRecv;G.yard=kickStart();
   show('game');updateBoard();hint('');
@@ -1527,7 +1527,6 @@ function assignDefense(){
   for(const k of DEFK){const e=R[k];e.react=(.1+(99-Rt(e.p,'cov'))*.004)*G.covM;e.laneTried=false;e.readT=DL.includes(k)?0:e.asg.t==='man'?.55:k.startsWith('LB')?.22:.38;if(e.rush)e.readT=0}
 }
 function snap(){
-  if(G&&G.zone&&G.down===1&&G.userT&&G.poss==='U')for(const p0 of new Set(Object.values(G.userT.roster||{})))if(p0&&p0.tst&&p0.xf){const z=G.zone.get(p0);if(!z||!z.on)G.zone.set(p0,{on:true,m:1})}
   if(!G||G.phase!=='set'||G.draw)return;
   if(G.pending>0){const ev=tick(G.c,G.pending);G.pending=0;updateBoard();
     if(ev.includes('tmw'))toast('TWO-MINUTE WARNING');if(ev.includes('q'))toast('END OF QUARTER');
@@ -4070,7 +4069,7 @@ function bindFlip(root){(root||document).querySelectorAll('.flip.fbig').forEach(
 function utTeam(){
   recalcChem();const c=UT.club,t={city:c.city,name:c.name,abbr:c.abbr,c1:c.c1,c2:c.c2,roster:{}};
   for(const k of SLOTK){const cd=cardById(UT.lineup[k]),e=effOvr(cd),sh=e-cd.ovr,r={};for(const [rk,v] of Object.entries(cd.r||makeRatings(cd.pos,cd.ovr)))r[rk]=clamp(v+sh,20,99);
-    t.roster[k]={tst:!!cd.tst,pth:!!cd.path,abil:cardAb(cd),xf:cardXf(cd),name:cd.n,num:cd.num,pos:SLOTGRP[k],ovr:e,r,spd:r.spd??clamp(cd.spd+sh,40,99),skin:cd.skin,s:cd.s||(cd.s={}),sig:undefined}}
+    t.roster[k]={tst:!!cd.tst,pth:!!cd.path,abil:abLive(cd)?cardAb(cd):null,xf:xfLive(cd)?cardXf(cd):null,name:cd.n,num:cd.num,pos:SLOTGRP[k],ovr:e,r,spd:r.spd??clamp(cd.spd+sh,40,99),skin:cd.skin,s:cd.s||(cd.s={}),sig:undefined}}
   calcRatings(t);return t;
 }
 function oppSquad(ovr,tb){
@@ -4305,16 +4304,35 @@ function utMatch(opp,label,info){
   }});
 }
 const OFFROWS=[['WR1','LT','LG','C','RG','RT','TE','WR2'],['WR3','QB','RB']],DEFROWS=[['CB1','DE1','DT1','DT2','DE2','CB2'],['LB1','LB2','LB3'],['S1','S2']],STROWS=[['K','P']];
+// ability budget: only a few abilities and one X-Factor can be live in a lineup, you pick which
+const AB_MAX=3,XF_MAX=1;
+function abPick(kind){const max=kind==='ab'?AB_MAX:XF_MAX,fn=kind==='ab'?cardAb:cardXf,onK=kind+'On',offK=kind+'Off';
+  const st=[...new Set(Object.values(UT.lineup||{}))].map(cardById).filter(c=>c&&fn(c));
+  let on=(UT[onK]||[]).filter(id=>st.some(c=>c.id===id));const off=new Set(UT[offK]||[]);
+  for(const c of st.slice().sort((a,b)=>effOvr(b)-effOvr(a))){if(on.length>=max)break;if(!on.includes(c.id)&&!off.has(c.id))on.push(c.id)}
+  return{on:on.slice(0,max),cands:st,max}}
+const abLive=c=>!UT||!c||abPick('ab').on.includes(c.id);
+const xfLive=c=>!UT||!c||abPick('xf').on.includes(c.id);
+function abToggle(kind,id){const P=abPick(kind),onK=kind+'On',offK=kind+'Off';let on=P.on.slice(),off=new Set(UT[offK]||[]);
+  if(on.includes(id)){on=on.filter(x=>x!==id);off.add(id)}else{off.delete(id);on.push(id);while(on.length>P.max){const b=on.shift();off.add(b)}}
+  UT[onK]=on;UT[offK]=[...off];utSave()}
+function abPanel(){const row=(kind)=>{const P=abPick(kind),fn=kind==='ab'?cardAb:cardXf;if(!P.cands.length)return'<p class="muted">None in this lineup.</p>';
+    return P.cands.map(c=>{const a=fn(c),A=NEWAB[a]||{n:a,i:''},on=P.on.includes(c.id),slot=Object.keys(UT.lineup).find(k=>UT.lineup[k]===c.id)||'';
+      return`<button class="abchip${on?' on':''}" data-k="${kind}" data-id="${c.id}" style="font:inherit;font-size:9px;cursor:pointer;margin:3px;padding:8px 10px;border:3px solid ${on?(kind==='xf'?'#ff3b2a':'#ffd23f'):'#c9c4b5'};background:${on?'#1b2340':'#ebe8de'};color:${on?(kind==='xf'?'#ff8a7a':'#ffd23f'):'#8a8678'};box-shadow:${on?'3px 3px 0 #000':'none'}">${A.i} ${esc(A.n)} <span style="color:${on?'#fff':'#8a8678'}">${slot} ${esc((c.n||'').split(' ').slice(-1)[0])}</span>${on?' ✓':''}</button>`}).join('')};
+  const a=abPick('ab'),x=abPick('xf');
+  return`<h3>Abilities <span class="muted">${a.on.length}/${AB_MAX} live</span></h3><p class="muted lhint">Only ${AB_MAX} abilities and ${XF_MAX} X-Factor can be live at once. Tap to choose.</p><div class="chips">${row('ab')}</div>
+  <h3>X-Factor <span class="muted">${x.on.length}/${XF_MAX} live</span></h3><div class="chips">${row('xf')}</div>`}
 function uLineup(){
   const o=teamOvr(),cm=recalcChem(),chips=Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([t,n])=>{const tb=tbOf(t);return`<span class="chip" style="--c1:${tb[3]};--c2:${tb[4]}"><b>${t}</b> x${n}${chemBonus(n)?` <em>+${chemBonus(n)}</em>`:''}</span>`}).join('');
   const rows=(R)=>R.map(r=>`<div class="lrow">${r.map(k=>{const c=cardById(UT.lineup[k]);return`<div class="lslot" data-slot="${k}"><span class="lk">${k}</span>${c?cardHTML(c,{sm:true,noStar:true}):'<span class="empty">+</span>'}</div>`}).join('')}</div>`).join('');
   return`<div class="row" style="justify-content:space-between"><p class="big lovr" style="margin:0">OVR ${o.all} <span class="muted">OFF ${o.o}, DEF ${o.d}</span></p><button class="btn primary" id="auto">Generate best lineup</button></div>
   <p class="muted lhint">Click a slot to swap in a different player. Chemistry from shared league teams:</p><div class="chips">${chips}</div>
-  <h3>Offense</h3><div class="lfield">${rows(OFFROWS)}</div><h3>Defense</h3><div class="lfield">${rows(DEFROWS)}</div><h3>Special teams</h3><div class="lfield">${rows(STROWS)}</div>`;
+  ${abPanel()}<h3>Offense</h3><div class="lfield">${rows(OFFROWS)}</div><h3>Defense</h3><div class="lfield">${rows(DEFROWS)}</div><h3>Special teams</h3><div class="lfield">${rows(STROWS)}</div>`;
 }
 function bLineup(){
   $('#auto').onclick=()=>{const before=teamOvr().all;UT.lineup=bestLineup();recalcChem();utSave();renderUT();const after=teamOvr().all;toastUT(after>before?`Best lineup generated: OVR ${before} to ${after}`:`Already your best lineup (OVR ${after})`)};
   document.querySelectorAll('.lslot').forEach(s=>s.onclick=()=>slotPicker(s.dataset.slot));
+  document.querySelectorAll('.abchip').forEach(b=>b.onclick=()=>{abToggle(b.dataset.k,+b.dataset.id);renderUT()});
 }
 const SLOTW={QB:.32,RB:.15,WR1:.0625,WR2:.0625,WR3:.0625,TE:.0625,LT:.056,LG:.056,C:.056,RG:.056,RT:.056,DE1:.0875,DT1:.0875,DT2:.0875,DE2:.0875,LB1:.0833,LB2:.0833,LB3:.0833,CB1:.1,CB2:.1,S1:.1,S2:.1,K:.03,P:.02};
 function bestLineup(){
