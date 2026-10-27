@@ -289,14 +289,14 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:15px}
 .tb.pet{font-size:6px;gap:1px}.tb.pet i{font-size:15px}
 .tb.mvb{transition:transform .12s,opacity .12s,box-shadow .12s;}
 .tb.mvb,.tb.mvb[style*='--pc']{background:rgba(10,14,30,.62)!important;border:2px solid var(--pc)!important;box-shadow:0 0 0 1px rgba(0,0,0,.6),inset 0 0 14px color-mix(in srgb,var(--pc) 30%,transparent)!important;-webkit-backdrop-filter:none;backdrop-filter:none;opacity:.78}
-.tb.mvb i,.tb.mvb[style*='--pc'] i{color:var(--pc)!important;font-size:24px!important;text-shadow:0 0 8px color-mix(in srgb,var(--pc) 60%,transparent)}
-.tb.mvb b,.tb.mvb[style*='--pc'] b{display:block!important;font-size:6px;color:#fff;opacity:.85;letter-spacing:.5px}
+.tb.mvb i,.tb.mvb[style*='--pc'] i{color:var(--pc)!important;font-size:30px!important;font-style:normal;text-shadow:0 0 8px color-mix(in srgb,var(--pc) 60%,transparent)}
+.tb.mvb b,.tb.mvb[style*='--pc'] b{display:none!important}
 .tb.mvb.dim{opacity:.28;transform:scale(.9)}
 .tb.mvb.need{opacity:1;transform:scale(1.18);background:color-mix(in srgb,var(--pc) 35%,rgba(10,14,30,.85))!important;box-shadow:0 0 0 2px #000,0 0 18px var(--pc)!important}
-.tb.mvb.need::after{content:'';position:absolute;inset:calc(-14px + var(--k,0) * 12px);border-radius:50%;border:3px solid var(--pc);opacity:calc(.35 + var(--k,0) * .65);pointer-events:none}
+.tb.mvb.need::after{content:'';position:absolute;inset:calc(-30px + var(--k,0) * 28px);border-radius:50%;border:3px solid var(--pc);opacity:calc(.35 + var(--k,0) * .65);pointer-events:none}
 .tb.mvb.need.now{background:#2fae4e!important;border-color:#b9ffc9!important;transform:scale(1.3);box-shadow:0 0 0 3px #000,0 0 30px #6cff8a!important}
 .tb.mvb.need.now i{color:#fff!important}.tb.mvb.need.now b{display:none!important}
-.tb.mvb.need.now::before{content:'NOW';position:absolute;top:-18px;font-size:9px;color:#6cff8a;text-shadow:0 2px 0 #000}
+.tb.mvb.need.now::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:3px solid #6cff8a}
 .tb.mvb.zz{font-size:6px;gap:2px;background:radial-gradient(circle at 50% 28%,rgba(255,255,255,.3),transparent 55%),#2a3a66;border:3px solid rgba(0,0,0,.6);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.5)}.tb.mvb i{font-size:20px;color:#fff}.tb.mvb.locked{opacity:.35}.tb.mvb[style*='--pc']{background:radial-gradient(circle at 50% 28%,rgba(255,255,255,.35),transparent 55%),var(--pc)}.tb.mvb[style*='--pc'] i{color:#10142a}.tb.mvb[style*='--pc'] b{display:none}.tb.mvb[style*='--pc'] i{font-size:26px}.tb.mvb.teach{animation:tbteach .32s ease-in-out 4}@keyframes tbteach{50%{transform:scale(1.22);box-shadow:0 4px 0 rgba(0,0,0,.5),0 0 0 4px #fff,0 0 24px var(--pc)}}
 .tb.mvb.soon{box-shadow:0 4px 0 rgba(0,0,0,.5),0 0 0 3px #fff}.tb.mvb.now{background:#2fae4e;box-shadow:0 4px 0 rgba(0,0,0,.5),0 0 0 4px #6cff8a,0 0 22px #6cff8a;transform:scale(1.08)}
 .tb.locked{opacity:.38}.tb.locked i{filter:grayscale(1)}
@@ -2117,6 +2117,36 @@ function findThreat(c){if(!G.demo){let best=null;
     if(!best||ttc<best.ttc)best={d,ttc}}
   return best}
   let best=null;for(const d of G.ents){if(d.side!=='D'||d.eng||d.down>0||d.stun>0||d.tryCD>0)continue;const dx=d.x-c.x,dy=d.y-c.y,dd=Math.hypot(dx,dy)||.01;if(dd>6.5||dx<-1.5)continue;const cl=-(dx*(d.vx-c.vx)+dy*(d.vy-c.vy))/dd;if(cl<.6)continue;const ttc=Math.max(0,(dd-.95)/cl);if(!best||ttc<best.ttc)best={d,ttc}}return best}
+// ===== early read: who tackles next, what move beats him, and when (up to ~3 s ahead) =====
+function ttFor(d,c){const R=phys(c.p,c.p.pos||'RB'),Dp=phys(d.p,d.p.pos||'LB'),ax=d.x-c.x,ay=Math.abs(d.y-c.y),P={x:(d.x+c.x)/2,y:(d.y+c.y)/2};
+  const crowd=G.ents.filter(o=>o!==d&&o.side==='D'&&o.down<=0&&!o.eng&&dist(o,P)<3.6&&o.x>c.x-1).length;
+  if(crowd>=1)return'high';if(ay>ax*1.1)return'arm';return Math.random()<clamp((DL.includes(d.role)?.4:.3)+(Dp.ht-R.ht)*.03+rf(Rt(d.p,'tak'))*.1,.15,.6)?'low':'sq'}
+const COMMIT=3.0;
+// the marked tackler is the one who commits: he winds up when he gets within COMMIT yards, so the countdown is real
+function nextTackler(c,dt){if(G.demo||!c||(G.traffic&&(c.stuffT>0||!G.gaps||!G.gaps.some(q=>q.can&&q.open)))){G.next=null;return}const pre=!!G.traffic;
+  {const W=G.tokD;if(W&&(W.wind>0||W.dive>0)&&(!G.next||G.next.d!==W)){if(G.next&&G.next.d.tt&&!(G.next.d.wind>0||G.next.d.dive>0))G.next.d.tt=null;if(!W.tt)W.tt=ttFor(W,c);const t0=W.wind>0?W.wind:0;G.next={d:W,eta:t0,tN:t0,T0:Math.max(.8,t0),pd:dist(W,c),cl:null}}}
+  let N=G.next;if(N&&(N.d.down>0||N.d.eng||N.d.stun>0||N.d.x<c.x-1.2||dist(N.d,c)>34||N.d.tryCD>.4)){if(N.d.tt&&!(N.d.wind>0||N.d.dive>0))N.d.tt=null;G.next=N=null}
+  const etaOf=(d,cl)=>{const dd=dist(d,c);return Math.max(0,dd-COMMIT)/Math.max(cl,1.5)+WIND-.07};
+  const clEst=d=>{const rx=d.x-c.x,ry=d.y-c.y,dd=Math.hypot(rx,ry)||.01;return(c.vx*rx+c.vy*ry)/dd+d.spd*.6};
+  let best=null,be=3.4;for(const d of G.ents){if(d.side!=='D'||d.eng||d.down>0||d.stun>0||d.tryCD>.4||d.decoyT>0)continue;if(d.x<c.x-.3)continue;if(pre&&d.x<G.los+.8)continue;if(pre&&d.eng)continue;
+    if(!pre&&d.claimed&&!d.claimed.eng&&d.claimed.down<=0&&dist(d.claimed,d)<2.5)continue;if(dist(d,c)>32)continue;const e=etaOf(d,clEst(d));if(e<be){be=e;best=d}}
+  if(N){const dd=dist(N.d,c);if(N.pd!=null&&dt>0){const cl=(N.pd-dd)/dt;N.cl=N.cl==null?cl:N.cl+(cl-N.cl)*Math.min(1,dt*4)}N.pd=dd;
+    const raw=N.d.wind>0?Math.max(0,N.d.wind-.07):N.d.dive>0?0:etaOf(N.d,Math.max(N.cl??clEst(N.d),clEst(N.d)*.6));N.tN+=(raw-N.tN)*Math.min(1,dt*6);N.eta=raw;if(!N.d.tt)N.d.tt=ttFor(N.d,c)}
+  if(best&&(!N||(N.d!==best&&be<N.eta-.35&&!(N.d.wind>0||N.d.dive>0)))){if(N&&N.d.tt&&!(N.d.wind>0||N.d.dive>0))N.d.tt=null;if(!best.tt)best.tt=ttFor(best,c);G.next={d:best,eta:be,tN:be,T0:Math.max(.8,be),pd:dist(best,c),cl:null}}
+  {const N2=G.next;if(N2){const d=N2.d;if(!pre&&!G.tokD&&!(d.wind>0)&&!(d.dive>0)&&d.tryCD<=0&&d.x>c.x-.3&&dist(d,c)<=COMMIT){d.wind=WIND;G.tokD=d;G.tokCand=null;d.low=d.tt==='low'}
+    // bullet-time read: slow down while he closes in so you see it coming, back to full speed the moment you move
+    if(!mvActive()&&!(d.dive>0)&&N2.tN<2.6&&!(G.mv&&G.runT-G.mv.t0<.6)){G.ts=Math.min(G.ts,.38);G.slowT=Math.max(G.slowT||0,.08)}}}}
+function drawNext(g){const N=G.next,c=G.carrier;if(!N||!c||G.phase!=='run'||G.hl||G.demo)return;const d=N.d;if(!d.tt)return;const T=TKT[d.tt],col=T.c,ic=MVICO[T.m];
+  const th=G.threat,perf=th&&th.d===d&&perfWin(th),late=d.dive>0&&!perf,x=sxW(c.x),y=syW(c.y)-12-Math.round(c.z||0),dx=sxW(d.x),dy=syW(d.y)-AY-14,k=clamp(N.tN/Math.max(.6,N.T0),0,1);
+  // dotted line from the tackler to you
+  g.globalAlpha=.55;g.fillStyle=col;const n=Math.ceil(Math.hypot(dx-x,dy-y)/5);for(let i=1;i<n;i+=2){g.fillRect(Math.round(x+(dx-x)*i/n),Math.round(y+(dy-y)*i/n),2,2)}g.globalAlpha=1;
+  // badge over the tackler: the move that beats him
+  const r=8+(d.wind>0?Math.sin(G.anim*24)*1.2:0);g.fillStyle='#000';g.beginPath();g.arc(dx,dy,r+2,0,7);g.fill();g.fillStyle=col;g.beginPath();g.arc(dx,dy,r,0,7);g.fill();g.font='bold 11px system-ui, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#10142a';g.fillText(ic,dx,dy+1);
+  // timing: a ring closes in on your runner and turns green on NOW
+  const T0=10,rr=perf?T0:T0+k*30;g.lineWidth=5;g.strokeStyle='rgba(0,0,0,.6)';g.beginPath();g.ellipse(x+.5,y,T0,T0*.8,0,0,7);g.stroke();g.lineWidth=2;g.strokeStyle=perf?'#6cff8a':'#ffffff';g.beginPath();g.ellipse(x+.5,y,T0,T0*.8,0,0,7);g.stroke();
+  if(!perf&&!late){g.lineWidth=5;g.strokeStyle='rgba(0,0,0,.55)';g.beginPath();g.ellipse(x+.5,y,rr,rr*.8,0,0,7);g.stroke();g.lineWidth=3;g.strokeStyle=col;g.beginPath();g.ellipse(x+.5,y,rr,rr*.8,0,0,7);g.stroke()}
+  if(perf){g.globalAlpha=Math.floor(G.anim*16)%2?.5:.3;g.fillStyle='#6cff8a';g.beginPath();g.ellipse(x+.5,y,T0,T0*.8,0,0,7);g.fill();g.globalAlpha=1;g.font='10px "Press Start 2P", monospace';g.fillStyle='#000';g.fillText('NOW!',x+1,y-24);g.fillStyle='#6cff8a';g.fillText('NOW!',x,y-25)}
+  else if(N.tN<1.6&&!late){g.font='8px "Press Start 2P", monospace';g.fillStyle='#000';g.fillText(ic,x+1,y-21);g.fillStyle=col;g.fillText(ic,x,y-22)}}
 function smartMove(c){const th=G.threat,has=k=>c.ab.has(k),sb=c.p.sig&&SIGBASE[c.p.sig];
   if(th&&th.d.dive>0&&has('hurdle'))return'hurdle';
   if(th){const side=Math.abs(th.d.y-c.y)>1.7,behind=th.d.x<c.x+.2;if(behind&&has('spin'))return'spin';if(side)return has('stiff')?'stiff':'juke';
@@ -2134,9 +2164,9 @@ function runStep(dt){
   if(!G.demo&&c.p&&hasAb(c.p,'afterburner')&&!c.abUsed&&G.runT>.4){c.abUsed=1;c.burnT=2.6;c.invT=Math.max(c.invT||0,.3);abCine('afterburner',c,null)}if(!G.demo&&G.juice<G.jmax&&!mvActive()){G.jReg+=dt;if(G.jReg>=2.4){G.jReg=0;G.juice++}}steer(c,dt);updateEngs(dt);if(G.perfT>0)G.perfT-=dt;
   if(G.whiffT>0)G.whiffT-=dt;
   if(!G.demo){if(G.tokD&&(G.tokD.eng||G.tokD.down>0||G.tokD.stun>0||!(G.tokD.wind>0||G.tokD.dive>0))){G.tokD.wind=0;G.tokD=null;G.tokCD=.18}if(G.tokCD>0)G.tokCD-=dt;
-    G.tokCand=null;if(!G.tokD&&!(G.tokCD>0)){let be=WIND+.05;for(const d of G.ents){if(d.side!=='D'||d.eng||d.down>0||d.stun>0||d.dive>0||d.tryCD>0)continue;if(G.runT<d.readT&&d.asg)continue;const rx=d.x-c.x,ry=d.y-c.y,dd=Math.hypot(rx,ry)||.01;if(dd>6.5)continue;const front=d.x>c.x-.3,cr=(c.vx*rx+c.vy*ry)/dd,cl=cr+d.spd*(front?.4:.9),eta=dd<1.8?0:(dd-1.5)/Math.max(cl,.4);if(!front)continue;if(eta<=be){be=eta;G.tokCand=d}}}}
+    G.tokCand=null;if(!G.tokD&&!(G.tokCD>0)){let be=WIND+.05;for(const d of G.ents){if(d.side!=='D'||d.eng||d.down>0||d.stun>0||d.dive>0||d.tryCD>0)continue;if(G.runT<d.readT&&d.asg)continue;const rx=d.x-c.x,ry=d.y-c.y,dd=Math.hypot(rx,ry)||.01;if(dd>6.5)continue;const front=d.x>c.x-.3,cr=(c.vx*rx+c.vy*ry)/dd,cl=cr+d.spd*(front?.4:.9);let eta=dd<1.8?0:(dd-1.5)/Math.max(cl,.4);if(!front)continue;if(G.next&&!G.traffic){if(G.next.d===d)eta=dd<=COMMIT?0:9;else if(dd>1.6)continue}if(eta<=be){be=eta;G.tokCand=d}}}}
   if(!G.demo&&(!G.chT||(G.chT-=dt)<=0)){G.chT=.2;const cand=G.ents.filter(d=>d.side==='D'&&!d.eng&&d.down<=0&&d.stun<=0).map(d=>{const dd=dist(d,c),front=d.x>c.x-.3,eta=dd/Math.max(1,d.spd)+(front?0:.9);return{d,eta}}).sort((a,b)=>a.eta-b.eta);G.chasers=new Set(cand.slice(0,3).map(o=>o.d));if(G.tokD)G.chasers.add(G.tokD);G.laneOf=new Map(cand.slice(3).map((o,i)=>[o.d,i%4]))}
-  G.threat=findThreat(c);
+  G.threat=findThreat(c);nextTackler(c,dt);
   if(G.mvQ){const Q=G.mvQ;if(G.demo){if(G.runT-Q.t>1.6||G.mv&&mvActive())G.mvQ=null;else if(!G.threat||G.threat.ttc<=.42)startMove(Q.type,Q.dir,'good')}
     else if(G.runT-Q.t>.5)G.mvQ=null;else if(Q.buf){if(G.mvCD<=0)startMove(Q.type,Q.dir,perfWin(G.threat)?'perfect':'free')}else if(!G.threat||G.threat.ttc<=PERF_HI-.06)startMove(Q.type,Q.dir,'good')}
   if(G.threat&&!G.threat.d.cued&&G.threat.d.wind>0&&!G.demo&&G.ts>=1){G.threat.d.cued=true;slowmo(.5,.4)}
@@ -2156,7 +2186,7 @@ function runStep(dt){
     if(!G.demo&&d.wind>0){d.wind-=dt;if(d.x>c.x-.3){const L=Math.min(1.2,Math.hypot(c.vx,c.vy)*.12);moveTo(d,Math.max(c.x+.6,Math.min(d.x,c.x+c.vx*L+1.2)),c.y+c.vy*L,d.spd*.45,dt)}else chase(d,c,dt,d.spd*.9);if(d.wind<=0){const tk=rf(Rt(d.p,'tak')),px=c.x+c.vx*.24,py=c.y+c.vy*.24,lx=px-d.x,ly=py-d.y,l=Math.hypot(lx,ly)||1,sp=d.spd*1.5*(.9+tk*.2);d.dive=LUNGE;d.lgT=0;d.dvx=lx/l*sp;d.dvy=ly/l*sp;d.wind=0}continue}
     if(G.runT<d.readT&&d.asg){coverStep(d,dt);continue}
     const dd=dist(d,c);
-    if(!G.demo){if(d===G.tokCand){d.wind=WIND;G.tokD=d;G.tokCand=null;const R=phys(c.p,c.p.pos||'RB'),Dp=phys(d.p,d.p.pos||'LB'),ax=d.x-c.x,ay=Math.abs(d.y-c.y),crowd=G.ents.filter(o=>o!==d&&o.side==='D'&&o.down<=0&&!o.eng&&dist(o,c)<3.4).length;
+    if(!G.demo){if(d===G.tokCand){d.wind=WIND;G.tokD=d;G.tokCand=null;if(d.tt){d.low=d.tt==='low';continue}const R=phys(c.p,c.p.pos||'RB'),Dp=phys(d.p,d.p.pos||'LB'),ax=d.x-c.x,ay=Math.abs(d.y-c.y),crowd=G.ents.filter(o=>o!==d&&o.side==='D'&&o.down<=0&&!o.eng&&dist(o,c)<3.4).length;
       // the move has to make sense: a crowd means spin out, a tackler at your side means stiff arm, only a solo head-on tackler dives low for a hurdle
       if(crowd>=1)d.tt='high';else if(ax<ay*.9||ax<1)d.tt='arm';else d.tt=Math.random()<clamp((DL.includes(d.role)?.4:.3)+(Dp.ht-R.ht)*.03+rf(Rt(d.p,'tak'))*.1,.15,.6)?'low':'sq';
       d.low=d.tt==='low';continue}}
@@ -3703,8 +3733,8 @@ function render(rdt){
     if(e===G.carrier&&G.phase==='run'){g.fillStyle=mvActive()?'#fff':'#ffd23f';const yy=y-AY-6-Math.round(e.z||0);g.fillRect(x-1,yy,3,2);g.fillRect(x,yy+2,1,1)}}
   if(G.phase==='run'&&G.carrier){const c=G.carrier,x=sxW(c.x),y=syW(c.y);g.font='9px "Press Start 2P", monospace';g.textAlign='center';g.textBaseline='middle';
     if(c.p.sig){for(let i=0;i<3;i++){const a=G.anim*5+i*2.094;g.fillStyle=i%2?'#fff3b0':'#ffd23f';g.fillRect(x+Math.round(Math.cos(a)*8),y-14+Math.round(Math.sin(a)*10),2,2)}}
-    const th=G.threat;
-    if(th&&!G.hl&&!G.traffic&&th.ttc<1.6&&(G.demo||(!mvActive()&&(th.d.wind>0||th.d.dive>0)))){const d=th.d,dx=sxW(d.x),dy=syW(d.y)-AY-12,perf=G.demo?th.ttc>=.08&&th.ttc<=.55:perfWin(th),cy=y-10,T0=11;
+    drawNext(g);const th=G.threat;
+    if(G.demo&&th&&!G.hl&&th.ttc<1.6){const d=th.d,dx=sxW(d.x),dy=syW(d.y)-AY-12,perf=G.demo?th.ttc>=.08&&th.ttc<=.55:perfWin(th),cy=y-10,T0=11;
       if(!G.demo){const on=d.wind>0||d.dive>0,bl=Math.floor(G.anim*10)%2;g.strokeStyle='#000';g.lineWidth=3;g.beginPath();g.ellipse(dx+.5,syW(d.y)-2,9,5,0,0,7);g.stroke();const tc=d.tt?TKT[d.tt].c:'#ff8a3a';g.strokeStyle=on&&bl?'#fff':tc;g.lineWidth=2;g.beginPath();g.ellipse(dx+.5,syW(d.y)-2,9,5,0,0,7);g.stroke();
         if(on&&d.tt){const pu=.5+.5*Math.sin(G.anim*18);g.globalAlpha=.25+.25*pu;g.fillStyle=tc;g.beginPath();g.ellipse(dx+.5,syW(d.y)-2,11,6,0,0,7);g.fill();g.globalAlpha=1;
           const bx=Math.round(dx),by=Math.round(dy+1-pu*2);g.fillStyle='#000';g.beginPath();g.arc(bx,by,7.5,0,7);g.fill();g.fillStyle=tc;g.beginPath();g.arc(bx,by,6.5,0,7);g.fill();
@@ -3901,7 +3931,7 @@ function syncTouch(){
   }
   else if(ph==='air')btns=[{a:'catch',l:'CATCH',i:'\u270B',pri:1,pc:'#2fae4e',s:100}];
   else if(ph==='run'&&c){const MX=-84,MY=-92,pt=(dx,dy,a,l,i,lk)=>({a,l,i,lock:lk,pet:1,x:MX+dx,y:MY+dy,s:44});const has=k=>c.ab&&c.ab.has(k);
-    if(!G.traffic){const POS4=[[-70,-176],[-150,-132],[-178,-50],[-62,-74]],L4=[['hurdle','Hurdle','\u2934'],['spin','Spin','\u21BB'],['juke','Juke','\u21D5'],['stiff','Stiff arm','\u270A']].filter(m=>has(m[0]));
+    if(!G.traffic||G.next){const POS4=[[-70,-176],[-150,-132],[-178,-50],[-62,-74]],L4=[['hurdle','Hurdle','\u2934'],['spin','Spin','\u21BB'],['juke','Juke','\u21D5'],['stiff','Stiff arm','\u270A']].filter(m=>has(m[0]));
       btns=L4.map((m,i)=>({a:'mv:'+m[0],l:m[1],i:m[2],mvb:1,x:POS4[i][0],y:POS4[i][1],s:64,pc:MVCOL[m[0]]}))}}
   if(G.cu)btns=[{a:'skip',l:'SKIP',i:'\u23ED',pri:1,pc:'#2a3a66',s:70}];
   else if(ph==='cine'||ph==='intro')btns=[{a:'skip',l:'SKIP',i:'\u23ED',pri:1,pc:'#2a3a66',s:70}];
@@ -3915,7 +3945,7 @@ function syncTouch(){
       return `<button class="tb${b.pri?' pri':''}${b.pet?' pet':''}${b.mvb?' mvb':''}${b.rcv!=null?' rcv':''}${b.lock?' locked':''}${b.dis?' done':''}" data-act="${b.a}" style="${st}" aria-label="${b.l}">${b.rcv!=null?'<span class="tt"></span>':''}<i>${b.i}</i><b>${b.l}</b></button>`}).join('');
     $('#tmini').innerHTML=mini.map(([a,l])=>`<button class="tm2" data-act="${a}">${l}</button>`).join('')}
   tc.style.visibility=G.cuPend||(G.hl&&!G.cu)?'hidden':'';{const jy=$('#joy');if(jy)jy.style.visibility=G.cu||G.cuPend?'hidden':''}  tc.classList.toggle('stick',stick);tc.classList.toggle('pocket',!!passing&&!G.demo);if(!passing&&tc._pk){tc._pk=0;J.x=J.y=0}if(passing)tc._pk=1;if(tc.classList.contains('hidden'))tc.classList.remove('hidden');
-  if(ph==='run'&&!G.demo){const th=G.threat,on=th&&th.d.tt&&(th.d.wind>0||th.d.dive>0),need=on?TKT[th.d.tt].m:null,perf=on&&perfWin(th),k=on?clamp(1-(th.ttc-PERF_HI)/WIND,0,1):0;
+  if(ph==='run'&&!G.demo){const th=G.threat,N=G.next,on=!!(N&&N.d.tt),need=on?TKT[N.d.tt].m:null,perf=on&&th&&th.d===N.d&&perfWin(th),k=on?clamp(1-N.tN/Math.max(.6,N.T0),0,1):0;
     document.querySelectorAll('#tbtns .tb.mvb').forEach(b=>{const t=b.dataset.act.split(':')[1],me=t===need;b.classList.toggle('need',!!me);b.classList.toggle('dim',!!need&&!me);b.classList.toggle('now',!!(me&&perf));if(me)b.style.setProperty('--k',k.toFixed(2))})}
   if(ph==='run'){const mb=document.querySelector('#tbtns [data-act="move"]');if(mb){const th=G.threat,act=G.mv&&mvActive(),perf=!G.traffic&&!act&&perfWin(th),soon=!G.traffic&&th&&!act&&th.ttc<1.6&&!perf;mb.classList.toggle('now',!!perf);mb.classList.toggle('soon',!!soon);const lb=mb.querySelector('b');const want=perf?'NOW!':G.mvQ?'READY':'MOVE';if(lb&&lb.textContent!==want)lb.textContent=want}}
   if(passing){const cov=G.ents.filter(d=>d.side==='D'&&!d.rush&&d.down<=0);document.querySelectorAll('#tbtns .tb.rcv').forEach(b=>{const e=G.R[b.dataset.act.slice(4)];if(!e||!e.wps)return;let sp=9;for(const d of cov)sp=Math.min(sp,dist(d,e));b.classList.toggle('open',sp>3.2&&G.t>G.dropT*.8)})}
