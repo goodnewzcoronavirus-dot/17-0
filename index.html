@@ -744,7 +744,7 @@ const ABREQ={truck:['str',85],ankle:['agi',88],superman:['spd',88],matrix:['agi'
  moss:['hnd',86],spidey:['hnd',88],toetap:['hnd',84],glitchroute:['rte',88],laser:['arm',88],houdini:['spd',78],moonball:['arm',90],pancake:['rbk',85],
  x_train:['str',90],x_quake:['str',92],x_warp:['spd',93],x_seeker:['hnd',92],x_wreck:['blk',88],x_timestop:['poc',90],x_orbital:['acc',92],x_wall:['pbk',90]};
 const abSlots=c=>{const o=effOvr(c);return o>=95?3:o>=90?2:o>=80?1:0};
-const xSlot=c=>effOvr(c)>=95||!!(c.pu&&c.pot&&c.ovr+(c.up||0)>=c.pot);
+const xSlot=c=>effOvr(c)>=95||!!(c.pu&&c.ovr+(c.up||0)>=99);
 function chipInit(c){if(!c||c.eq!==undefined)return;const a=c.abO!==undefined?c.abO:abFor(c.n,c.pos,c.ovr+(c.up||0),c.prog,c.pu);const x=c.xfO!==undefined?c.xfO:xfFor(c.n,c.pos,c.ovr+(c.up||0),c.prog);c.eq=a?[a]:[];c.eqX=x||null}
 const cardAbs=c=>{if(!c)return[];chipInit(c);return c.eq||[]};
 function chipWhy(c,k){if(!c)return'No player';const xf=k.startsWith('x_');if(!((xf?XFPOS:ABPOS)[c.pos]||[]).includes(k))return'Not for '+c.pos+'s';
@@ -3978,7 +3978,7 @@ const cardById=id=>UT.cards.find(c=>c.id===id);
 const starterSlot=id=>SLOTK.find(k=>UT.lineup[k]===id);
 const cardVal=c=>Math.round(25*Math.pow(2,(c.ovr+(c.up||0)-50)/4.6)/5)*5*(c.pu?2:1);
 const qsCoins=c=>Math.max(5,Math.round(cardVal(c)*.3/5)*5);
-const qsTP=c=>TIERS[c.tier].tp;
+const TPV={bronze:2,silver:5,gold:20,elite:60,legend:150};const qsTP=c=>(TPV[c.tier]||2)*(c.pu?2:1);
 const fmtN=n=>n.toLocaleString('en-US');
 const PROGRAMS={
  origins:{n:'Origins',d:'Early-career versions, 8 to 11 below baseline. A cheap way to land a star and grow him.',w:1,rw:0},
@@ -4013,7 +4013,7 @@ function buildCatalog(){
     ids.forEach((pl,i)=>{Math.random=mulberry(hashS(key+'|'+pl.name+'|'+pl.pos+'|'+i));
       const B=pl.ovr,cap=Math.min(99,B+10),pid='p'+i,skin=Math.floor(hs32(pl.name+'k')*5),[a,z]=GRPNUM[pl.pos];
       const add=(p,ovr)=>{const sh=ovr-B,r={};for(const [k,v] of Object.entries(pl.r))r[k]=clamp(v+sh,25,99);out.push({tid:pid+p,pid,p,n:pl.name,pos:pl.pos,ovr,B,pot:cap,r,spd:r.spd??clamp(GRPSPD0[pl.pos]+Math.round((ovr-80)*.3),35,99),team:pl.team||pick(TEAM_BASE)[2],num:pl.num||ri(a,z),skin,pu:p==='power',st:pl.st})};
-      if(pl.tb){add('throwback',B);if(B>=88)add('icon',Math.min(99,B+2));if(B>=93)add('peak',cap);return}
+      if(pl.tb){add('throwback',B);if(B>=88)add('icon',Math.min(99,B+2));if(B>=93)add('peak',cap);add('power',clamp(B-10,58,85));out[out.length-1].pot=99;return}
       if(B>=72)add('origins',Math.max(46,B-ri(8,11)));
       add('core',B);
       const bump=b=>Math.min(98,B+Math.max(1,Math.round(b*Math.min(1,(99-B)/(b+3)))));
@@ -4023,7 +4023,7 @@ function buildCatalog(){
       let pv=0;if(B>=84){pv=bump(6);add(OFFG.includes(pl.pos)?'prime':'feared',pv)}
       if(B>=88)add('icon',Math.min(99,Math.max(pv+1,bump(8))));
       if(B>=91)add('peak',cap);
-      if(B>=80&&Math.random()<.45){add('power',clamp(B-16,60,75));out[out.length-1].pot=Math.min(99,B+ri(-3,6))}
+      add('power',clamp(B-10,58,85));out[out.length-1].pot=99;
     });
     // signatures: every team's best skill player, plus every skill star 90+
     SIGMAP={};const bestT={},SK=['RB','WR','TE'];
@@ -4033,7 +4033,7 @@ function buildCatalog(){
   }finally{Math.random=orig}
   CAT=out;CATKEY=ck;return out;
 }
-const tplCard=t=>({id:-1,tid:t.tid,pid:t.pid,sig:t.sig,B:t.B,n:t.n,pos:t.pos,ovr:t.ovr,up:0,xp:0,pot:t.pot,r:t.r,spd:t.spd,tier:tierOf(t.ovr),prog:PROGRAMS[t.p].n,pk:t.p,team:t.team,num:t.num,skin:t.skin,pu:t.pu||undefined,st:t.st});
+const tplCard=t=>({id:-1,tid:t.tid,pid:t.pid,sig:t.sig,B:t.B,n:t.n,pos:t.pos,ovr:t.ovr,up:0,xp:0,pot:t.pu?99:t.pot,r:t.r,spd:t.spd,tier:tierOf(t.ovr),prog:PROGRAMS[t.p].n,pk:t.p,team:t.team,num:t.num,skin:t.skin,pu:t.pu||undefined,st:t.st});
 function inst(t){const c=tplCard(t);c.id=UT.nid++;c.r=Object.assign({},t.r);return c}
 function genCard(pos,tier,lo,hi){
   const cat=buildCatalog();let pool;
@@ -4042,7 +4042,7 @@ function genCard(pos,tier,lo,hi){
   else{pool=cat.filter(t=>!t.pu&&t.ovr>=lo&&t.ovr<=hi&&(!pos||t.pos===pos));if(!pool.length)pool=cat.filter(t=>!t.pu&&(!pos||t.pos===pos)).sort((a,b)=>Math.abs(a.ovr-(lo+hi)/2)-Math.abs(b.ovr-(lo+hi)/2)).slice(0,8)}
   return inst(wpick(pool.map(t=>[t,PROGRAMS[t.p].w||.01])));
 }
-const puW=t=>t.pot>=95?.02:t.pot>=90?.09:t.pot>=85?.45:1;
+const puW=t=>1;
 function genPower(pos){const cat=buildCatalog();let pool=cat.filter(t=>t.p==='power'&&t.pos===pos);if(!pool.length)pool=cat.filter(t=>t.p==='power');return inst(wpick(pool.map(t=>[t,puW(t)])))}
 function genPowerOld(pos){
   const ovr=ri(66,73);let pot=ri(86,95),[a,z]=GRPNUM[pos],n=pick(FIRST)+' '+pick(LAST),team=pick(TEAM_BASE)[2],num=ri(a,z),r=null,st=null;
@@ -4106,7 +4106,7 @@ function cardHTML(c,o={}){
   const T=TIERS[c.tier],tb=tbOf(c.team),st=starterSlot(c.id),sg=cardXf(c),star=cardAb(c);
   const pk=c.pk||progKey(c.prog)||'core';
   return`<button class="ucard t-${c.tier} p-${pk}${c.pu?' pu':''}${sg?' sig':''}${o.sm?' sm':''}${o.big?' big':''}${o.ghost?' ghost':''}" data-id="${c.id}"${o.tid?` data-tid="${o.tid}"`:''} style="--tc:${c.pu?'#2bd9a0':T.c};--tc2:${c.pu?'#06382a':T.c2};--tm:${tb[3]}" aria-label="${esc(c.n)}, ${c.pos}, ${effOvr(c)} overall">
-  <span class="uo">${effOvr(c)}</span><span class="up">${c.pos}</span>${c.pu?`<span class="ug">POT ${c.pot}</span>`:c.up?`<span class="ug">+${c.up}</span>`:''}
+  <span class="uo">${effOvr(c)}</span><span class="up">${c.pos}</span>${c.pu?`<span class="ug">${c.up?'+'+c.up:'PU'}</span>`:c.up?`<span class="ug">+${c.up}</span>`:''}
   <span class="ufx" aria-hidden="true"></span>${pk==='origins'?'<span class="urib">ROOKIE</span>':''}<span class="ubg">${portraitTag(c)}</span>
   <span class="un">${esc(c.n)}</span><span class="ut">${esc(c.team)}, ${esc(c.prog)}</span>
   ${o.sm?'':`<span class="us">${RSET[c.pos].map(k=>`<b>${RLAB[k]} ${cRat(c,k)}</b>`).join('')}</span>${star?`<span class="uab">${NEWAB[star].i} ${NEWAB[star].n}</span>`:''}${sg?`<span class="usig">${NEWAB[sg].i}<b>X</b><u>X-FACTOR: ${NEWAB[sg].n}</u></span>`:''}`}${o.sm&&(star||sg)?`<span class="usg">${sg?NEWAB[sg].i:NEWAB[star].i}</span>`:''}
@@ -4279,14 +4279,16 @@ function nextUp(){const L=[];const go=(t,sub,msg,btn)=>L.push({t,sub,msg,btn});
   const pick=UT.cards.find(c=>c.pu&&c.puPick);if(pick)go('pu','pu',`${pick.n} leveled up. Pick his free reward.`,'Pick reward');
   const st=SLOTK.map(k=>cardById(UT.lineup[k])).filter(Boolean),spare=Object.entries(UT.chips||{}).filter(([,n])=>n>0).map(([k])=>k);
   if(spare.some(k=>st.some(c=>!chipWhy(c,k))))go('team','lineup','You have spare chips a starter can use.','Equip chips');
-  const pu=UT.cards.find(c=>c.pu&&!starterSlot(c.id)&&(c.up||0)<puMax(c));if(pu)go('team','lineup',`Start your Power Up ${pu.n} so he earns XP.`,'Set lineup');
+  const pus=UT.cards.filter(c=>c.pu&&!c.puPick&&(c.up||0)<puMax(c));if(!UT.cards.some(c=>c.pu)||UT.fantasy>0)go('pu','pu',UT.fantasy>0?`You have ${UT.fantasy} free Fantasy Pack${UT.fantasy>1?'s':''}. Pick a Power Up.`:'Get your first Power Up from a Fantasy Pack.','Get a Power Up');else if(pus.some(c=>(UT.tp||0)>=puCost(c)))go('pu','pu',`You have ${fmtN(UT.tp)} training. Upgrade a Power Up.`,'Train');
+  const junk=UT.cards.filter(c=>!starterSlot(c.id)&&!c.pu&&(c.tier==='bronze'||c.tier==='silver'));if(junk.length>=5)go('cards','coll',`${junk.length} bronze and silver bench cards could be training.`,'Quick sell');
   if(CHIPTR.some(m=>trPool(m).length>=m.cnt))go('store','trade','You have enough bench cards to trade in for a chip.','Trade in');
-  const S=UT.season,g=S&&nextGame();if(g)go('play','season',`Season game next: ${g.label}.`,'Play season game');else go('play','play','Play a game to earn coins, chips and Power Up XP.','Play');
+  const S=UT.season,g=S&&nextGame();if(g)go('play','season',`Season game next: ${g.label}.`,'Play season game');else go('play','play','Win games to earn coins and chips.','Play');
   return L}
 function nextUpHTML(){const L=nextUp().slice(0,3);return`<div class="action" style="border-left:6px solid ${UT.club.c2}"><h2 style="margin-top:0">Next up</h2>${L.map((x,i)=>`<div class="solo"><div><b>${i+1}. ${esc(x.msg)}</b></div><button class="btn${i===0?' primary':''}" data-go="${x.t}:${x.sub}">${esc(x.btn)}</button></div>`).join('')}</div>`}
 function renderUT(){
+  if(UT&&UT.fantasy===undefined){UT.fantasy=1;for(const c of UT.cards)if(c.pu)c.pot=99;utSave()}
   const c=UT.club,o=teamOvr();
-  $('#utHead').innerHTML=`<div class="hubhead" style="--c1:${c.c1};--c2:${c.c2}"><div class="crest">${esc(c.abbr)}</div><div><p class="kicker">Ultimate Team</p><h1>${esc(c.city)} ${esc(c.name)}</h1><p class="rec">OVR ${o.all} <span class="muted">OFF ${o.o}, DEF ${o.d}, record ${UT.rec.w}-${UT.rec.l}${UT.rec.t?'-'+UT.rec.t:''}</span></p></div><div class="wallet"><span><b>${fmtN(UT.coins)}</b> coins</span><span><b>${UT.packs.length}</b> packs</span></div><button class="hubhelp" id="hubHelp" title="Tutorial" aria-label="Replay the tutorial">?</button></div>`;
+  $('#utHead').innerHTML=`<div class="hubhead" style="--c1:${c.c1};--c2:${c.c2}"><div class="crest">${esc(c.abbr)}</div><div><p class="kicker">Ultimate Team</p><h1>${esc(c.city)} ${esc(c.name)}</h1><p class="rec">OVR ${o.all} <span class="muted">OFF ${o.o}, DEF ${o.d}, record ${UT.rec.w}-${UT.rec.l}${UT.rec.t?'-'+UT.rec.t:''}</span></p></div><div class="wallet"><span><b>${fmtN(UT.coins)}</b> coins</span><span><b>${fmtN(UT.tp||0)}</b> training</span><span><b>${UT.packs.length}</b> packs</span></div><button class="hubhelp" id="hubHelp" title="Tutorial" aria-label="Replay the tutorial">?</button></div>`;
   $('#hubHelp').onclick=()=>tourStart(0);
   chipsMigrate();PACKS.featured.n=PROGRAMS[featProg()].n+' Pack';
   if(UTPARENT[utTab]&&!UTSUBS[utTab]){UTSUB[UTPARENT[utTab]]=utTab==='upgrade'?'trade':utTab==='path'?'pu':utTab;utTab=UTPARENT[utTab]}else if(!UTSUBS[utTab])utTab='play';
@@ -4324,20 +4326,36 @@ function bCat(){
 }
 const dreamNeed=t=>Math.round(96*Math.pow(1.12,Math.max(0,(t.pot||t.ovr)-70)));
 // ================= Power Ups: level up by playing =================
-const puMax=c=>Math.max(0,(c.pot||c.ovr)-c.ovr),puNeed=c=>40+6*(c.up||0);
+const puMax=c=>Math.max(0,99-c.ovr),puNeed=c=>40+6*(c.up||0);
+const puCost=c=>2+Math.floor(Math.max(0,c.ovr+(c.up||0)-60)/5);
+function puTrain(c,n=1){let done=0;while(done<n&&(c.up||0)<puMax(c)&&(UT.tp||0)>=puCost(c)&&!c.puPick){UT.tp-=puCost(c);c.up=(c.up||0)+1;done++;const top=c.up>=puMax(c);if(top||c.up%3===0)c.puPick=puOffer(c,top)}if(done)utSave();return done}
+const puToMax=c=>{let t=0,u=c.up||0;for(;u<puMax(c);u++)t+=2+Math.floor(Math.max(0,c.ovr+u-60)/5);return t};
 function puGain(c,xp){const out=[];c.pxp=(c.pxp||0)+xp;while((c.up||0)<puMax(c)&&c.pxp>=puNeed(c)){c.pxp-=puNeed(c);c.up=(c.up||0)+1;out.push(c.up);
     const top=c.up>=puMax(c);if(top||c.up%3===0)c.puPick=puOffer(c,top)}if((c.up||0)>=puMax(c))c.pxp=0;return out}
 function puOffer(c,top){const own=new Set([...cardAbs(c),cardXf(c)].filter(Boolean));let L=(top?XFPOS:ABPOS)[c.pos]||[];L=L.filter(k=>!own.has(k));if(L.length<2)L=[...new Set([...L,...(top?ALLXF:ALLAB).filter(k=>!own.has(k))])];return shuffle(L.slice()).slice(0,2)}
 function puClaim(c,k){if(!c||!c.puPick||!c.puPick.includes(k))return;c.puPick=null;chipGive(k);const on=chipEquip(c,k);utSave();toastUT(on?`${(NEWAB[k]||{}).n} equipped on ${c.n}`:`${(NEWAB[k]||{}).n} added to your spare chips`)}
-function uPU(){const L=UT.cards.filter(c=>c.pu).sort((a,b)=>(starterSlot(b.id)?1:0)-(starterSlot(a.id)?1:0)||(b.pot||0)-(a.pot||0));
-  const row=c=>{const st=starterSlot(c.id),mx=puMax(c),lv=c.up||0,done=lv>=mx,need=puNeed(c),pct=done?100:Math.round((c.pxp||0)/need*100),next=done?'Maxed: X-Factor slot unlocked':lv%3===2||lv+1>=mx?'Next level: pick a free '+(lv+1>=mx?'X-Factor':'chip'):'Next level: +1 overall';
-    return`<div class="pathrow"><div class="pcard">${cardHTML(c,{sm:true})}</div><div class="pbody"><b>${esc(c.n)}</b> <span class="muted">Level ${lv} of ${mx} · ${effOvr(c)} now, ${c.pot} max${st?'':' · on the bench, start him to earn XP'}</span>
-    <div class="dbar"><i style="width:${pct}%"></i></div><p class="muted">${done?'':`${c.pxp||0} of ${need} XP. `}${next}</p>
-    ${c.puPick?`<p><b>Pick his reward:</b></p><div class="chips">${c.puPick.map(k=>`<button class="btn primary" data-pup="${c.id}" data-k="${k}">${chipLabel(k)}</button>`).join('')}</div>`:''}
+function uPU(){const L=UT.cards.filter(c=>c.pu).sort((a,b)=>(starterSlot(b.id)?1:0)-(starterSlot(a.id)?1:0)||effOvr(b)-effOvr(a));
+  const row=c=>{const st=starterSlot(c.id),mx=puMax(c),lv=c.up||0,done=lv>=mx,cost=puCost(c),can=!done&&!c.puPick&&(UT.tp||0)>=cost,pct=Math.round((c.ovr+lv-c.ovr)/Math.max(1,mx)*100);
+    const nextR=done?'At 99: X-Factor slot unlocked':(lv+1)>=mx?'Next level: 99 and an X-Factor pick':(lv+1)%3===0?'Next level: pick a free chip':'Every 3 levels: pick a free chip';
+    return`<div class="pathrow"><div class="pcard">${cardHTML(c,{sm:true})}</div><div class="pbody"><b>${esc(c.n)}</b> <span class="muted">${effOvr(c)} now · ${done?'maxed at 99':(99-c.ovr-lv)+' to go, '+fmtN(puToMax(c))+' training to 99'}${st?'':' · bench'}</span>
+    <div class="dbar"><i style="width:${pct}%"></i></div><p class="muted">${nextR}</p>
+    ${c.puPick?`<p><b>Pick his reward:</b></p><div class="chips">${c.puPick.map(k=>`<button class="btn primary" data-pup="${c.id}" data-k="${k}">${chipLabel(k)}</button>`).join('')}</div>`:done?'':`<div class="row"><button class="btn${can?' primary':''}" data-tr="${c.id}" ${can?'':'disabled'}>Train +1 (${cost} training)</button><button class="btn" data-trm="${c.id}" ${can?'':'disabled'}>Train as far as I can</button></div>`}
     ${st?'':`<button class="btn" data-pust="${c.id}">Start him</button>`}</div></div>`};
-  return dreamPanel()+`<p class="muted lhint">Power Ups grow by playing. Every game he starts, he earns XP from what he does: yards, catches, TDs, tackles, sacks and wins. Each level is +1 overall up to his potential. Every 3 levels you pick a free ability chip, and at max level he gets an X-Factor slot and an X-Factor pick.</p>
-  <h3>Your Power Ups</h3>${L.length?L.map(row).join(''):'<p class="muted">No Power Ups yet. They come from Elite and Legend packs, Store trade-ins, or your Dream Card above.</p>'}`}
-function bPU(){bindDream();document.querySelectorAll('[data-pup]').forEach(b=>b.onclick=()=>{puClaim(cardById(+b.dataset.pup),b.dataset.k);renderUT()});
+  const fp=UT.fantasy||0;
+  return`<div class="action"><h2 style="margin-top:0">Get Power Ups</h2><p class="muted">Every player in the game has a Power Up card, and every Power Up can be trained to 99.</p>
+  <div class="solo"><div><b>Fantasy Pack</b><span class="muted">Pick a position, then choose 1 of 3 Power Ups.${fp?` You have ${fp} free.`:''}</span></div><button class="btn primary" id="fantasy">${fp?'Open free':fmtN(FANTASY_COST)+' coins'}</button></div>
+  <div class="solo"><div><b>Pick any player</b><span class="muted">Find him in Cards, Every player, then tap Get his Power Up.</span></div><button class="btn" data-go="cards:cat">Browse players</button></div></div>
+  <p class="muted lhint">You have <b>${fmtN(UT.tp||0)} training</b>. Get training by quick selling cards you don't need (Cards tab, or right after opening a pack). Each +1 costs a bit more the higher he gets.</p>
+  <h3>Your Power Ups</h3>${L.length?L.map(row).join(''):'<p class="muted">No Power Ups yet. Open a Fantasy Pack above.</p>'}`}
+const FANTASY_COST=2000,puPrice=t=>1500+Math.max(0,t.B-65)*150;
+function fantasyOpen(){const fp=UT.fantasy||0;if(!fp&&UT.coins<FANTASY_COST)return toastUT('Not enough coins. Win games to earn more.');
+  utModal(`<h2>Fantasy Pack</h2><p class="muted">Pick a position. You'll choose 1 of 3 Power Ups.</p><div class="row">${GROUPS.map(g=>`<button class="btn primary" data-fpos="${g}">${g}</button>`).join('')}</div>`,[['Cancel',closeModal,'alt']]);
+  document.querySelectorAll('[data-fpos]').forEach(b=>b.onclick=()=>{const g=b.dataset.fpos;if(UT.fantasy>0)UT.fantasy--;else UT.coins-=FANTASY_COST;utSave();
+    const pool=buildCatalog().filter(t=>t.p==='power'&&t.pos===g),pick3=[];const by=pool.slice().sort((a,b2)=>b2.B-a.B);
+    const top=by.slice(0,Math.max(3,Math.ceil(by.length*.25)));pick3.push(pick(top));while(pick3.length<3&&pick3.length<pool.length){const t=pick(pool);if(!pick3.includes(t))pick3.push(t)}
+    utModal(`<h2>Choose your ${g}</h2><p class="muted">He joins as a Power Up you can train to 99.</p><div class="cgrid pick">${pick3.map(t=>`<div class="pcand">${cardHTML(tplCard(t),{sm:true})}<small>${esc(t.team)} · real ${t.B}</small><button class="btn primary" data-fp="${t.tid}">Take him</button></div>`).join('')}</div>`,[]);
+    document.querySelectorAll('[data-fp]').forEach(x=>x.onclick=()=>{const t=pick3.find(q=>q.tid===x.dataset.fp);const c=inst(t);UT.cards.push(c);utSave();closeModal();utTab='pu';renderUT();toastUT(c.n+' Power Up added. Train him to 99.')})})}
+function bPU(){const fb=$('#fantasy');if(fb)fb.onclick=fantasyOpen;document.querySelectorAll('[data-tr]').forEach(b=>b.onclick=()=>{puTrain(cardById(+b.dataset.tr),1);renderUT()});document.querySelectorAll('[data-trm]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.trm),n=puTrain(c,99);toastUT(`${c.n} +${n}, now ${effOvr(c)}`);renderUT()});document.querySelectorAll('[data-pup]').forEach(b=>b.onclick=()=>{puClaim(cardById(+b.dataset.pup),b.dataset.k);renderUT()});
   document.querySelectorAll('[data-pust]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.pust),k=SLOTK.filter(k=>SLOTGRP[k]===c.pos).sort((a,b2)=>effOvr(cardById(UT.lineup[a]))-effOvr(cardById(UT.lineup[b2])))[0];if(k){setSlot(k,c.id);toastUT(c.n+' starting at '+k);renderUT()}});
   document.querySelectorAll('#utBody .ucard[data-id]').forEach(b=>b.onclick=()=>{const id=+b.dataset.id;if(cardById(id))cardDetail(id)})}
 function dreamPanel(){const D=UT.dream,t=D&&buildCatalog().find(x=>x.tid===D.tid);if(!t)return`<div class="dreamp dempty"><b>Dream Card</b><p class="muted">Pick any Power Up in the Catalog and set it as your Dream Card. The higher his potential, the more points he costs. Every game, win, objective and pack adds Dream points until you earn it.</p></div>`;
@@ -4350,14 +4368,15 @@ function examineTpl(tid){
   const vs=cat.filter(x=>x.pid===t.pid).sort((a,b)=>a.ovr-b.ovr);
   utModal(`<div class="detail"><div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px">${flipHTML(c,{big:true,tid})}<span class="muted">Tap the card to flip it</span></div><div>
     <h2 style="margin-top:0">${esc(c.n)}</h2><p class="big" style="margin:4px 0">${c.ovr} OVR, ${GRPNAME[c.pos]}</p>
-    <p>${esc(P.n)} version. ${esc(P.d)}</p><p>${esc(c.team)}, #${c.num}. Baseline ${t.B}, can be upgraded to ${t.pot}.</p>
+    <p>${esc(P.n)} version. ${esc(P.d)}</p><p>${esc(c.team)}, #${c.num}. Real rating ${t.B}.${t.pu?' Power Up: can be trained to 99.':''}</p>
     ${sg?`<p class="bsig">\u2605 Signature: ${ABDEF[sg].n}</p>`:''}<p><b>Abilities</b></p>${abInfoHTML(ab,sg)}
     <p><b>${n?`You own ${n===1?'this card':n+' copies'}.`:'You don\'t own this card yet.'}</b></p>${(()=>{if(n)return'';const mine=UT.cards.filter(x=>x.pid===t.pid&&x.ovr<t.ovr).sort((a,b)=>b.ovr-a.ovr)[0];return mine?`<p class="pathbox">You can reach this card through <b>Path to Peak</b> from your ${esc(mine.prog)} ${mine.ovr}. <button class="btn primary" data-goto="${mine.id}">Open his card</button></p>`:''})()}
-    <p>${UT.dream&&UT.dream.tid===tid?'<b class="dreamtag">★ This is your Dream Card</b>':t.p==='power'?`<button class="btn primary" id="setDream">Make this my Dream Card (${fmtN(dreamNeed(t))} points)</button>`:'<span class="muted">Only Power Ups can be Dream Cards.</span>'}</p>
+    ${(()=>{const pt=cat.find(x=>x.pid===t.pid&&x.p==='power');return pt?`<p><button class="btn primary" id="buyPU" data-t="${pt.tid}" ${UT.coins>=puPrice(pt)?'':'disabled'}>Get his Power Up (${fmtN(puPrice(pt))} coins)</button> <span class="muted">Starts at ${pt.ovr}, train him to 99.</span></p>`:''})()}
     <p><b>Other versions:</b></p><div class="cgrid pick" style="max-height:none">${vs.filter(x=>x.tid!==tid).map(x=>cardHTML(tplCard(x),{sm:true,tid:x.tid,ghost:!own.has(x.tid)})).join('')||'<span class="muted">Only this version exists.</span>'}</div></div></div>`,[['Close',closeModal,'alt']]);
   bindFlip($('#utm'));
   document.querySelectorAll('#utm .cgrid .ucard[data-tid]').forEach(b=>b.onclick=()=>examineTpl(b.dataset.tid));
   document.querySelectorAll('#utm [data-goto]').forEach(b=>b.onclick=()=>cardDetail(+b.dataset.goto));
+  const bp=$('#buyPU');if(bp)bp.onclick=()=>{const pt=buildCatalog().find(x=>x.tid===bp.dataset.t);if(!pt||UT.coins<puPrice(pt))return;UT.coins-=puPrice(pt);const c=inst(pt);UT.cards.push(c);utSave();closeModal();utTab='pu';renderUT();toastUT(c.n+' Power Up added. Train him to 99.')};
   const sd=$('#setDream');if(sd)sd.onclick=()=>{const keep=UT.dream&&UT.dream.pts?Math.round(UT.dream.pts*.5):0;UT.dream={tid,pts:keep};utSave();closeModal();renderUT();toastUT('Dream Card set'+(keep?', kept '+keep+' points':''))};
 }
 function uPlay(){
@@ -4385,7 +4404,6 @@ function utMatch(opp,label,info){
     const ups=[],puUps=[];
     for(const c of starters){const a=snap.get(c.id)||{},b=c.s||{},dlt=k=>(b[k]||0)-(a[k]||0);
       let xp=20+(win?15:0)+Math.round(dlt('py')/10+dlt('ptd')*15+dlt('ry')/4+dlt('cy')/4+(dlt('rtd')+dlt('ctd'))*20+dlt('tkl')*5+dlt('sck')*20+dlt('dint')*25+dlt('fgm')*10+dlt('rec')*3);
-      if(c.pu){const lv=puGain(c,xp);if(lv.length)puUps.push([c,lv])}
       xp=0;
       while(false){if(c.ovr+c.up<xpCeil(c)&&c.up<capUp(c)){c.xp-=100+25*c.up;c.up++;ups.push(c)}else{c.xp=Math.min(c.xp,99+25*c.up);break}}}
     for(const c of starters){c.s=c.s||{};c.s.gp=(c.s.gp||0)+1;if(win)c.s.w=(c.s.w||0)+1}
@@ -4461,9 +4479,10 @@ function uColl(){
   let cs=UT.cards.filter(c=>(collF.g==='all'||c.pos===collF.g)&&(collF.t==='all'||c.tier===collF.t)&&(!collF.q||c.n.toLowerCase().includes(collF.q.toLowerCase())));
   cs.sort(collF.s==='ovr'?(a,b)=>effOvr(b)-effOvr(a):collF.s==='new'?(a,b)=>b.id-a.id:(a,b)=>GROUPS.indexOf(a.pos)-GROUPS.indexOf(b.pos)||effOvr(b)-effOvr(a));
   return`<div class="row"><label>Position <select id="cfG"><option value="all">All</option>${GROUPS.map(g=>`<option value="${g}"${collF.g===g?' selected':''}>${g}</option>`).join('')}</select></label><label>Tier <select id="cfT"><option value="all">All</option>${TORD.map(t=>`<option value="${t}"${collF.t===t?' selected':''}>${TIERS[t].n}</option>`).join('')}</select></label><label>Sort <select id="cfS"><option value="ovr"${collF.s==='ovr'?' selected':''}>Overall</option><option value="new"${collF.s==='new'?' selected':''}>Newest</option><option value="pos"${collF.s==='pos'?' selected':''}>Position</option></select></label><input id="cfQ" placeholder="Search names" value="${esc(collF.q)}"><button class="btn" id="cfB">${collF.back?'Show fronts':'Flip all cards'}</button></div>
-  <p class="muted">${cs.length} of ${UT.cards.length} cards. Click a card to sell, train, start or flip it.</p><div class="cgrid">${cs.map(c=>flipHTML(c,{back:collF.back})).join('')}</div>`;
+  <div class="solo"><div><b>Quick sell bench bronze and silver</b><span class="muted">Turns cards you don't start into training for your Power Ups.</span></div><button class="btn primary" id="qsAll">+${fmtN(UT.cards.filter(c=>!starterSlot(c.id)&&!c.pu&&(c.tier==='bronze'||c.tier==='silver')).reduce((a,c)=>a+qsTP(c),0))} training</button></div>
+  <p class="muted">${cs.length} of ${UT.cards.length} cards. Tap a card to start it, quick sell it for training, or flip it.</p><div class="cgrid">${cs.map(c=>flipHTML(c,{back:collF.back})).join('')}</div>`;
 }
-function bColl(){
+function bColl(){const qa=$('#qsAll');if(qa)qa.onclick=()=>{const L=UT.cards.filter(c=>!starterSlot(c.id)&&!c.pu&&(c.tier==='bronze'||c.tier==='silver'));if(!L.length)return toastUT('No bench bronze or silver cards');const v=L.reduce((a,c)=>a+qsTP(c),0),ids=new Set(L.map(c=>c.id));for(const c0 of L)chipReturn(c0);UT.cards=UT.cards.filter(c=>!ids.has(c.id));UT.tp=(UT.tp||0)+v;utSave();renderUT();toastUT(`Sold ${L.length} cards for ${fmtN(v)} training`)};
   const re=()=>{renderUT();const q=$('#cfQ');if(q&&collF.q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}};
   $('#cfG').onchange=e=>{collF.g=e.target.value;re()};$('#cfT').onchange=e=>{collF.t=e.target.value;re()};$('#cfS').onchange=e=>{collF.s=e.target.value;re()};$('#cfQ').oninput=e=>{collF.q=e.target.value;re()};
   $('#cfB').onclick=()=>{collF.back=!collF.back;re()};
@@ -4474,14 +4493,14 @@ function cardDetail(id){
   const btns=[];
   if(false)for(const f of UT.cards.filter(x=>x.pid===c.pid&&x.id!==id&&!starterSlot(x.id)))btns.push([`Merge ${f.prog} ${f.ovr} (+${Math.min(capUp(c)-c.up,mergeGain(c,f))})`,()=>{c.up=Math.min(capUp(c),c.up+mergeGain(c,f));chipReturn(f);UT.cards=UT.cards.filter(x=>x!==f);utSave();toastUT(`Merged: ${c.n} is now ${effOvr(c)}`);cardDetail(id);renderUT()}]);
   for(const k of SLOTK.filter(k=>SLOTGRP[k]===c.pos&&UT.lineup[k]!==id))btns.push([`Start at ${k} (over ${effOvr(cardById(UT.lineup[k]))})`,()=>{setSlot(k,id);closeModal();renderUT()},'alt']);
-  if(!st){btns.push([`Quick sell +${fmtN(qsCoins(c))} coins`,()=>sellCard(c,'coins'),'alt']);0}
+  if(!st){btns.push([`Quick sell +${fmtN(qsTP(c))} training`,()=>sellCard(c,'tp'),'alt']);0}
   btns.push(['Close',closeModal,'alt']);
   const next=Object.keys(ABDEF).filter(k=>!ab.includes(k)).map(k=>{for(const add of [1,2,3,4,5,6,8,10,12,15,20,25]){const r={};for(const rk of RSET[c.pos])r[rk]=clamp(cRat(c,rk)+add,20,99);if(abilities(c.pos,r).includes(k))return[k,add]}return null}).filter(Boolean).sort((a,b)=>a[1]-b[1]).slice(0,3);
   const stl=c.st&&Object.keys(c.st).length?`<p class="muted">Imported stats: ${Object.entries(c.st).slice(0,6).map(([k,v])=>`${k} ${v}`).join(', ')}</p>`:'';
   const line=[gs(c,'py')&&`${gs(c,'py')} pass yds`,gs(c,'ry')&&`${gs(c,'ry')} rush yds`,gs(c,'cy')&&`${gs(c,'cy')} rec yds`,(gs(c,'ptd')+gs(c,'rtd')+gs(c,'ctd'))&&`${gs(c,'ptd')+gs(c,'rtd')+gs(c,'ctd')} TD`,gs(c,'tkl')&&`${gs(c,'tkl')} tackles`].filter(Boolean).join(', ');
-  const PS=pathSection(c);
+  const PS='';
   utModal(`<div class="detail"><div>${flipHTML(c,{big:true})}<p class="muted" style="text-align:center">Click the card to flip it</p></div><div>${PS?`<div class="pathbox">${PS}</div>`:''}<h3>${esc(c.n)}</h3><p>${GRPNAME[c.pos]}, #${c.num}, ${c.pu?'Power Up':T.n+' '+esc(c.prog)}</p>
-  <p>Overall ${effOvr(c)}: card ${c.ovr}, upgraded +${c.up}${st?`, chemistry +${effOvr(c)-c.ovr-c.up}`:''}. Player baseline ${c.B||c.ovr}, ceiling ${c.pot}. ${c.pu?'Experience can level him all the way to his ceiling.':'Experience can level him up to his baseline; past that, train or merge.'} XP ${c.xp||0}/${100+25*c.up}.</p>${versionsHTML(c)}
+  <p>Overall ${effOvr(c)}: card ${c.ovr}, upgraded +${c.up}${st?`, chemistry +${effOvr(c)-c.ovr-c.up}`:''}. Player baseline ${c.B||c.ovr}. ${c.pu?'Power Up: train him with training points all the way to 99 in the Power Ups tab.':'Regular cards stay at this rating. Only Power Ups upgrade.'}</p>${versionsHTML(c)}
   <table>${RSET[c.pos].map(k=>`<tr><td><b>${RLAB[k]}</b></td><td class="n">${cRat(c,k)}</td><td class="muted">${RDESC[k]}</td></tr>`).join('')}</table>
   <p><b>Abilities</b></p>${abInfoHTML(ab,sigOf(c))}
   ${next.length?`<p class="muted">Next unlocks: ${next.map(([k,a])=>`${ABDEF[k].n} at about +${a}`).join(', ')}</p>`:''}
@@ -4492,13 +4511,13 @@ function sellCard(c,how){if(starterSlot(c.id))return;chipReturn(c);UT.cards=UT.c
 
 // ================= TUTORIAL: Ultimate Team tour =================
 const TOUR=[
-  {t:'Welcome to Ultimate Team',b:()=>`<p>The loop: <b>play games</b>, earn <b>coins, packs and chips</b>, make your team better. The <b>Next up</b> box on the Play tab always tells you the one thing to do next.</p>`},
+  {t:'Welcome to Ultimate Team',b:()=>`<p>The loop: <b>win games</b> for coins, open packs, <b>quick sell</b> extras for training, and <b>train Power Ups</b> to 99. The <b>Next up</b> box on the Play tab always tells you the one thing to do next.</p>`},
   {tab:'play',sel:'#utBody .action',t:'Next up',b:()=>`<p>Your to-do list. Tap the button and it takes you right there: open packs, equip chips, pick Power Up rewards, or play your next game.</p>`},
   {tab:'team',sel:'#auto',t:'Team',b:()=>`<p>Your lineup. Tap a slot to swap a player, or let it pick your best lineup. Same-team starters give chemistry boosts.</p>`},
   {tab:'team',sel:'#utBody h3',t:'Ability chips',b:()=>`<p>Abilities and X-Factors are <b>chips</b>. Tap a spare chip to put it on a starter. Better players have more slots, and some chips need a skill rating.</p><p>Only <b>5 abilities and 3 X-Factors</b> work in a game, so you choose which.</p>`},
   {tab:'cards',sel:'#utBody .row',t:'Cards',b:()=>`<p>Your collection and every player in the game, including <b>Throwback legends</b>. Tap a card to start, sell or look at it. Selling keeps its chips.</p>`},
   {tab:'store',sel:'#utBody .row',t:'Store',b:()=>`<p>Packs (with exact odds and bonus chips), the Market for one specific player, and <b>Trade-ins</b> that turn bench cards into chips and packs. The Featured pack changes every week.</p>`},
-  {tab:'pu',sel:'#utBody .lhint',t:'Power Ups',b:()=>`<p>Power Ups grow by <b>playing</b>. Start them and they earn XP from their own stats. Every level is +1 overall, every 3 levels you pick a free chip, and at max they get an X-Factor slot.</p>`},
+  {tab:'pu',sel:'#fantasy',up:'.action',t:'Power Ups',b:()=>`<p>Every player has a <b>Power Up</b> card that can be trained to <b>99</b>. Get one from a Fantasy Pack (your first is free) or buy any player's in Cards.</p><p>Quick sell cards you don't need for <b>training</b>, then spend it here. Every 3 levels you pick a free chip, and at 99 he gets an X-Factor slot.</p>`},
   {tab:'play',sel:'#qm',up:'.action',t:'Go play',b:()=>`<p>That's it. Play a game and check Next up after.</p>`}
 ];
 let TOURI=-1;
@@ -4594,9 +4613,9 @@ function walkout(c){
   PK.walkSkip=()=>{ts.forEach(clearTimeout);ts.length=0;reveal()};
 }
 function pkDone(){
-  if(!PK||PK.state==='done')return;PK.state='done';const bronze=PK.cards.filter(c=>c.tier==='bronze'),val=bronze.reduce((s,c)=>s+qsCoins(c),0);
-  const f=$('#pkfoot');f.innerHTML=`${PK.chips&&PK.chips.length?`<p class="pk-hint" style="color:#ffd23f">Bonus chip${PK.chips.length>1?'s':''}: ${PK.chips.map(k=>chipLabel(k)).join(', ')}. Equip it in Team.</p>`:''}<div class="row" style="justify-content:center"><button class="btn primary" id="pkOk">Send to collection</button>${bronze.length?`<button class="btn" id="pkQs">Quick sell ${bronze.length} bronze (+${fmtN(val)})</button>`:''}</div>`;
-  $('#pkOk').onclick=pkClose;if(bronze.length)$('#pkQs').onclick=()=>{const ids=new Set(bronze.map(c=>c.id));for(const c0 of UT.cards)if(ids.has(c0.id))chipReturn(c0);UT.cards=UT.cards.filter(c=>!ids.has(c.id));UT.coins+=val;utSave();pkClose()};
+  if(!PK||PK.state==='done')return;PK.state='done';const bronze=PK.cards.filter(c=>c.tier==='bronze'||c.tier==='silver'),val=bronze.reduce((s,c)=>s+qsTP(c),0);
+  const f=$('#pkfoot');f.innerHTML=`${PK.chips&&PK.chips.length?`<p class="pk-hint" style="color:#ffd23f">Bonus chip${PK.chips.length>1?'s':''}: ${PK.chips.map(k=>chipLabel(k)).join(', ')}. Equip it in Team.</p>`:''}<div class="row" style="justify-content:center"><button class="btn primary" id="pkOk">Send to collection</button>${bronze.length?`<button class="btn" id="pkQs">Quick sell ${bronze.length} bronze and silver (+${fmtN(val)} training)</button>`:''}</div>`;
+  $('#pkOk').onclick=pkClose;if(bronze.length)$('#pkQs').onclick=()=>{const ids=new Set(bronze.map(c=>c.id));for(const c0 of UT.cards)if(ids.has(c0.id))chipReturn(c0);UT.cards=UT.cards.filter(c=>!ids.has(c.id));UT.tp=(UT.tp||0)+val;utSave();pkClose()};
 }
 function pkClose(){PK=null;$('#packov').classList.add('hidden');$('#packov').innerHTML='';renderUT()}
 function refreshMarket(){UT.market=Array.from({length:12},()=>{const t=wpick([['bronze',40],['silver',35],['gold',20],['elite',4.5],['legend',.5]]),c=genCard(wpick(POSW),t);return{c,price:Math.round(cardVal(c)*rnd(1.05,1.5)/10)*10}})}
