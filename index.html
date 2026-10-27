@@ -3570,6 +3570,15 @@ function drawBlocks(g){const R=G.R,pass=G.play&&G.play.kind==='pass',L=G.los;g.l
   else{const pairs=[['LT','DE1'],['LG','DT1'],['C','LB2'],['RG','DT2'],['RT','DE2']];for(const [o,d] of pairs)arrow(R[o],R[d],'#fff');if(R.TE&&!R.TE.wps)arrow(R.TE,R.LB3,'#fff');
     const rb=R.RB,r=G.play.run,ty={iz:MID+.5,counter:MID+5,tossL:MID-12,tossR:MID+14,sneak:MID}[r]||MID,tx=L+5;if(r!=='sneak'){const pts=[[rb.x,rb.y],[L-2.5,r==='counter'?MID-2:(rb.y+ty)/2],[tx,ty]];g.strokeStyle='#000';g.lineWidth=5;g.beginPath();pts.forEach(([x,y],j)=>j?g.lineTo(sxW(x),syW(y)):g.moveTo(sxW(x),syW(y)));g.stroke();g.strokeStyle='#ffd23f';g.lineWidth=3;g.beginPath();pts.forEach(([x,y],j)=>j?g.lineTo(sxW(x),syW(y)):g.moveTo(sxW(x),syW(y)));g.stroke()}}
   g.lineWidth=1}
+// hole lanes at the line: green open, yellow closing, dim outline opening soon, red X blocked
+function drawHoles(g){const t=G.phase==='run'?G.runT:-1,x0=sxW(G.los-2.6),x1=sxW(G.los+3.4),w=x1-x0,bl=Math.floor(G.anim*8)%2;
+  for(const gp of G.gaps){const ya=syW(gp.y-.7),yb=syW(gp.y+.7),h=yb-ya,ym=Math.round((ya+yb)/2);
+    let st;if(t<0)st=gp.can?'pre':'shut';else if(!gp.can||t>=(gp.tC||0))st='shut';else if(t<(gp.tO||0))st='soon';else st=gp.closing?'closing':'open';
+    if(st==='shut'){g.globalAlpha=t<0?.45:.75;const cx=x0+Math.round(w/2);for(let i=-3;i<=3;i++){AP(g,cx+i-1,ym+i-1,3,3,'#000');AP(g,cx+i-1,ym-i-1,3,3,'#000')}for(let i=-3;i<=3;i++){AP(g,cx+i,ym+i,1,1,'#ff5a47');AP(g,cx+i,ym-i,1,1,'#ff5a47')}g.globalAlpha=1;continue}
+    if(st==='pre'||st==='soon'){g.globalAlpha=st==='pre'?.6:.8;const c=st==='pre'?'#6cff8a':'#ffffff';for(let x=x0;x<x1;x+=4){AP(g,x,ya,2,1,c);AP(g,x,yb-1,2,1,c)}AP(g,x0,ya,1,h,c);AP(g,x1-1,ya,1,h,c);g.globalAlpha=1;continue}
+    const col=st==='closing'?(bl?'#ffd23f':'#ff8a3a'):(gp.design?'#6cff8a':'#9dffb4');
+    g.globalAlpha=.3;AP(g,x0,ya,w,h,col);g.globalAlpha=1;AP(g,x0-1,ya-1,w+2,1,'#000');AP(g,x0-1,yb,w+2,1,'#000');AP(g,x0,ya,w,1,col);AP(g,x0,yb-1,w,1,col);
+    for(let k=0;k<4;k++){const x=x0+4+((k*14+Math.floor(G.anim*36))%(w-10));g.fillStyle='#000';g.beginPath();g.moveTo(x-2,ym-6);g.lineTo(x+6,ym);g.lineTo(x-2,ym+6);g.lineTo(x+1,ym);g.closePath();g.fill();g.fillStyle=col;g.beginPath();g.moveTo(x-1,ym-4.5);g.lineTo(x+4.5,ym);g.lineTo(x-1,ym+4.5);g.lineTo(x+1.2,ym);g.closePath();g.fill()}}}
 function render(rdt){
   if(G.cu&&G.cu.px2&&G.cu.px&&G.cu.px.t>.05)return; // 3D zoom scene covers the field; don't draw the 2D game under it
   const g=bx;g.imageSmoothingEnabled=false;afxTick(rdt);
@@ -3582,11 +3591,7 @@ function render(rdt){
   const fb=syW(53.3),f0=syW(0);
   if(G.ents.length&&['pre','set','live'].includes(G.phase)){g.fillStyle='rgba(80,160,255,.9)';g.fillRect(sxW(G.los),f0,2,fb-f0);if(G.fd<100){g.fillStyle='rgba(255,210,63,.95)';g.fillRect(sxW(10+G.fd),f0,2,fb-f0)}}
   if(['set','live','run','air'].includes(G.phase)&&!G.hl)drawStars(g);
-  if(!G.demo&&G.gaps&&G.play&&G.play.kind==='run'&&!G.hl&&(G.phase==='live'||(G.phase==='run'&&G.carrier&&G.carrier.x<G.los+2&&!G.carrier.holeDone))){
-    const a=G.phase==='live'?.9:clamp(1-G.runT/1.4,0,1)*.9,x0=sxW(G.los+.9);g.globalAlpha=a;
-    for(const gp of G.gaps){if(!gp.open)continue;const y=syW(gp.y)-2,col=gp.closing?'#ffd23f':gp.design?'#6cff8a':'#b9ffc9';
-      for(let k=0;k<2;k++){const x=x0+k*6+(Math.floor(G.anim*6)%2);g.fillStyle='#000';g.beginPath();g.moveTo(x-1,y-5);g.lineTo(x+5,y);g.lineTo(x-1,y+5);g.lineTo(x+1,y);g.closePath();g.fill();g.fillStyle=col;g.beginPath();g.moveTo(x,y-4);g.lineTo(x+4,y);g.lineTo(x,y+4);g.lineTo(x+1.5,y);g.closePath();g.fill()}}
-    g.globalAlpha=1}
+
 
   if(['pre','set','live','run','air'].includes(G.phase)&&!G.hl&&G.zone)drawZoneFx(g);
   if(G.phase==='set'){const live=false;
@@ -3649,6 +3654,7 @@ function render(rdt){
     G.trail.forEach(([tx,ty,th],i)=>{g.fillStyle=`rgba(255,255,255,${i/G.trail.length*.5})`;g.fillRect(sxW(tx),syW(ty)-Math.round(th*PPX*.8)-10,2,2)});
     const by=y-Math.round(b.h*PPX*.8)-10,sp=Math.floor(G.anim*16)%2;g.fillStyle='#1a1010';g.fillRect(x-3,by-2,7,5);g.fillStyle='#7a3f14';g.fillRect(x-2,by-1,5,3);g.fillStyle='#fff';g.fillRect(x-1+sp,by-1,1,1)}
   if(G.celeb&&G.celeb.ball){const b=G.celeb.ball,x=sxW(b.x),y=syW(G.celeb.c.y);g.fillStyle='rgba(0,0,0,.35)';g.fillRect(x-2,y,5,2);const by=y-Math.round(b.z)-3;g.fillStyle='#1a1010';g.fillRect(x-3,by-2,7,5);g.fillStyle='#7a3f14';g.fillRect(x-2,by-1,5,3)}
+  if(!G.demo&&G.gaps&&G.play&&G.play.kind==='run'&&!G.hl&&(G.phase==='live'||(G.phase==='run'&&G.carrier&&G.carrier.x<G.los+3&&!G.carrier.holeDone)))drawHoles(g);
   afxDraw(g,'over');
   g.font='9px "Press Start 2P", monospace';g.textAlign='center';g.textBaseline='middle';
   if(G.chg){if(!canAim())G.chg=null;else{const C=G.chg,r=C.r,sec=(performance.now()-C.t0)/1000,f=clamp(sec/CHG_FULL,0,1),band=chgBand(sec),col=band==='bullet'?'#ff5a3c':band==='touch'?'#ffd23f':'#5ad1ff',x=sxW(r.x),y=syW(r.y)-10;
