@@ -1,0 +1,1357 @@
+{
+ "throwbacks": [
+  {
+   "name": "Tom Brady",
+   "position": "QB",
+   "team": "NE",
+   "number": 12,
+   "overall": 99,
+   "season": 2007,
+   "stats": {
+    "passingYards": 4806,
+    "passingTouchdowns": 50,
+    "interceptionsThrown": 8,
+    "rushingYards": 98
+   }
+  },
+  {
+   "name": "Peyton Manning",
+   "position": "QB",
+   "team": "IND",
+   "number": 18,
+   "overall": 99,
+   "season": 2004,
+   "stats": {
+    "passingYards": 4557,
+    "passingTouchdowns": 49,
+    "interceptionsThrown": 10,
+    "rushingYards": 38
+   }
+  },
+  {
+   "name": "Joe Montana",
+   "position": "QB",
+   "team": "SF",
+   "number": 16,
+   "overall": 97,
+   "season": 1989,
+   "stats": {
+    "passingYards": 3521,
+    "passingTouchdowns": 26,
+    "interceptionsThrown": 8,
+    "rushingYards": 227
+   }
+  },
+  {
+   "name": "Dan Marino",
+   "position": "QB",
+   "team": "MIA",
+   "number": 13,
+   "overall": 97,
+   "season": 1984,
+   "stats": {
+    "passingYards": 5084,
+    "passingTouchdowns": 48,
+    "interceptionsThrown": 17,
+    "rushingYards": -7
+   }
+  },
+  {
+   "name": "Drew Brees",
+   "position": "QB",
+   "team": "NO",
+   "number": 9,
+   "overall": 96,
+   "season": 2011,
+   "stats": {
+    "passingYards": 5476,
+    "passingTouchdowns": 46,
+    "interceptionsThrown": 14,
+    "rushingYards": 86
+   }
+  },
+  {
+   "name": "Aaron Rodgers",
+   "position": "QB",
+   "team": "GB",
+   "number": 12,
+   "overall": 97,
+   "season": 2011,
+   "stats": {
+    "passingYards": 4643,
+    "passingTouchdowns": 45,
+    "interceptionsThrown": 6,
+    "rushingYards": 257
+   }
+  },
+  {
+   "name": "John Elway",
+   "position": "QB",
+   "team": "DEN",
+   "number": 7,
+   "overall": 95,
+   "season": 1993,
+   "stats": {
+    "passingYards": 4030,
+    "passingTouchdowns": 25,
+    "interceptionsThrown": 10,
+    "rushingYards": 153
+   }
+  },
+  {
+   "name": "Brett Favre",
+   "position": "QB",
+   "team": "GB",
+   "number": 4,
+   "overall": 95,
+   "season": 1996,
+   "stats": {
+    "passingYards": 3899,
+    "passingTouchdowns": 39,
+    "interceptionsThrown": 13,
+    "rushingYards": 136
+   }
+  },
+  {
+   "name": "Steve Young",
+   "position": "QB",
+   "team": "SF",
+   "number": 8,
+   "overall": 95,
+   "season": 1994,
+   "stats": {
+    "passingYards": 3969,
+    "passingTouchdowns": 35,
+    "interceptionsThrown": 10,
+    "rushingYards": 293
+   }
+  },
+  {
+   "name": "Johnny Unitas",
+   "position": "QB",
+   "team": "IND",
+   "number": 19,
+   "overall": 93,
+   "season": 1959,
+   "stats": {
+    "passingYards": 2899,
+    "passingTouchdowns": 32,
+    "interceptionsThrown": 14,
+    "rushingYards": 145
+   }
+  },
+  {
+   "name": "Kurt Warner",
+   "position": "QB",
+   "team": "LAR",
+   "number": 13,
+   "overall": 93,
+   "season": 1999,
+   "stats": {
+    "passingYards": 4353,
+    "passingTouchdowns": 41,
+    "interceptionsThrown": 13,
+    "rushingYards": 92
+   }
+  },
+  {
+   "name": "Michael Vick",
+   "position": "QB",
+   "team": "ATL",
+   "number": 7,
+   "overall": 91,
+   "season": 2006,
+   "stats": {
+    "passingYards": 2474,
+    "passingTouchdowns": 20,
+    "interceptionsThrown": 13,
+    "rushingYards": 1039
+   }
+  },
+  {
+   "name": "Troy Aikman",
+   "position": "QB",
+   "team": "DAL",
+   "number": 8,
+   "overall": 92,
+   "season": 1992,
+   "stats": {
+    "passingYards": 3445,
+    "passingTouchdowns": 23,
+    "interceptionsThrown": 14,
+    "rushingYards": 105
+   }
+  },
+  {
+   "name": "Jim Kelly",
+   "position": "QB",
+   "team": "BUF",
+   "number": 12,
+   "overall": 92,
+   "season": 1991,
+   "stats": {
+    "passingYards": 3844,
+    "passingTouchdowns": 33,
+    "interceptionsThrown": 17,
+    "rushingYards": 45
+   }
+  },
+  {
+   "name": "Warren Moon",
+   "position": "QB",
+   "team": "TEN",
+   "number": 1,
+   "overall": 91,
+   "season": 1990,
+   "stats": {
+    "passingYards": 4689,
+    "passingTouchdowns": 33,
+    "interceptionsThrown": 13,
+    "rushingYards": 215
+   }
+  },
+  {
+   "name": "Roger Staubach",
+   "position": "QB",
+   "team": "DAL",
+   "number": 12,
+   "overall": 92,
+   "season": 1979,
+   "stats": {
+    "passingYards": 3586,
+    "passingTouchdowns": 27,
+    "interceptionsThrown": 11,
+    "rushingYards": 27
+   }
+  },
+  {
+   "name": "Terry Bradshaw",
+   "position": "QB",
+   "team": "PIT",
+   "number": 12,
+   "overall": 91,
+   "season": 1978,
+   "stats": {
+    "passingYards": 2915,
+    "passingTouchdowns": 28,
+    "interceptionsThrown": 20,
+    "rushingYards": 93
+   }
+  },
+  {
+   "name": "Barry Sanders",
+   "position": "RB",
+   "team": "DET",
+   "number": 20,
+   "overall": 99,
+   "season": 1997,
+   "stats": {
+    "rushingYards": 2053,
+    "touchdowns": 14,
+    "receivingYards": 305,
+    "receptions": 33
+   }
+  },
+  {
+   "name": "Walter Payton",
+   "position": "RB",
+   "team": "CHI",
+   "number": 34,
+   "overall": 98,
+   "season": 1977,
+   "stats": {
+    "rushingYards": 1852,
+    "touchdowns": 16,
+    "receivingYards": 269,
+    "receptions": 27
+   }
+  },
+  {
+   "name": "Jim Brown",
+   "position": "RB",
+   "team": "CLE",
+   "number": 32,
+   "overall": 98,
+   "season": 1963,
+   "stats": {
+    "rushingYards": 1863,
+    "touchdowns": 15,
+    "receivingYards": 268,
+    "receptions": 24
+   }
+  },
+  {
+   "name": "LaDainian Tomlinson",
+   "position": "RB",
+   "team": "LAC",
+   "number": 21,
+   "overall": 97,
+   "season": 2006,
+   "stats": {
+    "rushingYards": 1815,
+    "touchdowns": 31,
+    "receivingYards": 508,
+    "receptions": 56
+   }
+  },
+  {
+   "name": "Adrian Peterson",
+   "position": "RB",
+   "team": "MIN",
+   "number": 28,
+   "overall": 97,
+   "season": 2012,
+   "stats": {
+    "rushingYards": 2097,
+    "touchdowns": 12,
+    "receivingYards": 217,
+    "receptions": 40
+   }
+  },
+  {
+   "name": "Emmitt Smith",
+   "position": "RB",
+   "team": "DAL",
+   "number": 22,
+   "overall": 96,
+   "season": 1995,
+   "stats": {
+    "rushingYards": 1773,
+    "touchdowns": 25,
+    "receivingYards": 375,
+    "receptions": 62
+   }
+  },
+  {
+   "name": "Eric Dickerson",
+   "position": "RB",
+   "team": "LAR",
+   "number": 29,
+   "overall": 96,
+   "season": 1984,
+   "stats": {
+    "rushingYards": 2105,
+    "touchdowns": 14,
+    "receivingYards": 139,
+    "receptions": 21
+   }
+  },
+  {
+   "name": "Marshall Faulk",
+   "position": "RB",
+   "team": "LAR",
+   "number": 28,
+   "overall": 96,
+   "season": 2000,
+   "stats": {
+    "rushingYards": 1359,
+    "touchdowns": 26,
+    "receivingYards": 830,
+    "receptions": 81
+   }
+  },
+  {
+   "name": "Earl Campbell",
+   "position": "RB",
+   "team": "TEN",
+   "number": 34,
+   "overall": 95,
+   "season": 1980,
+   "stats": {
+    "rushingYards": 1934,
+    "touchdowns": 13,
+    "receivingYards": 47,
+    "receptions": 11
+   }
+  },
+  {
+   "name": "Terrell Davis",
+   "position": "RB",
+   "team": "DEN",
+   "number": 30,
+   "overall": 95,
+   "season": 1998,
+   "stats": {
+    "rushingYards": 2008,
+    "touchdowns": 23,
+    "receivingYards": 217,
+    "receptions": 25
+   }
+  },
+  {
+   "name": "Marcus Allen",
+   "position": "RB",
+   "team": "LV",
+   "number": 32,
+   "overall": 93,
+   "season": 1985,
+   "stats": {
+    "rushingYards": 1759,
+    "touchdowns": 14,
+    "receivingYards": 555,
+    "receptions": 67
+   }
+  },
+  {
+   "name": "Thurman Thomas",
+   "position": "RB",
+   "team": "BUF",
+   "number": 34,
+   "overall": 93,
+   "season": 1991,
+   "stats": {
+    "rushingYards": 1407,
+    "touchdowns": 12,
+    "receivingYards": 631,
+    "receptions": 62
+   }
+  },
+  {
+   "name": "Shaun Alexander",
+   "position": "RB",
+   "team": "SEA",
+   "number": 37,
+   "overall": 93,
+   "season": 2005,
+   "stats": {
+    "rushingYards": 1880,
+    "touchdowns": 28,
+    "receivingYards": 78,
+    "receptions": 15
+   }
+  },
+  {
+   "name": "Bo Jackson",
+   "position": "RB",
+   "team": "LV",
+   "number": 34,
+   "overall": 92,
+   "season": 1989,
+   "stats": {
+    "rushingYards": 950,
+    "touchdowns": 4,
+    "receivingYards": 69,
+    "receptions": 9
+   }
+  },
+  {
+   "name": "Edgerrin James",
+   "position": "RB",
+   "team": "IND",
+   "number": 32,
+   "overall": 92,
+   "season": 2000,
+   "stats": {
+    "rushingYards": 1709,
+    "touchdowns": 18,
+    "receivingYards": 594,
+    "receptions": 63
+   }
+  },
+  {
+   "name": "Tony Dorsett",
+   "position": "RB",
+   "team": "DAL",
+   "number": 33,
+   "overall": 92,
+   "season": 1981,
+   "stats": {
+    "rushingYards": 1646,
+    "touchdowns": 4,
+    "receivingYards": 325,
+    "receptions": 32
+   }
+  },
+  {
+   "name": "Jerry Rice",
+   "position": "WR",
+   "team": "SF",
+   "number": 80,
+   "overall": 99,
+   "season": 1995,
+   "stats": {
+    "receptions": 122,
+    "receivingYards": 1848,
+    "touchdowns": 15
+   }
+  },
+  {
+   "name": "Randy Moss",
+   "position": "WR",
+   "team": "MIN",
+   "number": 84,
+   "overall": 99,
+   "season": 2003,
+   "stats": {
+    "receptions": 111,
+    "receivingYards": 1632,
+    "touchdowns": 17
+   }
+  },
+  {
+   "name": "Calvin Johnson",
+   "position": "WR",
+   "team": "DET",
+   "number": 81,
+   "overall": 98,
+   "season": 2012,
+   "stats": {
+    "receptions": 122,
+    "receivingYards": 1964,
+    "touchdowns": 5
+   }
+  },
+  {
+   "name": "Antonio Brown",
+   "position": "WR",
+   "team": "PIT",
+   "number": 84,
+   "overall": 96,
+   "season": 2015,
+   "stats": {
+    "receptions": 136,
+    "receivingYards": 1834,
+    "touchdowns": 10
+   }
+  },
+  {
+   "name": "Marvin Harrison",
+   "position": "WR",
+   "team": "IND",
+   "number": 88,
+   "overall": 96,
+   "season": 2002,
+   "stats": {
+    "receptions": 143,
+    "receivingYards": 1722,
+    "touchdowns": 11
+   }
+  },
+  {
+   "name": "Terrell Owens",
+   "position": "WR",
+   "team": "SF",
+   "number": 81,
+   "overall": 95,
+   "season": 2001,
+   "stats": {
+    "receptions": 93,
+    "receivingYards": 1412,
+    "touchdowns": 16
+   }
+  },
+  {
+   "name": "Larry Fitzgerald",
+   "position": "WR",
+   "team": "ARI",
+   "number": 11,
+   "overall": 95,
+   "season": 2008,
+   "stats": {
+    "receptions": 96,
+    "receivingYards": 1431,
+    "touchdowns": 12
+   }
+  },
+  {
+   "name": "Andre Johnson",
+   "position": "WR",
+   "team": "HOU",
+   "number": 80,
+   "overall": 94,
+   "season": 2008,
+   "stats": {
+    "receptions": 115,
+    "receivingYards": 1575,
+    "touchdowns": 8
+   }
+  },
+  {
+   "name": "Steve Smith",
+   "position": "WR",
+   "team": "CAR",
+   "number": 89,
+   "overall": 93,
+   "season": 2005,
+   "stats": {
+    "receptions": 103,
+    "receivingYards": 1563,
+    "touchdowns": 12
+   }
+  },
+  {
+   "name": "Cris Carter",
+   "position": "WR",
+   "team": "MIN",
+   "number": 80,
+   "overall": 93,
+   "season": 1995,
+   "stats": {
+    "receptions": 122,
+    "receivingYards": 1371,
+    "touchdowns": 17
+   }
+  },
+  {
+   "name": "Michael Irvin",
+   "position": "WR",
+   "team": "DAL",
+   "number": 88,
+   "overall": 93,
+   "season": 1995,
+   "stats": {
+    "receptions": 111,
+    "receivingYards": 1603,
+    "touchdowns": 10
+   }
+  },
+  {
+   "name": "Isaac Bruce",
+   "position": "WR",
+   "team": "LAR",
+   "number": 80,
+   "overall": 92,
+   "season": 1995,
+   "stats": {
+    "receptions": 119,
+    "receivingYards": 1781,
+    "touchdowns": 13
+   }
+  },
+  {
+   "name": "Torry Holt",
+   "position": "WR",
+   "team": "LAR",
+   "number": 81,
+   "overall": 92,
+   "season": 2003,
+   "stats": {
+    "receptions": 117,
+    "receivingYards": 1696,
+    "touchdowns": 12
+   }
+  },
+  {
+   "name": "Reggie Wayne",
+   "position": "WR",
+   "team": "IND",
+   "number": 87,
+   "overall": 92,
+   "season": 2007,
+   "stats": {
+    "receptions": 104,
+    "receivingYards": 1510,
+    "touchdowns": 10
+   }
+  },
+  {
+   "name": "Lance Alworth",
+   "position": "WR",
+   "team": "LAC",
+   "number": 19,
+   "overall": 92,
+   "season": 1965,
+   "stats": {
+    "receptions": 69,
+    "receivingYards": 1602,
+    "touchdowns": 14
+   }
+  },
+  {
+   "name": "Tim Brown",
+   "position": "WR",
+   "team": "LV",
+   "number": 81,
+   "overall": 91,
+   "season": 1997,
+   "stats": {
+    "receptions": 104,
+    "receivingYards": 1408,
+    "touchdowns": 5
+   }
+  },
+  {
+   "name": "Chad Johnson",
+   "position": "WR",
+   "team": "CIN",
+   "number": 85,
+   "overall": 91,
+   "season": 2005,
+   "stats": {
+    "receptions": 97,
+    "receivingYards": 1432,
+    "touchdowns": 9
+   }
+  },
+  {
+   "name": "Rob Gronkowski",
+   "position": "TE",
+   "team": "NE",
+   "number": 87,
+   "overall": 97,
+   "season": 2011,
+   "stats": {
+    "receptions": 90,
+    "receivingYards": 1327,
+    "touchdowns": 17
+   }
+  },
+  {
+   "name": "Tony Gonzalez",
+   "position": "TE",
+   "team": "KC",
+   "number": 88,
+   "overall": 96,
+   "season": 2004,
+   "stats": {
+    "receptions": 102,
+    "receivingYards": 1258,
+    "touchdowns": 7
+   }
+  },
+  {
+   "name": "Antonio Gates",
+   "position": "TE",
+   "team": "LAC",
+   "number": 85,
+   "overall": 94,
+   "season": 2005,
+   "stats": {
+    "receptions": 89,
+    "receivingYards": 1101,
+    "touchdowns": 10
+   }
+  },
+  {
+   "name": "Shannon Sharpe",
+   "position": "TE",
+   "team": "DEN",
+   "number": 84,
+   "overall": 93,
+   "season": 1996,
+   "stats": {
+    "receptions": 80,
+    "receivingYards": 1062,
+    "touchdowns": 10
+   }
+  },
+  {
+   "name": "Kellen Winslow",
+   "position": "TE",
+   "team": "LAC",
+   "number": 80,
+   "overall": 92,
+   "season": 1980,
+   "stats": {
+    "receptions": 89,
+    "receivingYards": 1290,
+    "touchdowns": 9
+   }
+  },
+  {
+   "name": "Mike Ditka",
+   "position": "TE",
+   "team": "CHI",
+   "number": 89,
+   "overall": 90,
+   "season": 1961,
+   "stats": {
+    "receptions": 56,
+    "receivingYards": 1076,
+    "touchdowns": 12
+   }
+  },
+  {
+   "name": "Anthony Munoz",
+   "position": "OL",
+   "team": "CIN",
+   "number": 78,
+   "overall": 98,
+   "season": 1988,
+   "stats": {}
+  },
+  {
+   "name": "Jonathan Ogden",
+   "position": "OL",
+   "team": "BAL",
+   "number": 75,
+   "overall": 97,
+   "season": 2003,
+   "stats": {}
+  },
+  {
+   "name": "Walter Jones",
+   "position": "OL",
+   "team": "SEA",
+   "number": 71,
+   "overall": 97,
+   "season": 2005,
+   "stats": {}
+  },
+  {
+   "name": "Larry Allen",
+   "position": "OL",
+   "team": "DAL",
+   "number": 73,
+   "overall": 96,
+   "season": 1997,
+   "stats": {}
+  },
+  {
+   "name": "Joe Thomas",
+   "position": "OL",
+   "team": "CLE",
+   "number": 73,
+   "overall": 96,
+   "season": 2010,
+   "stats": {}
+  },
+  {
+   "name": "Bruce Matthews",
+   "position": "OL",
+   "team": "TEN",
+   "number": 74,
+   "overall": 95,
+   "season": 1992,
+   "stats": {}
+  },
+  {
+   "name": "Orlando Pace",
+   "position": "OL",
+   "team": "LAR",
+   "number": 76,
+   "overall": 95,
+   "season": 1999,
+   "stats": {}
+  },
+  {
+   "name": "John Hannah",
+   "position": "OL",
+   "team": "NE",
+   "number": 73,
+   "overall": 95,
+   "season": 1978,
+   "stats": {}
+  },
+  {
+   "name": "Mike Webster",
+   "position": "OL",
+   "team": "PIT",
+   "number": 52,
+   "overall": 94,
+   "season": 1980,
+   "stats": {}
+  },
+  {
+   "name": "Forrest Gregg",
+   "position": "OL",
+   "team": "GB",
+   "number": 75,
+   "overall": 93,
+   "season": 1962,
+   "stats": {}
+  },
+  {
+   "name": "Reggie White",
+   "position": "DL",
+   "team": "PHI",
+   "number": 92,
+   "overall": 99,
+   "season": 1987,
+   "stats": {
+    "sacks": 21,
+    "tackles": 76,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "Aaron Donald",
+   "position": "DL",
+   "team": "LAR",
+   "number": 99,
+   "overall": 99,
+   "season": 2018,
+   "stats": {
+    "sacks": 20.5,
+    "tackles": 59,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "J.J. Watt",
+   "position": "DL",
+   "team": "HOU",
+   "number": 99,
+   "overall": 98,
+   "season": 2012,
+   "stats": {
+    "sacks": 20.5,
+    "tackles": 81,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "Bruce Smith",
+   "position": "DL",
+   "team": "BUF",
+   "number": 78,
+   "overall": 97,
+   "season": 1990,
+   "stats": {
+    "sacks": 19,
+    "tackles": 101,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "Deacon Jones",
+   "position": "DL",
+   "team": "LAR",
+   "number": 75,
+   "overall": 96,
+   "season": 1967,
+   "stats": {
+    "sacks": 26,
+    "tackles": 55,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "Joe Greene",
+   "position": "DL",
+   "team": "PIT",
+   "number": 75,
+   "overall": 96,
+   "season": 1972,
+   "stats": {
+    "sacks": 11,
+    "tackles": 54,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "Michael Strahan",
+   "position": "DL",
+   "team": "NYG",
+   "number": 92,
+   "overall": 95,
+   "season": 2001,
+   "stats": {
+    "sacks": 22.5,
+    "tackles": 73,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "Julius Peppers",
+   "position": "DL",
+   "team": "CAR",
+   "number": 90,
+   "overall": 94,
+   "season": 2004,
+   "stats": {
+    "sacks": 11,
+    "tackles": 64,
+    "interceptions": 2
+   }
+  },
+  {
+   "name": "Warren Sapp",
+   "position": "DL",
+   "team": "TB",
+   "number": 99,
+   "overall": 94,
+   "season": 2000,
+   "stats": {
+    "sacks": 16.5,
+    "tackles": 52,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "Jason Taylor",
+   "position": "DL",
+   "team": "MIA",
+   "number": 99,
+   "overall": 93,
+   "season": 2006,
+   "stats": {
+    "sacks": 13.5,
+    "tackles": 62,
+    "interceptions": 2
+   }
+  },
+  {
+   "name": "Lawrence Taylor",
+   "position": "LB",
+   "team": "NYG",
+   "number": 56,
+   "overall": 99,
+   "season": 1986,
+   "stats": {
+    "sacks": 20.5,
+    "tackles": 105,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "Ray Lewis",
+   "position": "LB",
+   "team": "BAL",
+   "number": 52,
+   "overall": 98,
+   "season": 2003,
+   "stats": {
+    "sacks": 1.5,
+    "tackles": 161,
+    "interceptions": 6
+   }
+  },
+  {
+   "name": "Dick Butkus",
+   "position": "LB",
+   "team": "CHI",
+   "number": 51,
+   "overall": 97,
+   "season": 1969,
+   "stats": {
+    "sacks": 5,
+    "tackles": 117,
+    "interceptions": 1
+   }
+  },
+  {
+   "name": "Derrick Thomas",
+   "position": "LB",
+   "team": "KC",
+   "number": 58,
+   "overall": 95,
+   "season": 1990,
+   "stats": {
+    "sacks": 20,
+    "tackles": 63,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "Junior Seau",
+   "position": "LB",
+   "team": "LAC",
+   "number": 55,
+   "overall": 95,
+   "season": 1994,
+   "stats": {
+    "sacks": 5.5,
+    "tackles": 155,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "Mike Singletary",
+   "position": "LB",
+   "team": "CHI",
+   "number": 50,
+   "overall": 94,
+   "season": 1985,
+   "stats": {
+    "sacks": 3,
+    "tackles": 113,
+    "interceptions": 1
+   }
+  },
+  {
+   "name": "Brian Urlacher",
+   "position": "LB",
+   "team": "CHI",
+   "number": 54,
+   "overall": 94,
+   "season": 2005,
+   "stats": {
+    "sacks": 6,
+    "tackles": 121,
+    "interceptions": 0
+   }
+  },
+  {
+   "name": "Jack Lambert",
+   "position": "LB",
+   "team": "PIT",
+   "number": 58,
+   "overall": 94,
+   "season": 1976,
+   "stats": {
+    "sacks": 2,
+    "tackles": 124,
+    "interceptions": 2
+   }
+  },
+  {
+   "name": "Patrick Willis",
+   "position": "LB",
+   "team": "SF",
+   "number": 52,
+   "overall": 94,
+   "season": 2009,
+   "stats": {
+    "sacks": 4,
+    "tackles": 152,
+    "interceptions": 3
+   }
+  },
+  {
+   "name": "Luke Kuechly",
+   "position": "LB",
+   "team": "CAR",
+   "number": 59,
+   "overall": 94,
+   "season": 2013,
+   "stats": {
+    "sacks": 2,
+    "tackles": 156,
+    "interceptions": 4
+   }
+  },
+  {
+   "name": "Deion Sanders",
+   "position": "CB",
+   "team": "ATL",
+   "number": 21,
+   "overall": 98,
+   "season": 1994,
+   "stats": {
+    "interceptions": 6,
+    "passesDefended": 16,
+    "tackles": 34,
+    "interceptionTouchdowns": 3
+   }
+  },
+  {
+   "name": "Darrelle Revis",
+   "position": "CB",
+   "team": "NYJ",
+   "number": 24,
+   "overall": 97,
+   "season": 2009,
+   "stats": {
+    "interceptions": 6,
+    "passesDefended": 31,
+    "tackles": 47
+   }
+  },
+  {
+   "name": "Rod Woodson",
+   "position": "CB",
+   "team": "PIT",
+   "number": 26,
+   "overall": 96,
+   "season": 1993,
+   "stats": {
+    "interceptions": 8,
+    "passesDefended": 20,
+    "tackles": 95
+   }
+  },
+  {
+   "name": "Champ Bailey",
+   "position": "CB",
+   "team": "DEN",
+   "number": 24,
+   "overall": 96,
+   "season": 2006,
+   "stats": {
+    "interceptions": 10,
+    "passesDefended": 21,
+    "tackles": 66
+   }
+  },
+  {
+   "name": "Charles Woodson",
+   "position": "CB",
+   "team": "GB",
+   "number": 21,
+   "overall": 95,
+   "season": 2009,
+   "stats": {
+    "interceptions": 9,
+    "passesDefended": 18,
+    "tackles": 74
+   }
+  },
+  {
+   "name": "Night Train Lane",
+   "position": "CB",
+   "team": "LAR",
+   "number": 81,
+   "overall": 94,
+   "season": 1952,
+   "stats": {
+    "interceptions": 14,
+    "passesDefended": 16,
+    "tackles": 40
+   }
+  },
+  {
+   "name": "Mel Blount",
+   "position": "CB",
+   "team": "PIT",
+   "number": 47,
+   "overall": 94,
+   "season": 1975,
+   "stats": {
+    "interceptions": 11,
+    "passesDefended": 18,
+    "tackles": 50
+   }
+  },
+  {
+   "name": "Ty Law",
+   "position": "CB",
+   "team": "NE",
+   "number": 24,
+   "overall": 93,
+   "season": 2003,
+   "stats": {
+    "interceptions": 6,
+    "passesDefended": 23,
+    "tackles": 63
+   }
+  },
+  {
+   "name": "Ronnie Lott",
+   "position": "S",
+   "team": "SF",
+   "number": 42,
+   "overall": 97,
+   "season": 1986,
+   "stats": {
+    "interceptions": 10,
+    "passesDefended": 17,
+    "tackles": 77
+   }
+  },
+  {
+   "name": "Ed Reed",
+   "position": "S",
+   "team": "BAL",
+   "number": 20,
+   "overall": 97,
+   "season": 2004,
+   "stats": {
+    "interceptions": 9,
+    "passesDefended": 22,
+    "tackles": 76
+   }
+  },
+  {
+   "name": "Troy Polamalu",
+   "position": "S",
+   "team": "PIT",
+   "number": 43,
+   "overall": 96,
+   "season": 2010,
+   "stats": {
+    "interceptions": 7,
+    "passesDefended": 14,
+    "tackles": 63
+   }
+  },
+  {
+   "name": "Brian Dawkins",
+   "position": "S",
+   "team": "PHI",
+   "number": 20,
+   "overall": 95,
+   "season": 2002,
+   "stats": {
+    "interceptions": 2,
+    "passesDefended": 10,
+    "tackles": 104,
+    "sacks": 3
+   }
+  },
+  {
+   "name": "Sean Taylor",
+   "position": "S",
+   "team": "WSH",
+   "number": 21,
+   "overall": 93,
+   "season": 2007,
+   "stats": {
+    "interceptions": 5,
+    "passesDefended": 11,
+    "tackles": 47
+   }
+  },
+  {
+   "name": "Paul Krause",
+   "position": "S",
+   "team": "MIN",
+   "number": 22,
+   "overall": 93,
+   "season": 1964,
+   "stats": {
+    "interceptions": 12,
+    "passesDefended": 16,
+    "tackles": 40
+   }
+  },
+  {
+   "name": "Steve Atwater",
+   "position": "S",
+   "team": "DEN",
+   "number": 27,
+   "overall": 92,
+   "season": 1991,
+   "stats": {
+    "interceptions": 5,
+    "passesDefended": 12,
+    "tackles": 110
+   }
+  },
+  {
+   "name": "Adam Vinatieri",
+   "position": "K",
+   "team": "NE",
+   "number": 4,
+   "overall": 94,
+   "season": 2004,
+   "stats": {
+    "fieldGoalsMade": 31,
+    "fieldGoalAttempts": 33
+   }
+  },
+  {
+   "name": "Morten Andersen",
+   "position": "K",
+   "team": "NO",
+   "number": 7,
+   "overall": 93,
+   "season": 1995,
+   "stats": {
+    "fieldGoalsMade": 31,
+    "fieldGoalAttempts": 37
+   }
+  },
+  {
+   "name": "Jason Elam",
+   "position": "K",
+   "team": "DEN",
+   "number": 1,
+   "overall": 91,
+   "season": 1998,
+   "stats": {
+    "fieldGoalsMade": 23,
+    "fieldGoalAttempts": 27
+   }
+  },
+  {
+   "name": "Ray Guy",
+   "position": "P",
+   "team": "LV",
+   "number": 8,
+   "overall": 96,
+   "season": 1977,
+   "stats": {}
+  }
+ ]
+}
