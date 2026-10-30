@@ -1341,7 +1341,7 @@ function drawMvPx(g,type,cx,cy,ps,col){const rows=MVPX[type];if(!rows)return;g.f
 const jMax=c=>3+(Rt(c.p,'agi')>=86?1:0);
 function fb(){}
 function fxWave(e,col,big){if(!G||G.demo||!e)return;(G.wv=G.wv||[]).push({x:e.x,y:e.y,col,t:0,dur:big?.6:.4,r:big?34:20})}
-function fxTeach(m){if(!G||G.demo)return;G.teach={m,t:1.3}}
+function fxTeach(m){}
 const WIND=.45,LUNGE=.36,PERF_LO=-.12,PERF_HI=.30;
 const perfWin=th=>{if(!th)return false;const c=G&&G.carrier,d=th.d;let w=0;if(c&&c.p&&d&&d.p&&!G.demo)w=clamp((Math.max(Rt(c.p,'agi'),Rt(c.p,'str'))-Rt(d.p,'tak'))*.006+(G.heat||0)*.02,-.08,.18);return th.ttc>=PERF_LO-w*.5&&th.ttc<=PERF_HI+w};
 
@@ -1910,7 +1910,7 @@ function contact(d,c){
         else{p=(q==='perfect'?.8:q==='good'?.55:.2)+edge*.012;if(G.mv.elite)p+=.08;if(c.zone)p+=.12;if(q==='perfect'&&G.mv.chain)p+=Math.min(.1,G.mv.chain*.04)}
         p=clamp(p,.03,.95);{const ab1=c.p&&c.p.abil,pf=q==='perfect',auto=pf&&((ab1==='ankle'&&mt==='juke'&&right)||(ab1==='truck'&&mt==='stiff'&&right)||(ab1==='superman'&&mt==='hurdle'&&right)||(ab1==='matrix'&&mt==='spin'&&right)||(ab1==='clone'&&mt==='juke')||(ab1==='glitchstep'&&mt==='juke')||(ab1==='shockwave'&&mt==='stiff'));if(auto){p=1;G.abFire={type:ab1,d}}else if(c.freeBeat>0){p=1;c.freeBeat=0}}G.lastMv={t:mt,p,A,S,V,T,q,tt:d.tt,right};if(G.forced)p=G.forced==='beat'?1:0;
         if(Math.random()<p){if(right&&q==='perfect'){G.juice=Math.min(G.jmax,G.juice+1);G.jPop=.3;G.hot++;fxWave(c,G.hot>=2?'#ffb020':'#6cff8a',true);if(G.hot>=2)fxWave(c,'#fff')}else{G.hot=0;fxWave(c,'#fff')}beat(d,mt,c);return false}
-        G.hot=0;fxWave(c,tt.c);if(!right)fxTeach(tt.m);
+        G.hot=0;
         return tackleAnim(d,c,{juke:'ankle',spin:'wrap',hurdle:'undercut',stiff:'drag'}[mt])}
       if(mt==='juke')p=(dive?.55:behind?.35:.72)*(.55+.55*agi)-(tak-.5)*.15;
       if(mt==='spin')p=(dive?.3:behind?.7:.6)*(.55+.55*agi)-(tak-.5)*.15;
@@ -1921,7 +1921,7 @@ function contact(d,c){
       if(Math.random()<p*(G.demo?.82:.9)){beat(d,mt,c);return false}}
     return tackleAnim(d,c,{juke:'ankle',spin:'wrap',hurdle:'undercut',stiff:'drag'}[mt]);
   }
-  if(!G.demo&&!act&&!late&&d.tt){const tt=TKT[d.tt];fxWave(c,tt.c);fxTeach(tt.m)}
+  
   if(G.forcedTk)return tackleAnim(d,c,G.forcedTk);
   if(!G.demo&&!G.forced&&c.p&&hasAb(c.p,'pinball')&&(c.pinN||0)<3){c.pinN=(c.pinN||0)+1;beat(d,'broken',c);return false}
   if(G.forced==='broken'||!G.forced&&Math.random()<.05+(Rt(c.p,'str')-Rt(d.p,'tak'))*.004){beat(d,'broken',c);return false}
@@ -2155,14 +2155,14 @@ function heatReset(c){G.heat=0;G.heatMoves=[];G.heat3x=null;G.heat3m=0;G.tko=0;G
 function heatSet(v){const c=G.carrier;const was=G.heat||0;G.heat=clamp(v,0,3);if(G.runHL)G.runHL.heatMax=Math.max(G.runHL.heatMax,G.heat);
   if(c){if(G.heat>=3&&was<3){if(c.zone0===undefined)c.zone0=!!c.zone;c.zone=true;G.heat3x=c.x;G.heat3m=0;afxPop(c,'ON FIRE','gold');G.cheer=Math.max(G.cheer,2);try{SND.cheer(.7)}catch(e){}}
     if(G.heat<3&&was>=3&&c.zone0!==undefined){c.zone=c.zone0;delete c.zone0}}G.jPop=.3}
-function heatDrop(){if(G.heat>0){heatSet(G.heat-1);G.jFlash=.45}}
-function heatLanded(mt){const c=G.carrier;if(!c||G.demo||c.side!=='O')return;const at3=(G.heat||0)>=3;(G.heatMoves=G.heatMoves||[]).push(mt);if(G.runHL)G.runHL.btk++;
+function heatDrop(){}
+function heatLanded(mt){const c=G.carrier;if(!c||G.demo||c.side!=='O')return;const at3=(G.heat||0)>=3;if(G.runHL)G.runHL.btk++;return;
   let add=1;const L=G.heatMoves.slice(-3);if(L.length===3&&new Set(L).size===3&&!G.tripleT){G.tripleT=1;add=2;afxPop(c,'TRIPLE THREAT','gold');G.cheer=Math.max(G.cheer,2)}
   heatSet((G.heat||0)+add);if(at3){G.heat3m=(G.heat3m||0)+1;takeoverCheck(c)}}
 function takeoverCheck(c){if(G.tko||(G.heat||0)<3||!c||!c.p)return;if(!(G.heat3m>=1||(G.heat3x!=null&&c.x-G.heat3x>=15)))return;G.tko=1;
   const xf=c.p.xf,X=xf&&NEWAB[xf];if(X&&X.k==='run'){G.zone=G.zone||new Map();G.zone.set(c.p,{on:true,m:1});if(xfTry(c,'run')){afxPop(c,'TAKEOVER','x');if(G.runHL)G.runHL.abil.push(X.n);return}}
   afxPop(c,'UNSTOPPABLE','gold');c.invT=Math.max(c.invT||0,1.2);c.boostT=Math.max(c.boostT||0,1.5)}
-function heatTick(c,dt){if(G.demo||!c||c.side!=='O')return;if(c.burstT>0)c.burstT-=dt;
+function heatTick(c,dt){if(G.demo||!c||c.side!=='O')return;if(c.burstT>0)c.burstT-=dt;return;
   if(G.mvHoldT&&!G.burstDone&&performance.now()-G.mvHoldT>230){G.burstDone=true;if((G.heat||0)>=1){heatSet(G.heat-1);c.burstT=.95;fxWave(c,'#ffd23f',true);afxPop(c,'BURST','gold')}else G.jFlash=.45}
   if(c.burstT>0&&Math.random()<.8)G.parts.push({x:c.x-.6,y:c.y+rnd(-.3,.3),z:rnd(2,10),vx:-7,vy:0,vz:rnd(-1,1),life:.22,col:pick(['#fff','#ffd23f','#ffb020']),s:2});
   if((G.heat||0)>=3){takeoverCheck(c);if(Math.random()<.6)G.parts.push({x:c.x+rnd(-.3,.3),y:c.y,z:rnd(4,18),vx:-c.vx*.2,vy:rnd(-.5,.5),vz:rnd(6,14),life:rnd(.2,.4),col:pick(['#ff5a1a','#ffd23f','#fff','#ff2a6a']),s:pick([1,2])})}}
@@ -2177,7 +2177,7 @@ function tryMove(type,dir){if(!G||G.phase!=='run'||!G.carrier||G.hl||G.cu||G.cuP
   if(!G.demo){if(G.traffic)return;const W=G.tokD,live=W&&(W.wind>0||W.dive>0);
     // nobody committing: a free cut, no stumble
     if(!live&&!(G.threat&&G.threat.ttc<.5)){if(G.mvCD>0)return;const nd=nearest(G.ents.filter(x=>x.side==='D'&&x.down<=0),c);startMove(type,dir||(nd&&nd.y<c.y?1:-1),'free');G.whiffT=0;G.rFlash=0;G.mvCD=.45;return}
-    if(!perfWin(G.threat)&&!(PRESS&&PRESS.pf)&&G.threat&&G.threat.ttc>PERF_HI+.05){heatDrop();return}}
+    }
   if(type==='smart')type=G.demo?smartMove(c):'juke';
   if(!c.ab.has(type))return startMove(type);const th=G.threat;
   if(G.demo){if(th&&th.ttc>.55&&th.ttc<1.6){G.mvQ={type,dir,t:G.runT};return}return startMove(type,dir,th?(th.ttc>=.08&&th.ttc<=.55?'perfect':'free'):'free')}
@@ -3759,13 +3759,13 @@ function render(rdt){
   for(const e of order){const x=sxW(e.x),y=syW(e.y);if(x<-24||x>W+24)continue;const [pose,fr]=e.fxPose?[e.fxPose,e.fxFr||0]:poseOf(e);
     const hasB=(e===G.carrier&&!(G.celeb&&G.celeb.spiked))||(e===G.qb&&e.hasBall);
     const simg=sprite(e,pose,fr,hasB);if(e.zone&&!e.launch)zoneGlow(g,e,simg,x,y);if(e.fx)afxEnt(g,e,simg,x,y);else drawEnt(g,e,simg,x,y);
-    if(!G.demo&&e===G.tokD&&G.phase==='run'&&!G.traffic&&(e.wind>0||e.dive>0)){const on=e.wind>0?Math.floor(G.anim*20)%2:1;if(on){g.globalAlpha=e.wind>0?.75:.4;g.drawImage(tintImg(simg,'#ffffff'),x-AX,y-AY-Math.round(e.z||0));g.globalAlpha=1}
+    if(!G.demo&&e===G.tokD&&G.phase==='run'&&!G.traffic&&(e.wind>0||e.dive>0)){const on=0;if(on){g.globalAlpha=e.wind>0?.75:.4;g.drawImage(tintImg(simg,'#ffffff'),x-AX,y-AY-Math.round(e.z||0));g.globalAlpha=1}
       if(e.wind>0){const by=y-AY-9-Math.round((e.wind/WIND)*3);g.fillStyle='#000';g.fillRect(x-3,by-8,7,13);g.fillStyle='#fff';g.fillRect(x-2,by-7,5,7);g.fillRect(x-2,by+1,5,3)}}
     if(e===G.carrier&&G.phase==='run'){g.fillStyle=mvActive()?'#fff':'#ffd23f';const yy=y-AY-6-Math.round(e.z||0);g.fillRect(x-1,yy,3,2);g.fillRect(x,yy+2,1,1)}}
   if(G.phase==='run'&&G.carrier){const c=G.carrier,x=sxW(c.x),y=syW(c.y);g.font='9px "Press Start 2P", monospace';g.textAlign='center';g.textBaseline='middle';
     if(c.p.sig){for(let i=0;i<3;i++){const a=G.anim*5+i*2.094;g.fillStyle=i%2?'#fff3b0':'#ffd23f';g.fillRect(x+Math.round(Math.cos(a)*8),y-14+Math.round(Math.sin(a)*10),2,2)}}
     const th=G.threat;
-    if(th&&!G.hl&&th.ttc<1.6){const d=th.d,dx=sxW(d.x),dy=syW(d.y)-AY-12,perf=G.demo?th.ttc>=.08&&th.ttc<=.55:perfWin(th),cy=y-10,T0=11;
+    if(G.demo&&th&&!G.hl&&th.ttc<1.6){const d=th.d,dx=sxW(d.x),dy=syW(d.y)-AY-12,perf=G.demo?th.ttc>=.08&&th.ttc<=.55:perfWin(th),cy=y-10,T0=11;
       // danger marker on the defender (demo only)
       if(G.demo){g.fillStyle='#000';g.fillRect(dx-5,dy-9,11,19);g.fillStyle=perf?'#ff3b2a':'#ffd23f';g.fillRect(dx-3,dy-7,7,10);g.fillRect(dx-3,dy+5,7,3)}
       // fixed target ring
@@ -3776,7 +3776,7 @@ function render(rdt){
       if(!perf){const rr=G.demo?Math.max(2,T0+Math.min(1.6,th.ttc-.55)*34):T0+clamp((th.ttc-PERF_HI)/WIND,0,1.6)*26;g.lineWidth=6;g.strokeStyle='rgba(0,0,0,.7)';g.beginPath();g.ellipse(x+.5,cy,rr,rr*.8,0,0,7);g.stroke();g.lineWidth=3;g.strokeStyle=G.mvQ?'#ffd23f':'#fff';g.beginPath();g.ellipse(x+.5,cy,rr,rr*.8,0,0,7);g.stroke()}
       if(G.demo){g.font='9px "Press Start 2P", monospace';const mv=smartMove(c).toUpperCase().replace('STIFF','STIFF ARM'),lab=G.mvQ?'READY':perf?'NOW! '+mv:mv,ly=y-AY-(G.runT<1.2?40:28);
       if(lab){const w=g.measureText(lab).width+8;g.fillStyle='#000';g.fillRect(Math.round(x-w/2),ly-7,Math.round(w),14);g.fillStyle=perf?'#2fae4e':G.mvQ?'#ffd23f':'#fff';g.fillRect(Math.round(x-w/2)+1,ly-6,Math.round(w)-2,12);g.fillStyle=perf||G.mvQ?'#000':'#1b2340';g.fillText(lab,x,ly+1)}}}
-    if(!G.demo&&!G.hl&&c.side==='O'){const n=3,w=7,gp=3,tot=n*w+(n-1)*gp,sh=G.jFlash>0?Math.round(Math.sin(G.anim*60)*2):0,x0=Math.round(x-tot/2)+sh,py=Math.round(y+6),h=G.heat||0,hot=h>=3,fl=Math.floor(G.anim*12)%2;
+    if(false){const n=3,w=7,gp=3,tot=n*w+(n-1)*gp,sh=G.jFlash>0?Math.round(Math.sin(G.anim*60)*2):0,x0=Math.round(x-tot/2)+sh,py=Math.round(y+6),h=G.heat||0,hot=h>=3,fl=Math.floor(G.anim*12)%2;
       for(let i=0;i<n;i++){const on=i<h,pop=G.jPop>0&&i===h-1?1:0,cx=x0+i*(w+gp);g.fillStyle='#000';g.fillRect(cx-1,py-1-pop,w+2,5+pop*2);g.fillStyle=G.jFlash>0?'#ff3b2a':on?(hot?(fl?'#ffd23f':'#ff6a1a'):'#ffb020'):'#2a3050';g.fillRect(cx,py-pop,w,3+pop*2);if(on){g.fillStyle='rgba(255,255,255,.6)';g.fillRect(cx,py-pop,w,1)}}}
     if(G.perfT>0&&!G.hl){const ly=y-AY-(G.runT<1.2?38:26)-Math.round((.6-G.perfT)*20);g.fillStyle='#000';g.fillText('PERFECT',x+1,ly+1);g.fillStyle='#6cff8a';g.fillText('PERFECT',x,ly)}}
   if(!G.hl&&!G.cu&&!G.demo){const e=G.carrier||(G.tk&&G.tk.c);
@@ -3979,7 +3979,7 @@ function syncTouch(){
   tc.style.visibility=G.cuPend||(G.hl&&!G.cu)?'hidden':'';{const jy=$('#joy');if(jy)jy.style.visibility=G.cu||G.cuPend?'hidden':''}  tc.classList.toggle('stick',stick);tc.classList.toggle('pocket',!!passing&&!G.demo);if(!passing&&tc._pk){tc._pk=0;J.x=J.y=0}if(passing)tc._pk=1;if(tc.classList.contains('hidden'))tc.classList.remove('hidden');
   if(ph==='run'&&!G.demo&&c){const W=G.tokD,tell=!!(W&&(W.wind>0||W.dive>0)),perf=tell&&perfWin(G.threat),m=smartPick(c),h3=(G.heat||0)>=3;
     document.querySelectorAll('#tbtns .tb.mvb').forEach(b=>{const bm=b.dataset.act.slice(3),isRec=tell&&bm===m;
-      b.classList.toggle('rec',isRec);b.classList.toggle('now',isRec&&perf);b.classList.toggle('fire',h3)})}
+      b.classList.remove('rec','now','fire')})}
   if(passing){const cov=G.ents.filter(d=>d.side==='D'&&!d.rush&&d.down<=0);document.querySelectorAll('#tbtns .tb.rcv').forEach(b=>{const e=G.R[b.dataset.act.slice(4)];if(!e||!e.wps)return;let sp=9;for(const d of cov)sp=Math.min(sp,dist(d,e));b.classList.toggle('open',sp>3.2&&G.t>G.dropT*.8)})}
 }
 function loop(ts){
