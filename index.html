@@ -4752,7 +4752,7 @@ function pxPhotoDraw(cv){if(cv.dataset.done)return;cv.dataset.done=1;const url=c
 function pxPhotoScan(root){(root||document).querySelectorAll('canvas.pxph:not([data-done])').forEach(pxPhotoDraw)}
 try{new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1){if(n.matches&&n.matches('canvas.pxph'))pxPhotoDraw(n);else if(n.querySelector)pxPhotoScan(n)}}).observe(document.body,{childList:true,subtree:true})}catch(e){}
 
-function portraitTag(c){const u=portrait(c),ph=photoFor({name:c.n}),tb=tbOf(c.team);const base=portraitAnimated(c)?`<span class="uimg anim" style="background-image:url(${u})"></span>`:`<img class="uimg" src="${u}" alt="">`;return ph?base+`<canvas class="pxph" width="32" height="36" data-ph="${esc(ph)}" data-tc="${tb[3]||'#000'}"></canvas>`:base}
+function portraitTag(c){const u=portrait(c),ph=photoFor({name:c.n}),tb=tbOf(c.team);const base=portraitAnimated(c)?`<span class="uimg anim" style="background-image:url(${u})"></span>`:`<img class="uimg" src="${u}" alt="">`;return base}
 const ABC={burner:['BR','#ff6a1a'],cannon:['CN','#5ad1ff'],dime:['DM','#6cff8a'],escape:['EA','#b48cff'],onehand:['1H','#ffd23f'],edge:['ET','#ff3b2a'],lockdown:['LD','#39f2ff'],ballhawk:['BH','#ffd23f'],enforcer:['EN','#ff5a47'],bigleg:['BL','#c0c0c0'],ankle:['AB','#ffd23f'],matrix:['MX','#ff4fd8'],superman:['SM','#5ad1ff'],truck:['TS','#ff8a1a']};
 const abChips=(ab,sg)=>{const l=ab.filter(k=>ABC[k]&&k!==sg).slice(0,4);return l.length?`<span class="uabs">${l.map(k=>`<i style="--ac:${ABC[k][1]}" title="${esc(ABDEF[k].n)}">${ABC[k][0]}</i>`).join('')}</span>`:''};
 function cardHTML(c,o={}){
@@ -4956,7 +4956,7 @@ function nextUp(){const L=[];const go=(t,sub,msg,btn,ic,big,lab)=>L.push({t,sub,
   const S=UT.season,g=S&&nextGame();if(g)go('play','season',`Season game next: ${g.label}.`,'Play season game','trophy','WK','SEASON');else go('play','play','Win games to earn coins and chips.','Play','ball','GO','PLAY');
   return L}
 function nextUpHTML(){const L=nextUp().slice(0,4);return`<div class="nxu">${L.map((x,i)=>`<button class="nxt${i===0?' hot':''}" data-go="${x.t}:${x.sub}" title="${esc(x.msg)}" aria-label="${esc(x.msg)}">${pxIco(x.ic||'ball',26)}<b>${esc(String(x.big??''))}</b><span>${esc(x.lab||x.btn)}</span></button>`).join('')}</div>`}
-function renderUT(){try{localStorage.setItem('gr_resume',JSON.stringify({s:'ut',t:Date.now()}))}catch(_){}
+function renderUT(){if(UT&&!UT.testPk1){UT.testPk1=1;const K=Object.keys(PACKS);UT.packs.push(...K);utSave();setTimeout(()=>toastUT(`Test gift: ${K.length} packs, one of every kind, in Store > My packs`),500)}try{localStorage.setItem('gr_resume',JSON.stringify({s:'ut',t:Date.now()}))}catch(_){}
   if(UT&&!UT.noToe){UT.chips=UT.chips||{};let n=UT.chips.toetap||0;delete UT.chips.toetap;for(const c of UT.cards){if(c.eq&&c.eq.includes('toetap')){c.eq=c.eq.filter(a=>a!=='toetap');n++}if(c.abO==='toetap')c.abO=null}for(let i=0;i<n;i++)chipGive(pick(ABPOS.WR));UT.noToe=1;utSave();if(n)setTimeout(()=>toastUT(`Toe Tap was retired. You got ${n} other chip${n>1?'s':''} instead.`),300)}
   if(UT&&UT.fantasy===undefined){UT.fantasy=1;for(const c of UT.cards)if(c.pu)c.pot=99;utSave()}
   const c=UT.club,o=teamOvr();
