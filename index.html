@@ -428,6 +428,43 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 /* ===== card reveal ===== */
 #rv{position:fixed;inset:0;z-index:96;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#03040a;cursor:pointer;--tc:#f5cd4c;--tm:#e84a3a;--tm2:#ffd23f;font-family:'Press Start 2P',monospace;color:#fff}
 #rv.hidden{display:none}
+
+/* ===== shiny cards: foil + glare follow phone tilt, finger, or an idle shimmer ===== */
+.ucard.t-elite::after,.ucard.t-legend::after,.ucard.p-peak::after,.ucard.p-icon::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:6;animation:none;
+  background:radial-gradient(circle at calc(var(--hx,.5)*100%) calc(var(--hy,.35)*100%),rgba(255,255,255,.7),rgba(255,255,255,0) 34%),
+   repeating-linear-gradient(calc(105deg + var(--hx,.5)*50deg),#ff2a7a 0,#ffd23f 5%,#3dffb0 10%,#2aa8ff 15%,#b14dff 20%,#ff2a7a 25%);
+  background-size:100% 100%,320% 320%;background-position:center,calc(var(--hx,.5)*100%) calc(var(--hy,.5)*100%);mix-blend-mode:overlay;opacity:.5}
+.ucard.t-legend::after,.ucard.p-peak::after{opacity:.55;background:radial-gradient(circle at calc(var(--hx,.5)*100%) calc(var(--hy,.35)*100%),rgba(255,255,255,.8),rgba(255,255,255,0) 36%),
+   radial-gradient(circle,rgba(255,255,255,.9) 0 1px,transparent 1.5px) 0 0/9px 9px,
+   repeating-linear-gradient(calc(105deg + var(--hx,.5)*50deg),#ff2a7a 0,#ffd23f 5%,#3dffb0 10%,#2aa8ff 15%,#b14dff 20%,#ff2a7a 25%);
+  background-size:100% 100%,9px 9px,320% 320%;background-position:center,calc(var(--hx,.5)*40px) calc(var(--hy,.5)*40px),calc(var(--hx,.5)*100%) calc(var(--hy,.5)*100%)}
+.ucard.t-gold::after{background:radial-gradient(circle at calc(var(--hx,.5)*100%) calc(var(--hy,.35)*100%),rgba(255,255,255,.55),rgba(255,255,255,0) 30%),linear-gradient(calc(100deg + var(--hx,.5)*40deg),transparent 30%,rgba(255,255,255,.45) 45%,transparent 60%);background-size:100% 100%,250% 100%;background-position:center,calc(var(--hx,.5)*100%) 0;animation:none;opacity:.7;mix-blend-mode:normal}
+.ucard.big.t-elite,.ucard.big.t-legend,.ucard.big.t-gold,.ucard.big.p-peak,.ucard.big.p-icon{transform:perspective(700px) rotateY(calc((var(--hx,.5) - .5)*26deg)) rotateX(calc((.5 - var(--hy,.5))*18deg));transition:transform .08s linear}
+@media (prefers-reduced-motion:reduce){.ucard.big{transform:none!important}}
+/* ===== walkout extras ===== */
+#rv .rtun{position:absolute;inset:0;z-index:1;opacity:0;background:radial-gradient(ellipse at 50% 100%,rgba(255,255,255,.35),transparent 45%),repeating-linear-gradient(90deg,transparent 0 46px,rgba(255,255,255,.05) 46px 50px)}
+#rv.tn .rtun{opacity:1;animation:rvtun .25s steps(2) infinite}
+#rv .rsmoke{position:absolute;left:-10%;right:-10%;bottom:-10%;height:45%;z-index:1;opacity:0;background:radial-gradient(ellipse at 30% 80%,rgba(200,210,255,.35),transparent 55%),radial-gradient(ellipse at 75% 90%,rgba(200,210,255,.3),transparent 50%)}
+#rv.tn .rsmoke,#rv.s9 .rsmoke{opacity:1;animation:rvsmoke 3s ease-in-out infinite alternate}
+#rv .rteamwash{position:absolute;inset:0;z-index:1;background:linear-gradient(115deg,var(--tm) 0 50%,var(--tm2) 50%);opacity:0;transform:translateX(-100%)}
+#rv.tw .rteamwash{opacity:.28;transform:none;transition:transform .35s cubic-bezier(.2,1.2,.4,1),opacity .35s}
+#rv .rface{position:absolute;z-index:3;left:50%;top:6%;width:min(40vh,80vw);height:min(40vh,80vw);margin-left:calc(min(40vh,80vw)/-2);opacity:0;pointer-events:none}
+#rv .rface img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 24px var(--tc)) drop-shadow(4px 0 0 #000) drop-shadow(-4px 0 0 #000)}
+#rv .rface img.px{image-rendering:pixelated;object-fit:cover;width:52%;height:52%;display:block;margin:6% auto 0;border:5px solid #000;background:var(--tm);box-shadow:0 0 0 4px var(--tc),0 0 34px var(--tc);filter:none}
+#rv.s9 .rface{animation:rvface .7s cubic-bezier(.2,1.3,.4,1) .15s both}
+#rv .rname{position:absolute;left:0;right:0;bottom:11%;z-index:6;text-align:center;opacity:0;pointer-events:none}
+#rv .rname small{display:block;font-size:clamp(10px,2.4vw,16px);color:#fff;text-shadow:3px 3px 0 #000}
+#rv .rname b{display:block;font-weight:400;font-size:clamp(22px,7vw,54px);color:#fff;text-shadow:4px 4px 0 #000,0 0 20px var(--tc);margin-top:6px;white-space:nowrap}
+#rv .rname em{display:inline-block;font-style:normal;margin-top:10px;font-size:clamp(8px,1.8vw,12px);color:#000;background:var(--tc);padding:6px 8px 4px;border:3px solid #000;box-shadow:3px 3px 0 #000}
+#rv.s9 .rname{animation:rvname .45s cubic-bezier(.2,1.5,.4,1) .55s both}
+#rv.t3.s9 .rcard,#rv.t4.s9 .rcard{margin-top:22vh}
+#rv.t3 .rcard .ucard.big,#rv.t4 .rcard .ucard.big{width:min(180px,calc(50vh * 5 / 7))}
+#rv.t3 .rname,#rv.t4 .rname{bottom:auto;top:calc(6% + min(40vh,80vw) - 9vh)}
+#rv.t3 .ptag,#rv.t4 .ptag{top:2%}
+@keyframes rvtun{50%{filter:brightness(1.4)}}
+@keyframes rvsmoke{to{transform:translateX(4%) translateY(-3%)}}
+@keyframes rvface{from{transform:translateY(30%) scale(.7);opacity:0}to{opacity:1}}
+@keyframes rvname{from{transform:scale(2);opacity:0}to{opacity:1}}
 #rv .rbg{position:absolute;inset:0;background:radial-gradient(circle at 50% 55%,color-mix(in srgb,var(--tc) 30%,transparent),transparent 60%);opacity:0;transition:opacity .5s steps(5)}
 #rv.s1 .rbg{opacity:1}
 #rv .rbeams{position:absolute;left:50%;top:55%;width:220vmax;height:220vmax;margin:-110vmax 0 0 -110vmax;background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--tc) 55%,transparent) 0 6deg,transparent 6deg 30deg);opacity:0;animation:rvspin 6s linear infinite;mask:radial-gradient(circle,#000 0,transparent 55%);-webkit-mask:radial-gradient(circle,#000 0,transparent 55%)}
@@ -5129,12 +5166,23 @@ function pfxHTML(pk){const R=(n,f)=>Array.from({length:n},(_,i)=>f(i)).join('');
     case'origins':return`<div class="ribbon"><b>ROOKIE ORIGINS</b></div>`;
     case'power':return`<div class="pfx">${R(5,i=>`<i class="zap" style="left:${12+i*18}%;animation-delay:${i*.07}s"></i>`)}</div><div class="ptag">POWER UP</div>`;
     default:return'';}}
+
+// ===== shiny cards: one shared tilt value drives every foil card =====
+(()=>{const R=document.documentElement;let hx=.5,hy=.35,last=0,asked=false;const set=(x,y)=>{hx=clamp(x,0,1);hy=clamp(y,0,1);last=performance.now();R.style.setProperty('--hx',hx.toFixed(3));R.style.setProperty('--hy',hy.toFixed(3))};
+  addEventListener('deviceorientation',e=>{if(e.gamma==null)return;set(.5+e.gamma/60,.5+(e.beta-40)/70)},{passive:true});
+  addEventListener('pointermove',e=>{if(e.pointerType==='mouse')set(e.clientX/innerWidth,e.clientY/innerHeight)},{passive:true});
+  addEventListener('pointerdown',()=>{if(asked)return;asked=true;try{const D=window.DeviceOrientationEvent;if(D&&typeof D.requestPermission==='function'&&document.querySelector('.ucard.t-elite,.ucard.t-legend,.ucard.t-gold'))D.requestPermission().catch(()=>{})}catch(_){}},{passive:true});
+  const idle=t=>{if(performance.now()-last>2500&&document.querySelector('.ucard.t-elite,.ucard.t-legend,.ucard.t-gold')){const a=t/1600;R.style.setProperty('--hx',(.5+Math.sin(a)*.35).toFixed(3));R.style.setProperty('--hy',(.4+Math.cos(a*.7)*.25).toFixed(3))}requestAnimationFrame(idle)};requestAnimationFrame(idle)})();
+const STLAB={passingyards:'PASS YDS',passingtouchdowns:'PASS TD',rushingyards:'RUSH YDS',rushingtouchdowns:'RUSH TD',receivingyards:'REC YDS',receptions:'REC',receivingtouchdowns:'REC TD',touchdowns:'TD',tackles:'TKL',sacks:'SACKS',interceptions:'INT',passesdefended:'PD',fieldgoalsmade:'FG',puntyards:'PUNT YDS'};
+function realLine(c){const st=c.st||{},L=[];for(const [k,v] of Object.entries(st)){const lab=STLAB[String(k).toLowerCase()];if(lab&&v>0&&L.length<3)L.push(fmtN(Math.round(v))+' '+lab)}return L.join(' · ')}
+function walkFace(c){const p={name:c.n,num:c.num,skin:c.skin||0},ph=photoFor(p),tb=tbOf(c.team);const px=(()=>{try{return faceURL(p,{c1:tb[3],c2:tb[4]},true)}catch(e){return''}})();return ph?`<img referrerpolicy="no-referrer" alt="" src="${esc(ph)}" onerror="this.className='px';this.src='${px}'">`:px?`<img class="px" alt="" src="${px}">`:''}
 function revealCard(c,done,opt={}){
   const el=$('#rv'),ti=Math.max(0,TORD.indexOf(c.tier)),T=TIERS[c.tier]||TIERS.gold,tb=tbOf(c.team),pk=c.pk||'core';
   if(RV)RV.finish(true);
   el.className=`t${ti} p-${pk}`;el.style.setProperty('--tc',T.c);el.style.setProperty('--tm',tb[3]);el.style.setProperty('--tm2',tb[4]);
   const conf=ti>=3?Array.from({length:ti===4?70:40},()=>`<i class="cf" style="left:${rnd(0,100)}%;background:${pick([T.c,tb[3],tb[4],'#fff'])};animation-delay:${rnd(0,.7).toFixed(2)}s"></i>`).join(''):'';
-  el.innerHTML=`<div class="rbg"></div><div class="rbeams"></div>${ti===4?'<i class="rbolt" style="left:22%"></i><i class="rbolt" style="left:71%"></i><div class="rcrack"></div>':''}<div class="rtxt" id="rvt"></div><div class="rwave"></div><div class="rcard">${cardHTML(c,{big:true})}</div>${pfxHTML(pk)}${conf}<div class="rflash"></div><div class="rtap">${opt.auto?'':'Tap to continue'}</div>`;
+  const nm0=String(c.n||'').trim().split(/\s+/),rl=realLine(c),big=ti>=3;
+  el.innerHTML=`<div class="rbg"></div>${big?'<div class="rtun"></div><div class="rsmoke"></div><div class="rteamwash"></div>':''}<div class="rbeams"></div>${big?`<div class="rface">${walkFace(c)}</div><div class="rname"><small>${esc(nm0.slice(0,-1).join(' ').toUpperCase())}</small><b>${esc((nm0.slice(-1)[0]||'').toUpperCase())}</b>${rl?`<em>${esc(rl)}</em>`:''}</div>`:''}${ti===4?'<i class="rbolt" style="left:22%"></i><i class="rbolt" style="left:71%"></i><div class="rcrack"></div>':''}<div class="rtxt" id="rvt"></div><div class="rwave"></div><div class="rcard">${cardHTML(c,{big:true})}</div>${pfxHTML(pk)}${conf}<div class="rflash"></div><div class="rtap">${opt.auto?'':'Tap to continue'}</div>`;
   const ts=[],at=(ms,f)=>ts.push(setTimeout(f,ms)),add=k=>el.classList.add(k),txt=h=>{const t=$('#rvt');if(t)t.innerHTML=h};
   const buzz=n=>{if(navigator.vibrate)try{navigator.vibrate(n)}catch(_){}};
   const land=()=>{add('s9');add('fl');SND.tier(ti);SND.fanfare(pk);if(ti>=2)buzz(ti>=3?[30,40,60]:25);txt('');at(ti>=3?1100:600,()=>{add('ready');if(opt.auto)at(900,()=>RV&&RV.finish())})};
@@ -5143,12 +5191,13 @@ function revealCard(c,done,opt={}){
   if(ti<=1){at(40,land)}
   else if(ti===2){at(30,()=>add('s1'));at(650,land)}
   else{const L=ti===4;
-    at(30,()=>{add('s1');add('shk')});
-    if(L)at(500,()=>{add('fl');add('s3');txt('<span class="rslam" style="color:#9fd8ff">LEGEND</span>');buzz(80)});
-    at(L?1300:700,()=>{el.classList.remove('fl');txt(`<span class="rslam">${esc(c.pos)}</span>`);buzz(20)});
-    at(L?2000:1400,()=>{txt(`<span class="rslam">${esc(c.pos)}</span><span class="rteam">${esc(c.team)}</span>`);buzz(20)});
-    at(L?2700:2100,()=>{el.classList.remove('shk');txt(`<span class="rslam">${esc(c.pos)}</span><span class="rteam">${esc(c.team)}</span><span class="rovr">${effOvrSafe(c)}</span>`);buzz(40)});
-    at(L?3400:2800,land)}
+    const D=700;add('tn');try{SND.crowdLevel&&SND.crowdLevel(.9)}catch(_){}
+    at(D+30,()=>{el.classList.remove('tn');add('s1');add('shk')});
+    if(L)at(D+500,()=>{add('fl');add('s3');txt('<span class="rslam" style="color:#9fd8ff">LEGEND</span>');buzz(80)});
+    at(D+(L?1300:700),()=>{el.classList.remove('fl');txt(`<span class="rslam">${esc(c.pos)}</span>`);buzz(20)});
+    at(D+(L?2000:1400),()=>{add('tw');txt(`<span class="rslam">${esc(c.pos)}</span><span class="rteam">${esc(c.team)}</span>`);buzz(20)});
+    at(D+(L?2700:2100),()=>{el.classList.remove('shk');const fin=effOvrSafe(c);txt(`<span class="rslam">${esc(c.pos)}</span><span class="rteam">${esc(c.team)}</span><span class="rovr" id="rvo">${fin-12}</span>`);buzz(40);for(let k=1;k<=12;k++)at(D+(L?2700:2100)+k*38,()=>{const o=$('#rvo');if(o)o.textContent=fin-12+k})});
+    at(D+(L?3400:2800),()=>{el.classList.remove('tw');land();try{SND.cheer(ti>=4?2.2:1.6)}catch(_){}})}
   RV={finish(silent){ts.forEach(clearTimeout);ts.length=0;el.className='hidden';el.innerHTML='';el.onclick=null;RV=null;if(!silent&&done)done()},
       skip(){ts.forEach(clearTimeout);ts.length=0;el.classList.remove('shk');add('s1');land()}};
   el.onclick=()=>{if(!RV)return;if(el.classList.contains('s9'))RV.finish();else RV.skip()};
