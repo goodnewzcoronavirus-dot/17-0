@@ -428,6 +428,48 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 /* ===== card reveal ===== */
 #rv{position:fixed;inset:0;z-index:96;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#03040a;cursor:pointer;--tc:#f5cd4c;--tm:#e84a3a;--tm2:#ffd23f;font-family:'Press Start 2P',monospace;color:#fff}
 #rv.hidden{display:none}
+/* ===== store v2 ===== */
+.sh-h{font-family:'Press Start 2P',monospace;font-size:9px;margin:14px 0 7px;display:flex;align-items:center;gap:8px}.sh-h span{background:var(--accent);color:#fff;padding:3px 5px 2px;font-size:7px}
+.shelf{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 10px;background:linear-gradient(0deg,#3a2614 0 10px,transparent 10px)}
+.shelfp{flex:0 0 auto;background:none;border:0;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--ink)}.shelfp .pack{animation:pkIdle 2.4s ease-in-out infinite}
+@keyframes pkIdle{50%{transform:translateY(-3px) rotate(-1deg)}}
+.stoday{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+.stile{border:3px solid var(--edge);background:var(--panel);padding:8px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;box-shadow:3px 3px 0 var(--shadow)}
+.stile .st-h{font-family:'Press Start 2P',monospace;font-size:7px;align-self:stretch;text-align:left}
+.stile small{font-size:11px;color:var(--muted)}.stile small b{color:var(--ink)}.stile .btn{font-size:8px;width:100%}
+.stile.free{border-color:#2fae4e}.stile.deal{border-color:#ffd23f}.stile.week{border-color:#b06bff}.stile.fpl{border-color:#4fd8ff}
+.st-pk{position:relative}.st-pk em{position:absolute;right:-12px;top:-6px;background:#e8402a;color:#fff;font-style:normal;font-family:'Press Start 2P',monospace;font-size:8px;padding:4px 5px 3px;border:2px solid #000;transform:rotate(10deg)}
+.st-card .ucard{width:84px;max-width:none}
+.st-str{display:flex;gap:3px}.st-str i{width:16px;height:16px;border:2px solid var(--edge);font-style:normal;font-family:'Press Start 2P',monospace;font-size:6px;display:grid;place-items:center;color:var(--muted)}.st-str i.on{background:#2fae4e;color:#000;border-color:#000}.st-str i.nx{border-color:#ffd23f;color:#ffd23f;animation:tblink 1s steps(2) infinite}
+.sbund{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.sb{border:2px solid var(--edge);padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}.sb-pk{display:flex;gap:2px;height:64px;align-items:flex-end}.sb-pk .pack.sm{width:40px!important}.sb b{font-family:'Press Start 2P',monospace;font-size:8px}.sb small{font-size:11px;color:var(--muted)}.sb .btn{font-size:8px;width:100%}
+.pwall{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:10px;padding:10px;background:repeating-linear-gradient(0deg,#3a2614 0 8px,#24170c 8px 10px,transparent 10px 132px),#151a30;border:3px solid #000}
+.pw{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:'Press Start 2P',monospace;color:#fff}.pw b{font-size:6px;font-weight:400;text-align:center}.pw small{font-size:5px;color:#9aa3c0}.pw .btn{font-size:7px;padding:6px 6px;width:100%}
+.pw-p{background:none;border:0;padding:0;cursor:pointer}.pw-p .pack.sm{width:76px!important}.pw-p:hover .pack{transform:translateY(-4px)}
+.smile{display:flex;flex-direction:column;gap:5px}.sm{display:flex;align-items:center;gap:8px;border:2px solid var(--edge);padding:6px 8px}.sm span{flex:1}.sm b{font-size:12px}.sm i{display:block;height:8px;border:2px solid var(--edge);background:var(--chip);margin:4px 0}.sm u{display:block;height:100%;background:var(--turf)}.sm small{font-size:10px;color:var(--muted)}.sm.ok{border-color:#2fae4e}.sm.done{opacity:.5}.sm em{font-style:normal;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--turf)}.sm .btn{font-size:8px}
+.sluck{display:flex;flex-wrap:wrap;gap:5px}.sl{font-size:12px;border:2px solid #000;padding:3px 7px;background:var(--panel)}.sl b{font-family:'Press Start 2P',monospace;font-size:9px;margin-right:5px}.sl i{font-style:normal;color:#ffd23f;font-size:10px}.sl.t-legend{background:#5a0818;color:#fff}.sl.t-elite{background:#2a1a80;color:#fff}.sl.t-gold{background:#7a5608;color:#fff}
+.sodds{display:flex;gap:16px;align-items:center}.so{display:grid;grid-template-columns:60px 1fr 40px;gap:8px;align-items:center;margin:5px 0;font-size:12px}.so i{display:block;height:10px;border:2px solid var(--edge)}.so u{display:block;height:100%}.so b{text-align:right}
+/* pack v2 */
+.pack.v2{clip-path:polygon(0 3%,5% 0,10% 3%,15% 0,20% 3%,25% 0,30% 3%,35% 0,40% 3%,45% 0,50% 3%,55% 0,60% 3%,65% 0,70% 3%,75% 0,80% 3%,85% 0,90% 3%,95% 0,100% 3%,100% 97%,95% 100%,90% 97%,85% 100%,80% 97%,75% 100%,70% 97%,65% 100%,60% 97%,55% 100%,50% 97%,45% 100%,40% 97%,35% 100%,30% 97%,25% 100%,20% 97%,15% 100%,10% 97%,5% 100%,0 97%);box-shadow:none;border:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.45) 46%,transparent 60%),repeating-linear-gradient(135deg,rgba(255,255,255,.1) 0 6px,transparent 6px 14px),linear-gradient(170deg,var(--tc),var(--tc2));gap:10px;justify-content:center;filter:drop-shadow(4px 4px 0 #000)}
+.pack.v2::before,.pack.v2::after{display:none}.pack.v2 .pcrimp{display:none}
+.pack.v2 .plogo{font-size:12px;line-height:1.3;text-align:center;color:#fff;text-shadow:2px 2px 0 #000}
+.pack.v2 .pgem{width:28%;aspect-ratio:1;transform:rotate(45deg);background:linear-gradient(135deg,#fff,var(--tc) 40%,var(--tc2));border:3px solid #000;box-shadow:0 0 14px var(--tc)}
+.pack.v2 b{font-size:10px;background:#000;color:#fff;padding:5px 7px}.pack.v2 small{font-family:'Press Start 2P',monospace;font-size:6px;color:#fff;text-shadow:1px 1px 0 #000}
+.pack.v2.sm .plogo{font-size:7px}.pack.v2.sm b{font-size:6px;padding:3px 4px}.pack.v2.sm small{font-size:4px}.pack.v2.sm{gap:6px}
+.pack.v2.pa-legend{background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.5) 46%,transparent 60%),conic-gradient(from 0deg at 50% 45%,#ff2a7a,#ffd23f,#3dffb0,#2aa8ff,#b14dff,#ff2a7a)}
+.pack.v2.pa-elite{background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.45) 46%,transparent 60%),radial-gradient(circle at 50% 40%,#b89cff,#3b2aa8 50%,#160a48)}
+/* rip + tells */
+.pk-stage{position:relative;touch-action:none;user-select:none}
+.pk-stage .pack{transition:transform .1s}
+.pk-stage.tl2 .pack{animation:pkT1 1.2s ease-in-out infinite}.pk-stage.tl3 .pack{animation:pkT2 .5s steps(4) infinite}.pk-stage.tl4 .pack{animation:pkT3 .28s steps(4) infinite}
+@keyframes pkT1{50%{transform:translateY(-4px)}}@keyframes pkT2{25%{transform:translate(-2px,1px) rotate(-1deg)}75%{transform:translate(2px,-1px) rotate(1deg)}}@keyframes pkT3{25%{transform:translate(-4px,2px) rotate(-2deg)}75%{transform:translate(4px,-2px) rotate(2deg)}}
+.pk-stage.tl2,.pk-stage.tl3,.pk-stage.tl4{filter:drop-shadow(0 0 calc(10px + var(--rip,0)*30px) var(--tell))}
+.pk-stage .pk-tear{position:absolute;left:50%;top:9%;width:min(180px,calc((100dvh - 110px) * 3 / 5));margin-left:calc(min(180px,calc((100dvh - 110px) * 3 / 5))/-2);height:4px;background:linear-gradient(90deg,var(--tell,#fff) calc(var(--rip,0)*100%),rgba(255,255,255,.25) 0);box-shadow:0 0 calc(var(--rip,0)*24px) var(--tell,#fff);pointer-events:none}
+.pk-stage .pk-leak{position:absolute;left:50%;top:9%;width:10px;height:10px;margin:-5px;border-radius:50%;background:var(--tell,#fff);box-shadow:0 0 calc(var(--rip,0)*80px) calc(var(--rip,0)*30px) var(--tell,#fff);opacity:calc(var(--rip,0));pointer-events:none}
+.pk-stage.nudge .pack{animation:shk .3s steps(4)}
+.pk-stage.ripped .pk-tear{height:8px}
+.fback.tl2{box-shadow:0 0 12px #ffd23f,3px 3px 0 #000}.fback.tl3{box-shadow:0 0 18px #b06bff,3px 3px 0 #000;animation:fbP .9s ease-in-out infinite}.fback.tl4{box-shadow:0 0 24px #ff3b5a,3px 3px 0 #000;animation:fbP .45s ease-in-out infinite}
+@keyframes fbP{50%{filter:brightness(1.35)}}
+.pk-best{display:flex;align-items:center;gap:10px;justify-content:center;margin:6px 0;font-family:'Press Start 2P',monospace;animation:rvslam .4s steps(5) both}.pk-best b{background:#ffd23f;color:#000;padding:6px 8px 4px;font-size:10px;border:3px solid #000}.pk-best span{color:#fff;font-size:9px;text-shadow:2px 2px 0 #000}
 /* ===== card art v2 ===== */
 .uart{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .uart *{animation-play-state:paused!important}
@@ -5350,16 +5392,54 @@ function tourPlace(){
 }
 addEventListener('keydown',e=>{if(TOURI<0)return;if(e.key==='ArrowRight'||e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();const n=TOUR[TOURI].last?null:$('#tut [data-t="next"]');if(n)n.click();else tourEnd()}else if(e.key==='ArrowLeft'&&TOURI>0){e.preventDefault();e.stopImmediatePropagation();TOURI--;tourShow()}else if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();tourEnd()}},true);
 function toastUT(t){if(/coins/i.test(t)&&/\+/.test(t))SND.coin();const el=$('#uttoast');el.textContent=t;el.className='uttoast show';clearTimeout(toastUT.h);toastUT.h=setTimeout(()=>el.className='uttoast',1600)}
-function packArt(type,sm){const P=PACKS[type],T=TIERS[P.art];return`<div class="pack${sm?' sm':''}" style="--tc:${T.c};--tc2:${T.c2}"><span>GRIDIRON<br>ULTIMATE</span><b>${P.n.replace(' Pack','')}</b></div>`}
-function uPacks(){
-  const inv=UT.packs.map((p,i)=>`<div class="pitem">${packArt(p,true)}<button class="btn primary" data-inv="${i}">Open</button></div>`).join('');
-  const store=Object.entries(PACKS).map(([k,P])=>`<div class="pitem">${packArt(k,true)}<p><b>${P.n}</b><br>${P.cards} cards${P.groups?', '+P.groups.join('/'):''}<br><span class="muted">${Object.entries(P.odds).map(([t,v])=>`${TIERS[t].n} ${Math.round(v*100)}%`).join(', ')}${P.guar?`. ${TIERS[P.guar].n}+ guaranteed`:''}</span></p><button class="btn${UT.coins>=P.price?' primary':''}" data-buy="${k}" ${UT.coins>=P.price?'':'disabled'}>${fmtN(P.price)} coins</button></div>`).join('');
-  return`<h3>My packs</h3>${inv?`<div class="pgrid">${inv}</div>`:'<p class="muted">No unopened packs. Win solo challenges or buy one below.</p>'}<h3>Store</h3><div class="pgrid">${store}</div>`;
-}
+// ================= STORE v2: daily pack, deals, pack of the week, bundles, milestones, pack luck =================
+const dayKey=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
+const DAILY_LADDER=['bronze','bronze','silver','silver','gold','gold','elite'];
+const BUNDLES=[{id:'starter',n:'Starter Box',packs:['bronze','bronze','bronze','silver','silver'],price:3800},{id:'gold3',n:'Gold x3',packs:['gold','gold','gold'],price:11500},{id:'elite3',n:'Elite x3',packs:['elite','elite','elite'],price:27000},{id:'mix',n:'Big Mix',packs:['offense','defense','gold','elite'],price:17500}];
+const MILESTONES=[{id:'w10',n:'Win 10 games',v:()=>UT.rec.w,need:10,pack:'gold'},{id:'w25',n:'Win 25 games',v:()=>UT.rec.w,need:25,pack:'elite'},{id:'w50',n:'Win 50 games',v:()=>UT.rec.w,need:50,pack:'legend'},
+  {id:'o25',n:'Open 25 packs',v:()=>UT.opened||0,need:25,pack:'featured'},{id:'yd5k',n:'Club 5,000 scrimmage yards',v:()=>UT.cards.reduce((a,c)=>a+((c.s&&c.s.ry)||0)+((c.s&&c.s.cy)||0),0),need:5000,pack:'gold'},
+  {id:'pu20',n:'20 Power Up levels',v:()=>UT.cards.filter(c=>c.pu).reduce((a,c)=>a+(c.up||0),0),need:20,pack:'elite'},{id:'t1',n:'Win a title',v:()=>UT.titles||0,need:1,pack:'legend'}];
+function storeDaily(){const k=dayKey();UT.daily=UT.daily||{d:'',streak:0,claimed:''};
+  if(!UT.deal||UT.deal.d!==k){const pk=pick(['gold','elite','featured','offense','defense','trench','silver']);UT.deal={d:k,pack:pk,price:Math.round(PACKS[pk].price*.65/50)*50,bought:0}}
+  if(!UT.fplay||UT.fplay.d!==k){const cat=buildCatalog().filter(t=>!t.pu&&t.ovr>=86);const t=cat.length?pick(cat):null;UT.fplay={d:k,tid:t&&t.tid,price:t?Math.round(cardVal(tplCard(t))*1.05/50)*50:0,bought:0}}}
+function dailyNext(){const D=UT.daily,y=new Date(Date.now()-864e5),yk=y.getFullYear()+'-'+(y.getMonth()+1)+'-'+y.getDate();const s=D.claimed===yk?D.streak:0;return{streak:s,pack:DAILY_LADDER[s%7]}}
+function weekLeft(){const W=7*864e5,ms=W-(Date.now()%W),d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5);return d?`${d}d ${h}h`:`${h}h ${Math.floor(ms%36e5/6e4)}m`}
+function logPull(c){UT.pulls=UT.pulls||[];UT.pulls.push({n:c.n,o:c.ovr,t:c.tier,pk:c.pk||'core',ser:c.ser||'',d:dayKey()});UT.pulls.sort((a,b)=>b.o-a.o);UT.pulls.splice(12)}
+function uPacks(){storeDaily();const k=dayKey(),dn=dailyNext(),claimed=UT.daily.claimed===k,D=UT.deal,F=UT.fplay,fp=F.tid&&buildCatalog().find(t=>t.tid===F.tid),fw=featProg();
+  const inv=UT.packs.map((p,i)=>`<button class="shelfp" data-inv="${i}">${packArt(p,true)}<b>OPEN</b></button>`).join('');
+  const tile=(cls,title,body,btn)=>`<div class="stile ${cls}"><div class="st-h">${title}</div>${body}${btn}</div>`;
+  let h=`${inv?`<div class="sh-row"><div class="sh-h">MY PACKS <span>${UT.packs.length}</span></div><div class="shelf">${inv}</div></div>`:''}
+  <div class="sh-h">TODAY</div><div class="stoday">
+   ${tile('free','FREE DAILY PACK',`<div class="st-pk">${packArt(dn.pack,true)}</div><div class="st-str">${DAILY_LADDER.map((p,i)=>`<i class="${i<dn.streak+(claimed?1:0)?'on':''}${i===dn.streak%7&&!claimed?' nx':''}" title="Day ${i+1}: ${PACKS[p].n}">${i+1}</i>`).join('')}</div><small>Day ${(dn.streak%7)+1} of 7 · come back daily for better packs</small>`,claimed?'<button class="btn" disabled>CLAIMED · BACK TOMORROW</button>':`<button class="btn primary" id="sDaily">CLAIM FREE</button>`)}
+   ${tile('deal','DAILY DEAL',`<div class="st-pk">${packArt(D.pack,true)}<em>-35%</em></div><small><s>${fmtN(PACKS[D.pack].price)}</s> <b>${fmtN(D.price)}</b> coins · one per day</small>`,D.bought?'<button class="btn" disabled>BOUGHT</button>':`<button class="btn${UT.coins>=D.price?' primary':''}" id="sDeal" ${UT.coins>=D.price?'':'disabled'}>BUY ${fmtN(D.price)}</button>`)}
+   ${fp?tile('fpl','PLAYER OF THE DAY',`<div class="st-card">${cardHTML(tplCard(fp),{sm:true,tid:fp.tid})}</div><small>${esc(fp.n)} · ${fmtN(F.price)} coins</small>`,F.bought?'<button class="btn" disabled>SIGNED</button>':`<button class="btn${UT.coins>=F.price?' primary':''}" id="sFP" ${UT.coins>=F.price?'':'disabled'}>SIGN ${fmtN(F.price)}</button>`):''}
+   ${tile('week','PACK OF THE WEEK',`<div class="st-pk">${packArt('featured',true)}</div><small><b>${esc(PROGRAMS[fw].n)}</b> program · guaranteed ${esc(PROGRAMS[fw].n)} card · ends in ${weekLeft()}</small>`,`<button class="btn${UT.coins>=PACKS.featured.price?' primary':''}" data-buy="featured" ${UT.coins>=PACKS.featured.price?'':'disabled'}>BUY ${fmtN(PACKS.featured.price)}</button>`)}
+  </div>
+  <div class="sh-h">BUNDLES</div><div class="sbund">${BUNDLES.map(B=>{const full=B.packs.reduce((a,p)=>a+PACKS[p].price,0);return`<div class="sb"><div class="sb-pk">${[...new Set(B.packs)].map(p=>packArt(p,true)).join('')}</div><b>${B.n}</b><small>${B.packs.length} packs · save ${fmtN(full-B.price)}</small><button class="btn${UT.coins>=B.price?' primary':''}" data-bund="${B.id}" ${UT.coins>=B.price?'':'disabled'}>${fmtN(B.price)}</button></div>`}).join('')}</div>
+  <div class="sh-h">PACK WALL</div><div class="pwall">${Object.entries(PACKS).map(([k2,P])=>`<div class="pw"><button class="pw-p" data-odds="${k2}">${packArt(k2,true)}</button><b>${P.n.replace(' Pack','')}</b><small>${P.cards} cards</small><button class="btn${UT.coins>=P.price?' primary':''}" data-buy="${k2}" ${UT.coins>=P.price?'':'disabled'}>${fmtN(P.price)}</button></div>`).join('')}</div>
+  <div class="sh-h">MILESTONES</div><div class="smile">${MILESTONES.map(M=>{const v=Math.min(M.need,M.v()),done=(UT.ms||{})[M.id],ok=v>=M.need;return`<div class="sm${done?' done':ok?' ok':''}"><span><b>${M.n}</b><i><u style="width:${Math.round(v/M.need*100)}%"></u></i><small>${fmtN(v)} / ${fmtN(M.need)} · ${PACKS[M.pack].n}</small></span>${done?'<em>DONE</em>':ok?`<button class="btn primary" data-ms="${M.id}">CLAIM</button>`:''}</div>`}).join('')}</div>
+  ${(UT.pulls||[]).length?`<div class="sh-h">PACK LUCK · YOUR BEST PULLS</div><div class="sluck">${UT.pulls.slice(0,8).map(x=>`<span class="sl t-${x.t}"><b>${x.o}</b>${esc(lastNameOf(x.n))}${x.ser?` <i>#${esc(x.ser)}</i>`:''}</span>`).join('')}</div>`:''}`;
+  return h}
 function bPacks(){
   document.querySelectorAll('[data-inv]').forEach(b=>b.onclick=()=>openPackFromInv(+b.dataset.inv));
   document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{const k=b.dataset.buy;if(UT.coins<PACKS[k].price)return;UT.coins-=PACKS[k].price;openPack(k)});
+  const dl=$('#sDaily');if(dl)dl.onclick=()=>{const dn=dailyNext();UT.daily={d:dayKey(),streak:dn.streak+1,claimed:dayKey()};utSave();openPack(dn.pack)};
+  const de=$('#sDeal');if(de)de.onclick=()=>{const D=UT.deal;if(D.bought||UT.coins<D.price)return;UT.coins-=D.price;D.bought=1;utSave();openPack(D.pack)};
+  const fp=$('#sFP');if(fp)fp.onclick=()=>{const F=UT.fplay,t=buildCatalog().find(x=>x.tid===F.tid);if(!t||F.bought||UT.coins<F.price)return;UT.coins-=F.price;F.bought=1;const c=cardFlair(inst(t));UT.cards.push(c);logPull(c);utSave();renderUT();revealCard(c,()=>cardScreen(c,{kind:'own'}))};
+  document.querySelectorAll('[data-bund]').forEach(b=>b.onclick=()=>{const B=BUNDLES.find(x=>x.id===b.dataset.bund);if(!B||UT.coins<B.price)return;UT.coins-=B.price;UT.packs.push(...B.packs);utSave();renderUT();toastUT(`${B.n}: ${B.packs.length} packs added to My packs`)});
+  document.querySelectorAll('[data-ms]').forEach(b=>b.onclick=()=>{const M=MILESTONES.find(x=>x.id===b.dataset.ms);UT.ms=UT.ms||{};if(!M||UT.ms[M.id])return;UT.ms[M.id]=1;UT.packs.push(M.pack);utSave();renderUT();toastUT(`${M.n}: ${PACKS[M.pack].n} added to My packs`)});
+  document.querySelectorAll('[data-odds]').forEach(b=>b.onclick=()=>{const P=PACKS[b.dataset.odds];utModal(`<div class="sodds"><div>${packArt(b.dataset.odds)}</div><div><h3>${esc(P.n)}</h3><p>${P.cards} cards${P.groups?' · '+P.groups.join(', ')+' only':''}${P.guar?` · ${TIERS[P.guar].n}+ guaranteed`:''}</p>${Object.entries(P.odds).map(([t,v])=>`<div class="so"><span>${TIERS[t].n}</span><i><u style="width:${Math.max(2,Math.round(v*100))}%;background:${TIERS[t].c}"></u></i><b>${(v*100).toFixed(v<.1?1:0)}%</b></div>`).join('')}<p class="muted">Each card rolls on its own. Bonus chips can drop too.</p></div></div>`,[['Close',closeModal,'alt']])});
 }
+// ---- pack art v2: foil wrapper with crimped edges ----
+function packArt(type,sm){const P=PACKS[type],T=TIERS[P.art],pk=type==='featured'?featProg():'';return`<div class="pack v2${sm?' sm':''} pa-${P.art}${pk?' pf-'+pk:''}" style="--tc:${T.c};--tc2:${T.c2}"><i class="pcrimp t"></i><span class="plogo">GRIDIRON<br>RETRO</span><span class="pgem"></span><b>${P.n.replace(' Pack','').toUpperCase()}</b><small>${P.cards} CARDS</small><i class="pcrimp b"></i></div>`}
+// ---- swipe-to-rip + tells ----
+function pkRip(ov,best){const stg=ov.querySelector('.pk-stage');if(!stg)return;let prog=0,x0=null,last=0,done=false;const tc=best>=4?'#ff3b5a':best===3?'#b06bff':best===2?'#ffd23f':'#ffffff';stg.style.setProperty('--tell',tc);stg.classList.add('tl'+best);
+  const set=v=>{prog=clamp(v,0,1);stg.style.setProperty('--rip',prog.toFixed(3));if(prog>=1&&!done){done=true;stg.classList.add('ripped');try{SND.rip()}catch(_){}if(navigator.vibrate)try{navigator.vibrate(best>=3?[20,30,60]:25)}catch(_){}setTimeout(()=>{if(PK&&PK.state==='closed')pkAdvance()},120)}};
+  stg.addEventListener('pointerdown',e=>{x0=e.clientX;last=e.clientX;stg.setPointerCapture&&stg.setPointerCapture(e.pointerId)});
+  stg.addEventListener('pointermove',e=>{if(x0==null||done)return;const w=(stg.querySelector('.pack')||stg).getBoundingClientRect().width||180;set(prog+Math.abs(e.clientX-last)/(w*1.1));last=e.clientX;if(Math.random()<.3)try{SND.flip&&SND.flip()}catch(_){}});
+  stg.addEventListener('pointerup',e=>{if(x0==null)return;const moved=Math.abs(e.clientX-x0)>8;x0=null;if(!moved&&!done){set(prog+.34);stg.classList.remove('nudge');void stg.offsetWidth;stg.classList.add('nudge')}});
+  addEventListener('keydown',function kh(e){if(!PK||PK.state!=='closed'){removeEventListener('keydown',kh);return}if(e.key===' '||e.key==='Enter'){e.preventDefault();set(1)}})}
+
 function openPackFromInv(i){const k=UT.packs.splice(i,1)[0];if(k)openPack(k)}
 function featCard(){const cat=buildCatalog().filter(t=>t.p===featProg()&&!t.pu);return cat.length?inst(pick(cat)):genCard(null,'elite')}
 function rollPack(type){
@@ -5369,15 +5449,16 @@ function rollPack(type){
   return out.sort((a,b)=>a.ovr-b.ovr);
 }
 function openPack(type){
-  const cards=rollPack(type);cards.forEach(cardFlair);UT.cards.push(...cards);const uc=cards.filter(c=>unlEligible(c)&&TORD.indexOf(c.tier)>=2).sort((a,b)=>b.ovr-a.ovr)[0];const unlGot=uc&&unlStart(uc,true)?uc:null;const co=CHIPODDS[type]||[0,0],gotChips=[];if(Math.random()<co[0]){const k=chipRandom(false);chipGive(k);gotChips.push(k)}if(Math.random()<co[1]){const k=chipRandom(true);chipGive(k);gotChips.push(k)}UT.opened++;if(UT.dream)UT.dream.pts=(UT.dream.pts||0)+5;utSave();
+  const cards=rollPack(type);cards.forEach(cardFlair);cards.forEach(logPull);UT.cards.push(...cards);const uc=cards.filter(c=>unlEligible(c)&&TORD.indexOf(c.tier)>=2).sort((a,b)=>b.ovr-a.ovr)[0];const unlGot=uc&&unlStart(uc,true)?uc:null;const co=CHIPODDS[type]||[0,0],gotChips=[];if(Math.random()<co[0]){const k=chipRandom(false);chipGive(k);gotChips.push(k)}if(Math.random()<co[1]){const k=chipRandom(true);chipGive(k);gotChips.push(k)}UT.opened++;if(UT.dream)UT.dream.pts=(UT.dream.pts||0)+5;utSave();
   const ov=$('#packov');ov.classList.remove('hidden');
-  ov.innerHTML=`<div class="pk-stage">${packArt(type)}<p class="pk-hint">Click or press Space to open</p></div>`;
-  PK={cards,i:-1,state:'closed',type,timer:null,chips:gotChips,unl:unlGot};ov.onclick=e=>{if(e.target.closest('button'))return;pkAdvance()};
+  const best=Math.max(...cards.map(c=>TORD.indexOf(c.tier)));
+  ov.innerHTML=`<div class="pk-stage">${packArt(type)}<i class="pk-tear"></i><i class="pk-leak"></i><p class="pk-hint">SWIPE ACROSS THE PACK TO RIP IT</p></div>`;
+  PK={cards,i:-1,state:'closed',type,timer:null,chips:gotChips,unl:unlGot,best};ov.onclick=e=>{if(e.target.closest('button'))return;if(PK&&PK.state==='closed')return;pkAdvance()};pkRip(ov,best);
 }
 function pkAdvance(){
   if(!PK)return;
   if(PK.state==='closed'){PK.state='tearing';const p=$('#packov .pack');p.classList.add('shake');SND.rip();setTimeout(()=>{p.classList.add('torn');setTimeout(()=>{if(!PK)return;
-      $('#packov').innerHTML=`<div class="pk-row">${PK.cards.map((c,i)=>`<div class="pk-slot" id="pks${i}"><button class="fback" data-pk="${i}" aria-label="Reveal card ${i+1}">GU<small>TAP TO OPEN</small></button></div>`).join('')}</div><div class="pk-foot" id="pkfoot"><p class="pk-hint">Tap a card to open it</p><div class="row" style="justify-content:center"><button class="btn" id="pkAll">Reveal all</button></div></div><div id="walk" class="hidden"></div>`;
+      $('#packov').innerHTML=`<div class="pk-row">${PK.cards.map((c,i)=>`<div class="pk-slot" id="pks${i}"><button class="fback tl${TORD.indexOf(c.tier)}" data-pk="${i}" aria-label="Reveal card ${i+1}">GR<small>TAP TO OPEN</small></button></div>`).join('')}</div><div class="pk-foot" id="pkfoot"><p class="pk-hint">Tap a card to open it</p><div class="row" style="justify-content:center"><button class="btn" id="pkAll">Reveal all</button></div></div><div id="walk" class="hidden"></div>`;
       PK.state='pick';PK.rev=new Set();document.querySelectorAll('[data-pk]').forEach(b=>b.onclick=e=>{e.stopPropagation();pkOpen(+b.dataset.pk)});$('#pkAll').onclick=e=>{e.stopPropagation();pkAll()}},380)},560);return}
   if(PK.state==='pick')return;
   if(PK.state==='reveal'){clearTimeout(PK.timer);pkNext();return}
@@ -5407,7 +5488,8 @@ function walkout(c){
 }
 function pkDone(){
   if(!PK||PK.state==='done')return;PK.state='done';const bronze=PK.cards.filter(c=>c.tier==='bronze'||c.tier==='silver'),val=bronze.reduce((s,c)=>s+qsTP(c),0);
-  const f=$('#pkfoot');f.innerHTML=`${PK.unl?`<p class="pk-hint" style="color:#6cffd0">${esc(PK.unl.n)}: his Power Up unlock started. Start him and hit his goals (Power Ups tab).</p>`:''}${PK.chips&&PK.chips.length?`<p class="pk-hint" style="color:#ffd23f">Bonus chip${PK.chips.length>1?'s':''}: ${PK.chips.map(k=>chipLabel(k)).join(', ')}. Equip it in Team.</p>`:''}<div class="row" style="justify-content:center"><button class="btn primary" id="pkOk">Send to collection</button>${bronze.length?`<button class="btn" id="pkQs">Quick sell ${bronze.length} bronze and silver (+${fmtN(val)} training)</button>`:''}</div>`;
+  const bestC=PK.cards.slice().sort((a,b)=>TORD.indexOf(b.tier)-TORD.indexOf(a.tier)||b.ovr-a.ovr)[0];
+  const f=$('#pkfoot');f.innerHTML=`${bestC&&TORD.indexOf(bestC.tier)>=2?`<div class="pk-best"><b>BEST PULL</b><span>${esc(bestC.n)} · ${effOvr(bestC)} ${esc(bestC.pos)}${bestC.ser?' · #'+esc(bestC.ser):''}${bestC.auto?' · AUTO':''}</span></div>`:''}${PK.unl?`<p class="pk-hint" style="color:#6cffd0">${esc(PK.unl.n)}: his Power Up unlock started. Start him and hit his goals (Power Ups tab).</p>`:''}${PK.chips&&PK.chips.length?`<p class="pk-hint" style="color:#ffd23f">Bonus chip${PK.chips.length>1?'s':''}: ${PK.chips.map(k=>chipLabel(k)).join(', ')}. Equip it in Team.</p>`:''}<div class="row" style="justify-content:center"><button class="btn primary" id="pkOk">Send to collection</button>${bronze.length?`<button class="btn" id="pkQs">Quick sell ${bronze.length} bronze and silver (+${fmtN(val)} training)</button>`:''}</div>`;
   $('#pkOk').onclick=pkClose;if(bronze.length)$('#pkQs').onclick=()=>{const ids=new Set(bronze.map(c=>c.id));for(const c0 of UT.cards)if(ids.has(c0.id))chipReturn(c0);UT.cards=UT.cards.filter(c=>!ids.has(c.id));UT.tp=(UT.tp||0)+val;utSave();pkClose()};
 }
 function pkClose(){PK=null;$('#packov').classList.add('hidden');$('#packov').innerHTML='';renderUT()}
