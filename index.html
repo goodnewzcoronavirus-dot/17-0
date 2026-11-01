@@ -428,6 +428,18 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 /* ===== card reveal ===== */
 #rv{position:fixed;inset:0;z-index:96;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#03040a;cursor:pointer;--tc:#f5cd4c;--tm:#e84a3a;--tm2:#ffd23f;font-family:'Press Start 2P',monospace;color:#fff}
 #rv.hidden{display:none}
+
+/* ===== auction house ===== */
+.ah-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}.ah-tabs{display:flex;gap:4px}.ah-tabs button{font-family:'Press Start 2P',monospace;font-size:7px;padding:8px 9px 6px;border:2px solid var(--edge);background:var(--panel);color:var(--muted);cursor:pointer}.ah-tabs button.on{background:var(--ink);color:var(--bg)}.ah-top select{margin-left:auto}
+.ah-log{display:flex;flex-direction:column;gap:3px;margin-bottom:8px}.ah-log span{font-size:12px;border-left:4px solid #ffd23f;padding:3px 8px;background:var(--panel)}
+.ah-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.ahl{display:flex;flex-direction:column;align-items:center;gap:2px;border:2px solid var(--edge);background:var(--panel);color:var(--ink);padding:5px 4px 6px;cursor:pointer;font-family:'Press Start 2P',monospace;position:relative}
+.ahl-c .ucard{width:78px;max-width:none}.ahl b{font-weight:400;font-size:10px;margin-top:3px}.ahl small{font-size:5px;color:var(--muted)}.ahl em{font-style:normal;font-size:7px;color:#4fd8ff}.ahl em.hot{color:#ff5a47;animation:tblink .5s steps(2) infinite}.ahl i{font-style:normal;font-size:6px;background:#000;color:#ffd23f;padding:2px 4px}
+.ahl.top{border-color:#2fae4e;box-shadow:0 0 0 2px #2fae4e}.ahl.top small{color:#2fae4e}.ahl.end{opacity:.5}.ahl.sell small{font-size:6px}
+.ahd{display:flex;gap:14px;flex:1;min-height:0}.ahd .ucard.big{width:min(200px,28vw)}.ahd-r{flex:1;min-width:0;overflow:auto}.ahd-r h3{margin:0}.ahd-r h4{font-family:'Press Start 2P',monospace;font-size:8px;margin:10px 0 4px}
+.ahd-g{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.ahd-g div{border:2px solid var(--edge);padding:7px;font-family:'Press Start 2P',monospace}.ahd-g small{display:block;font-size:6px;color:var(--muted)}.ahd-g b{display:block;font-weight:400;font-size:13px;margin:5px 0 3px}.ahd-g em{font-style:normal;font-size:6px;color:#2fae4e}
+.ah-sp{width:100%;max-width:320px;height:60px}.ah-sp polyline{fill:none;stroke:#4fd8ff;stroke-width:1.2}.ah-sp circle{fill:#ffd23f}
+.ahs{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:'Press Start 2P',monospace;font-size:7px;margin:6px 0}.ahs input,.ahs select{width:130px;font-size:14px}
 /* ===== store v2 ===== */
 .sh-h{font-family:'Press Start 2P',monospace;font-size:9px;margin:14px 0 7px;display:flex;align-items:center;gap:8px}.sh-h span{background:var(--accent);color:#fff;padding:3px 5px 2px;font-size:7px}
 .shelf{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 10px;background:linear-gradient(0deg,#3a2614 0 10px,transparent 10px)}
@@ -4784,6 +4796,8 @@ function utModal(html,btns=[]){const m=$('#utm');m.classList.remove('hidden');m.
 const closeModal=()=>$('#utm').classList.add('hidden');
 
 // ---------- entry ----------
+function testCards(){if(!UT)return[];return UT.cards.filter(c=>c.tst||(c.prog==='Peak Form'&&c.ovr===99&&c.r&&c.r.spd===96&&c.r.agi===97&&c.r.str===95&&c.r.hnd===90))}
+function removeTestCards(){const T=new Set(testCards().map(c=>c.id));if(!T.size)return;for(const c of UT.cards)if(T.has(c.id)){c.eq=[];c.eqX=null}UT.cards=UT.cards.filter(c=>!T.has(c.id));for(const k of SLOTK)if(T.has(UT.lineup[k]))delete UT.lineup[k];UT.lineup=bestLineup();for(const k of SLOTK)if(!cardById(UT.lineup[k])){const g=genCard(SLOTGRP[k],null,50,61);UT.cards.push(g);UT.lineup[k]=g.id}UT.giftAb=1;UT.gift99=1;recalcChem();utSave();toastUT(`Removed ${T.size} test cards`)}
 function giveTestRB(){if(!UT||UT.gift99||UT.draft)return;const cat=buildCatalog().filter(t=>t.pos==='RB'&&t.p==='core').sort((a,b)=>b.B-a.B);const t=cat[0];if(!t)return;const c=inst(t);
   Object.assign(c,{ovr:99,B:99,pot:99,tier:'legend',prog:'Peak Form',pk:'peak',sig:'ankle',r:{spd:96,agi:97,str:95,hnd:90},spd:96,up:0});UT.cards.push(c);UT.lineup.RB=c.id;UT.gift99=1;recalcChem();utSave();setTimeout(()=>toastUT(c.n+' (99 RB) added and starting at RB'),300)}
 // one-time test squad: a card for every ability and every X-Factor, with a stacked lineup starting
@@ -4911,8 +4925,8 @@ function bSeason(){const n=$('#sNew');if(n)n.onclick=()=>{newUTSeason();renderUT
 const TABICO={play:'\u{1F3C8}',season:'\u{1F3C6}',lineup:'\u{1F4CB}',coll:'\u{1F5C2}\uFE0F',cat:'\u{1F4D6}',packs:'\u{1F381}',market:'\u{1F6D2}',path:'\u26F0\uFE0F',upgrade:'\u2B06\uFE0F',abil:'\u26A1',club:'\u{1F3DF}\uFE0F'};
 const UTTABS=[['play','Play'],['team','Team'],['cards','Cards'],['store','Store'],['pu','Power Ups'],['club','Club']];
 Object.assign(TABICO,{team:'\u{1F4CB}',cards:'\u{1F5C2}\uFE0F',store:'\u{1F381}',pu:'\u26F0\uFE0F'});
-const UTSUBS={play:[['play','Quick play'],['season','Season']],team:[['lineup','Lineup & chips'],['abil','Ability guide']],cards:[['coll','My cards'],['cat','Every player']],store:[['packs','Packs'],['market','Market'],['trade','Trade-ins']],pu:[['pu','Power Ups']],club:[['club','Club']]};
-const UTPARENT={season:'play',play:'play',lineup:'team',abil:'team',coll:'cards',cat:'cards',packs:'store',market:'store',upgrade:'store',trade:'store',path:'pu',pu:'pu',club:'club',team:'team',cards:'cards',store:'store'};
+const UTSUBS={play:[['play','Quick play'],['season','Season']],team:[['lineup','Lineup & chips'],['abil','Ability guide']],cards:[['coll','My cards'],['cat','Every player']],store:[['packs','Packs'],['auction','Auction House'],['market','Market'],['trade','Trade-ins']],pu:[['pu','Power Ups']],club:[['club','Club']]};
+const UTPARENT={season:'play',play:'play',lineup:'team',abil:'team',coll:'cards',cat:'cards',packs:'store',auction:'store',market:'store',upgrade:'store',trade:'store',path:'pu',pu:'pu',club:'club',team:'team',cards:'cards',store:'store'};
 let UTSUB={play:'play',team:'lineup',cards:'coll',store:'packs',pu:'pu',club:'club'};
 // ---------- hub pixel icons ----------
 const PXI={
@@ -4955,8 +4969,8 @@ function renderUT(){try{localStorage.setItem('gr_resume',JSON.stringify({s:'ut',
   document.querySelectorAll('#utTabs .tab').forEach(b=>b.onclick=()=>{utTab=b.dataset.k;renderUT()});
   const subs=UTSUBS[utTab],sub=UTSUB[utTab]||subs[0][0];
   const subBar=subs.length>1?`<div class="row" style="gap:6px;margin-bottom:10px">${subs.map(([k,l])=>`<button class="btn${k===sub?' primary':''}" data-sub="${k}">${l}</button>`).join('')}</div>`:'';
-  const body=$('#utBody');body.innerHTML=(utTab==='play'?nextUpHTML():'')+subBar+({season:uSeason,cat:uCat,play:uPlay,lineup:uLineup,coll:uColl,packs:uPacks,market:uMarket,trade:uTrade,abil:uAbil,club:uClub,pu:uPU})[sub]();
-  ({season:bSeason,cat:bCat,play:bPlay,lineup:bLineup,coll:bColl,packs:bPacks,market:bMarket,trade:bTrade,abil:()=>{},club:bClub,pu:bPU})[sub]();try{csWire($('#utBody'))}catch(e){console.error(e)}
+  const body=$('#utBody');body.innerHTML=(utTab==='play'?nextUpHTML():'')+subBar+({season:uSeason,cat:uCat,play:uPlay,lineup:uLineup,coll:uColl,packs:uPacks,auction:uAuction,market:uMarket,trade:uTrade,abil:uAbil,club:uClub,pu:uPU})[sub]();
+  ({season:bSeason,cat:bCat,play:bPlay,lineup:bLineup,coll:bColl,packs:bPacks,auction:bAuction,market:bMarket,trade:bTrade,abil:()=>{},club:bClub,pu:bPU})[sub]();try{csWire($('#utBody'))}catch(e){console.error(e)}
   body.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{UTSUB[utTab]=b.dataset.sub;renderUT()});
   body.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const [t,sb]=b.dataset.go.split(':');utTab=t;UTSUB[t]=sb;renderUT();window.scrollTo(0,0)});
 }
@@ -5144,6 +5158,63 @@ function playReel(r){let el=$('#reel');if(!el){el=document.createElement('div');
     requestAnimationFrame(step)};
   REELP=step;requestAnimationFrame(step);
   $('#rlAgain').onclick=()=>{pt=t0;cx=null};$('#rlX').onclick=()=>{REELP=null;el.className='';el.innerHTML=''}}
+// ================= AUCTION HOUSE: a live market of AI managers =================
+const AH_TAX=.05,AH_N=24,AH_DEM={QB:1.25,RB:1.15,WR:1.12,TE:1,OL:.85,DL:1,LB:.95,CB:1.05,S:.95,K:.6,P:.5};
+const AH_MGR=['RetroRick','BlitzKing','GridGuru','PackRat','ZoneBuster','TurfLord','RedZoneRay','HailMaryHank','SnapCount','PlayActionPat','CoverTwoCal','PicksixPete','DimeDropDee','PocketPrez','CleatChaser','FlexFrank'];
+let AHF={view:'browse',g:'all'},AHI=null;
+const ahKey=c=>c.n+'|'+c.tier+'|'+(c.pk||'core');
+const ahMin=L=>L.bid?Math.ceil(L.bid*1.05/10)*10:L.start;
+const ahLeft=L=>{const ms=Math.max(0,L.end-Date.now()),m=Math.floor(ms/6e4),s=Math.floor(ms%6e4/1e3);return ms<=0?'ENDED':m>=60?`${Math.floor(m/60)}h ${m%60}m`:m?`${m}m ${s}s`:`${s}s`};
+function ahInit(){UT.ah=UT.ah||{list:[],mine:[],hist:{},t:Date.now(),nid:1,log:[]};return UT.ah}
+function ahNewListing(now){const A=UT.ah,t=wpick([['bronze',22],['silver',30],['gold',30],['elite',14],['legend',4]]),c=cardFlair(genCard(wpick(POSW),t)),v=cardVal(c)*(AH_DEM[c.pos]||1);
+  return{id:A.nid++,c,seller:pick(AH_MGR),start:Math.max(50,Math.round(v*rnd(.4,.7)/10)*10),buyNow:Math.round(v*rnd(1.1,1.5)/50)*50,bid:0,bidder:null,nb:0,end:now+Math.round(rnd(4,70))*6e4,val:v}}
+// simulate the market from the last visit up to now, in 20 second steps
+function ahTick(quiet){if(typeof UT==='undefined'||!UT)return;const A=ahInit(),now=Date.now();let t=Math.max(A.t,now-6*36e5);const msgs=[];
+  while(A.list.length<AH_N)A.list.push(ahNewListing(t));
+  for(;t<=now;t+=2e4){for(const L of A.list.concat(A.mine)){if(L.done||L.end<t-2e4)continue;
+      const left=(L.end-t)/6e4,cap=(L.val||cardVal(L.c))*(AH_DEM[L.c.pos]||1)*(L.mineSell?rnd(.85,1.2):rnd(.8,1.15)),nx=ahMin(L),p=(left<2?.5:left<10?.12:.03)*(nx<cap?1:0);
+      if(Math.random()<p&&nx<=cap){if(L.bidder==='me'){UT.coins+=L.bid;msgs.push(`Outbid on ${L.c.n}. Your ${fmtN(L.bid)} coins came back.`)}L.bid=nx;L.bidder=pick(AH_MGR);L.nb++;if(left<1)L.end+=3e4}}
+    for(const L of A.list.concat(A.mine))if(!L.done&&L.end<=t)ahSettle(L,msgs)}
+  A.list=A.list.filter(L=>!L.done);A.mine=A.mine.filter(L=>!L.done||Date.now()-L.end<6*36e5);while(A.list.length<AH_N)A.list.push(ahNewListing(now));A.t=now;
+  if(msgs.length){(A.log=A.log||[]).unshift(...msgs.map(m=>({m,t:now})));A.log.splice(20);if(!quiet)msgs.slice(0,2).forEach((m,i)=>setTimeout(()=>toastUT(m),i*1600))}utSave()}
+function ahSettle(L,msgs){L.done=1;const A=UT.ah,k=ahKey(L.c);
+  if(L.bid){(A.hist[k]=A.hist[k]||[]).push(L.bid);A.hist[k].splice(0,Math.max(0,A.hist[k].length-12))}
+  if(L.mineSell){if(L.bid){const net=Math.round(L.bid*(1-AH_TAX));UT.coins+=net;msgs.push(`Sold ${L.c.n} to ${L.bidder} for ${fmtN(L.bid)} (+${fmtN(net)} after tax).`)}else{UT.cards.push(L.c);msgs.push(`${L.c.n} didn't sell. He's back in your collection.`)}return}
+  if(L.bidder==='me'){UT.cards.push(L.c);logPull(L.c);msgs.push(`You won ${L.c.n} for ${fmtN(L.bid)} coins!`)}}
+function ahBid(L,amt){ahTick(true);if(L.done||L.end<=Date.now())return toastUT('That auction has ended');amt=amt||ahMin(L);if(L.bidder==='me')return toastUT('You are already the top bidder');if(UT.coins<amt)return toastUT('Not enough coins');
+  UT.coins-=amt;L.bid=amt;L.bidder='me';L.nb++;if(L.end-Date.now()<3e4)L.end+=3e4;utSave();toastUT(`Top bid: ${fmtN(amt)} on ${L.c.n}`)}
+function ahBuy(L){ahTick(true);if(L.done||L.end<=Date.now())return toastUT('That auction has ended');if(UT.coins<L.buyNow)return toastUT('Not enough coins');if(L.bidder==='me')UT.coins+=L.bid;
+  UT.coins-=L.buyNow;L.bid=L.buyNow;L.bidder='me';ahSettle(L,[]);UT.ah.list=UT.ah.list.filter(x=>x!==L);utSave();toastUT(`Bought ${L.c.n} for ${fmtN(L.buyNow)}`)}
+function ahSpark(k){const H=(UT.ah.hist||{})[k]||[];if(H.length<2)return`<p class="muted">${H.length?`Last sale ${fmtN(H[0])} coins.`:'No sales of this card yet.'}</p>`;const mx=Math.max(...H),mn=Math.min(...H),X=i=>4+i*(112/(H.length-1)),Y=v=>36-(mx===mn?16:(v-mn)/(mx-mn)*30);
+  return`<svg class="ah-sp" viewBox="0 0 120 40"><polyline points="${H.map((v,i)=>X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' ')}"/>${H.map((v,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="1.6"/>`).join('')}</svg><p class="muted">Last ${H.length} sales: low ${fmtN(mn)}, high ${fmtN(mx)}</p>`}
+function ahDetail(L){const mine=L.mineSell,top=L.bidder==='me',mn=ahMin(L),ended=L.done||L.end<=Date.now();
+  utModal(`<div class="ahd"><div>${cardHTML(L.c,{big:true})}</div><div class="ahd-r"><h3>${esc(L.c.n)}</h3><p class="muted">${esc(L.c.pos)} · ${esc(L.c.team)} · ${esc(L.c.prog||'')}${L.c.ser?' · #'+esc(L.c.ser):''} · listed by <b>${mine?'you':esc(L.seller)}</b></p>
+    <div class="ahd-g"><div><small>${L.bid?'CURRENT BID':'STARTING BID'}</small><b>${fmtN(L.bid||L.start)}</b><em>${L.nb} bid${L.nb===1?'':'s'}${top?' · YOU':L.bidder?' · '+esc(L.bidder):''}</em></div><div><small>BUY NOW</small><b>${fmtN(L.buyNow)}</b></div><div><small>TIME LEFT</small><b class="ah-t" data-end="${L.end}">${ahLeft(L)}</b></div></div>
+    <h4>PRICE HISTORY</h4>${ahSpark(ahKey(L.c))}</div></div>`,
+    mine||ended?[['Close',closeModal,'alt']]:[[top?'YOU ARE TOP BIDDER':`BID ${fmtN(mn)}`,()=>{if(!top){ahBid(L,mn);ahDetail(L);renderUT()}}],[`BUY NOW ${fmtN(L.buyNow)}`,()=>{ahBuy(L);closeModal();renderUT()},'alt'],['Close',closeModal,'alt']]);
+  $('#utm .panel').classList.add('cscr')}
+function ahSell(c){const v=cardVal(c),st0=Math.round(v*.7/10)*10,bn0=Math.round(v*1.3/50)*50;
+  utModal(`<div class="ahd"><div>${cardHTML(c,{big:true})}</div><div class="ahd-r"><h3>Sell ${esc(c.n)}</h3><p class="muted">Worth about ${fmtN(v)} coins. Recent sales: ${((UT.ah.hist||{})[ahKey(c)]||[]).slice(-3).map(fmtN).join(', ')||'none yet'}.</p>
+    <label class="ahs">STARTING BID <input id="ahSt" type="number" min="50" step="50" value="${st0}"></label><label class="ahs">BUY NOW <input id="ahBn" type="number" min="100" step="50" value="${bn0}"></label>
+    <label class="ahs">DURATION <select id="ahDu"><option value="10">10 minutes</option><option value="60" selected>1 hour</option><option value="240">4 hours</option></select></label><p class="muted">5% tax comes off the sale price. Unsold cards come back to you.</p></div></div>`,
+    [['LIST HIM',()=>{const st=Math.max(50,+$('#ahSt').value||st0),bn=Math.max(st+50,+$('#ahBn').value||bn0),du=+$('#ahDu').value||60;if(starterSlot(c.id))return toastUT('Starters cannot be sold');
+      UT.cards=UT.cards.filter(x=>x!==c);UT.ah.mine.push({id:UT.ah.nid++,c,seller:'you',start:st,buyNow:bn,bid:0,bidder:null,nb:0,end:Date.now()+du*6e4,val:cardVal(c),mineSell:1});utSave();closeModal();AHF.view='mine';renderUT();toastUT(`${c.n} listed for ${du>=60?du/60+' h':du+' min'}`)}],['Cancel',closeModal,'alt']]);$('#utm .panel').classList.add('cscr')}
+function uAuction(){ahTick(true);const A=UT.ah,now=Date.now();let L=[];
+  if(AHF.view==='browse')L=A.list.filter(x=>AHF.g==='all'||x.c.pos===AHF.g).sort((a,b)=>a.end-b.end);
+  if(AHF.view==='bids')L=A.list.filter(x=>x.bidder==='me');
+  if(AHF.view==='mine')L=A.mine.slice().sort((a,b)=>b.end-a.end);
+  const item=x=>`<div role="button" tabindex="0" class="ahl${x.bidder==='me'?' top':''}${x.done||x.end<=now?' end':''}" data-ah="${x.id}"><div class="ahl-c">${cardHTML(x.c,{sm:true})}</div><b>${fmtN(x.bid||x.start)}</b><small>${x.bid?(x.bidder==='me'?'YOU LEAD':x.nb+' BIDS'):'NO BIDS'}</small><em class="ah-t" data-end="${x.end}">${ahLeft(x)}</em><i>BUY ${kN(x.buyNow)}</i></div>`;
+  const sellable=UT.cards.filter(c=>!starterSlot(c.id)).sort((a,b)=>cardVal(b)-cardVal(a));
+  return`<div class="ah-top"><div class="ah-tabs">${[['browse','BROWSE'],['bids','MY BIDS'],['mine','MY LISTINGS'],['sell','SELL']].map(([k,l])=>`<button class="${AHF.view===k?'on':''}" data-ahv="${k}">${l}${k==='bids'&&A.list.some(x=>x.bidder==='me')?' ●':''}</button>`).join('')}</div>${AHF.view==='browse'?`<select id="ahG"><option value="all">ALL</option>${GROUPS.map(g=>`<option${AHF.g===g?' selected':''}>${g}</option>`).join('')}</select>`:''}</div>
+   ${A.log&&A.log.length&&AHF.view!=='sell'?`<div class="ah-log">${A.log.slice(0,3).map(x=>`<span>${esc(x.m)}</span>`).join('')}</div>`:''}
+   ${AHF.view==='sell'?`<p class="muted">Pick a bench card to list. Starters can't be sold.</p><div class="ah-g">${sellable.map(c=>`<div role="button" tabindex="0" class="ahl sell" data-sell="${c.id}"><div class="ahl-c">${cardHTML(c,{sm:true})}</div><small>WORTH ~${kN(cardVal(c))}</small></div>`).join('')||'<p class="muted">No bench cards.</p>'}</div>`
+   :`<div class="ah-g">${L.map(item).join('')||`<p class="muted">${AHF.view==='bids'?'You are not leading any auctions.':AHF.view==='mine'?'You have nothing listed. Use SELL.':'Nothing listed at this position right now.'}</p>`}</div>`}`}
+function bAuction(){document.querySelectorAll('[data-ahv]').forEach(b=>b.onclick=()=>{AHF.view=b.dataset.ahv;renderUT()});const g=$('#ahG');if(g)g.onchange=e=>{AHF.g=e.target.value;renderUT()};
+  document.querySelectorAll('[data-ah]').forEach(b=>{const f=e=>{e.stopPropagation();const id=+b.dataset.ah,L=UT.ah.list.concat(UT.ah.mine).find(x=>x.id===id);if(L)ahDetail(L)};b.onclick=f;b.querySelectorAll('.ucard').forEach(u=>u.onclick=f)});
+  document.querySelectorAll('[data-sell]').forEach(b=>{const f=e=>{e.stopPropagation();const c=cardById(+b.dataset.sell);if(c)ahSell(c)};b.onclick=f;b.querySelectorAll('.ucard').forEach(u=>u.onclick=f)});
+  clearInterval(AHI);AHI=setInterval(()=>{if(utTab!=='store'||UTSUB.store!=='auction'||$('#ut').classList.contains('hidden')){clearInterval(AHI);return}document.querySelectorAll('.ah-t').forEach(e=>{const end=+e.dataset.end,ms=end-Date.now();e.textContent=ahLeft({end});e.classList.toggle('hot',ms>0&&ms<6e4)});
+    if(Math.floor(Date.now()/1000)%6===0){const sig=()=>JSON.stringify(UT.ah.list.concat(UT.ah.mine).map(x=>[x.id,x.bid,x.done?1:0])),b0=sig();ahTick(false);if(sig()!==b0&&$('#utm').classList.contains('hidden')){const y=scrollY;renderUT();scrollTo(0,y)}}},1000)}
+
 function utMatch(opp,label,info){
   const userT=utTeam(),home=Math.random()<.5,starters=SLOTK.map(k=>cardById(UT.lineup[k])),snap=new Map(starters.map(c=>[c.id,Object.assign({},c.s||{})]));for(const p of Object.values(opp.roster||{}))p.s=p.s||{};const osnap=new Map(Object.entries(opp.roster||{}).map(([k,p])=>[k,Object.assign({},p.s)]));
   startMatch({userT,oppT:opp,userHome:home,playoff:!!info.po,label,qlen:UT.qlen,custom:()=>UT.custom,save:utSave,onEnd:r=>{
@@ -5171,7 +5242,7 @@ function utMatch(opp,label,info){
       me.html=fbxSide(me.R,{abbr:UT.club.abbr,city:UT.club.city,name:UT.club.name,c1:UT.club.c1,c2:UT.club.c2,rec:`${UT.rec.w}-${UT.rec.l}${UT.rec.t?'-'+UT.rec.t:''}`},true,me.tot);th.html=fbxSide(th.R,{abbr:opp.abbr,city:opp.city,name:opp.name,c1:opp.c1,c2:opp.c2,rec:''},false,th.tot);FBX=fbxHTML(me,th,r)}catch(e){console.error(e)}
     for(const c of starters){c.s=c.s||{};c.s.gp=(c.s.gp||0)+1;if(win)c.s.w=(c.s.w||0)+1}
     const pathDone=starters.filter(c=>c.path&&pathReady(c)),unlDone=starters.filter(c=>c.unl&&unlReady(c)),unlGo=starters.filter(c=>c.unl&&!unlReady(c));
-    refreshMarket();recalcChem();utSave();
+    refreshMarket();try{ahTick(true)}catch(e){}recalcChem();utSave();
     lines.push(`+${fmtN(coins)} coins`);if(winChip)lines.push(`Win bonus: ${(NEWAB[winChip]||{}).n} chip`);if(fpTop&&fpTop[1]>0)lines.push(`Top fantasy score: ${fpTop[0].n} ${fpTop[1]} FP`);for(const c of starters.filter(c=>c.pu&&fpOf.has(c)))if((c.up||0)<puMax(c))lines.push(`${c.n}: +${fpOf.get(c)} FP${puReady(c)?' · READY TO LEVEL UP':` (${r1(c.pxp||0)} / ${puNeed(c)})`}`);{const tg=ECON.tpGame+(win?ECON.tpWin:0);UT.tp=(UT.tp||0)+tg;lines.push(`+${tg} training`)}for(const [c,n,o0] of puUps)lines.push(`${c.n} +${fpOf.get(c)} FP: up ${n} to ${effOvr(c)} OVR${c.puPick?', pick his free chip in Power Ups':''}`);if(r.objN)lines.push(`${r.objN} of 3 objectives done (${fmtN(r.objCoins)} coins of that)`);if(UT.dream)lines.push(`+${dp} Dream Card points`);if(pack)lines.push(`+${PACKS[pack].n}`);if(sx)lines.push(...sx.lines);for(const c of unlDone)lines.push(`${c.n}'s Power Up is ready. Claim it in Power Ups.`);if(unlGo.length)lines.push('Power Up unlocks: '+unlGo.map(c=>c.n+' '+unlPct(c)+'%').join(', '));
     const upHtml=ups.length?`<h3>Level ups</h3><div class="cgrid pick">${[...new Set(ups)].map(c=>cardHTML(c,{sm:true,noStar:true})).join('')}</div>`:'';
     renderUT();show('ut');
@@ -5602,12 +5673,14 @@ function uClub(){const c=UT.club;return`<div class="row"><label>City <input id="
   <h3>Custom plays</h3>${UT.custom.length?'<table>'+UT.custom.map((p,i)=>`<tr><td>${esc(p.n)}</td><td><button class="btn" data-del="${i}">Delete</button></td></tr>`).join('')+'</table>':'<p class="muted">Press R before a snap to draw a route, then S to save the play.</p>'}
   <h3>Tutorial</h3><div class="tutbox" id="tutBox"><p class="muted">Replay the Ultimate Team tour, or bring back the coach tips that pop up on the field the first time you pass, catch, run or make a move.</p><div class="row"><button class="btn primary" id="tutReplay">Replay the tour</button><button class="btn" id="tipsReset">Reset field tips</button><button class="btn" id="tipsToggle">Field tips: ${TIPS.off?'off':'on'}</button></div></div>
   <h3>Move your save</h3><p class="muted">Export everything to a file and import it on another device or the home screen app.</p><button class="btn" id="clXfer">Move save</button>
+  ${testCards().length?`<h3>Test cards</h3><p class="muted">An old version gave your club ${testCards().length} test cards (99 legends with every ability). Remove just those and keep everything else.</p><button class="btn primary" id="clTest">Remove ${testCards().length} test cards</button>`:''}
   <h3>Start over</h3><p class="muted">Deletes your club, cards and coins.</p><button class="btn" id="clReset">Reset Ultimate Team</button>`}
 function bClub(){
   const v=k=>$('#cl_'+k).value.trim();bindTeamPick('cl');
   $('#clXfer').onclick=openTransfer;$('#tutReplay').onclick=()=>tourStart(0);$('#tipsReset').onclick=()=>{TIPS={seen:{},off:false};tipsSave();renderUT();toastUT('Field tips will show again')};$('#tipsToggle').onclick=()=>{TIPS.off=!TIPS.off;tipsSave();renderUT();toastUT('Field tips '+(TIPS.off?'off':'on'))};
   $('#clSave').onclick=()=>{const c=UT.club;c.city=v('city')||c.city;c.name=v('name')||c.name;c.abbr=(v('abbr')||c.abbr).toUpperCase().slice(0,4);c.c1=$('#cl_c1').value;c.c2=$('#cl_c2').value;utSave();renderUT();toastUT('Club saved')};
   document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{UT.custom.splice(+b.dataset.del,1);utSave();renderUT()});
+  const ct=$('#clTest');if(ct)ct.onclick=()=>utModal(`<h3>Remove ${testCards().length} test cards?</h3><p>Your coins, other cards, Power Ups and seasons stay. Empty lineup spots get filled with your next best players.</p>`,[['Remove them',()=>{removeTestCards();closeModal();renderUT()}],['Cancel',closeModal,'alt']]);
   $('#clReset').onclick=()=>utModal('<h3>Reset Ultimate Team?</h3><p>This cannot be undone.</p>',[['Yes, delete everything',()=>{try{localStorage.removeItem(UTKEY)}catch(e){}UT=null;closeModal();utNewClub()}],['Cancel',closeModal,'alt']]);
 }
 
