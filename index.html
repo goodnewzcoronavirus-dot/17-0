@@ -251,6 +251,30 @@ kbd{display:inline-block;font-family:'Press Start 2P',monospace;font-size:9px;pa
 .tbox{width:100%;border-collapse:collapse;font-size:17px}.tbox td{text-align:center;padding:1px 6px;font-family:'Press Start 2P',monospace;font-size:10px}.tbox th{font-weight:400;color:var(--muted);text-align:center;padding:1px 4px}.tbox tr:nth-child(even){background:var(--chip)}
 .lead{font-size:17px}.lead p{margin:2px 0 6px}.oblist{list-style:none;padding:0;margin:4px 0}.oblist li{color:var(--muted)}.oblist li.done{color:var(--turf)}.oblist em{font-style:normal;color:#c98a00}
 .objs{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:15px;margin:2px 0 6px}.objs b{font-family:'Press Start 2P',monospace;font-weight:400;font-size:8px;align-self:center}.objs span.done{color:var(--turf);text-decoration:line-through}.objs em{font-style:normal;color:#c98a00}
+
+.pxi{display:inline-block;vertical-align:middle;flex:0 0 auto}
+.nxu{display:grid;grid-template-columns:repeat(auto-fit,minmax(72px,1fr));gap:8px;margin:0 0 14px}
+.nxt{font-family:'Press Start 2P',monospace;color:var(--ink);background:var(--panel);border:3px solid var(--edge);box-shadow:3px 3px 0 var(--shadow);padding:10px 4px 9px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;min-height:92px;justify-content:center}
+.nxt b{font-size:15px;font-weight:400;line-height:1}.nxt span{font-size:7px;color:var(--muted)}
+.nxt.hot{background:var(--accent);color:#fff;animation:nxPulse 1.6s ease-in-out infinite}.nxt.hot span{color:#fff}
+@keyframes nxPulse{50%{box-shadow:3px 3px 0 var(--shadow),0 0 0 4px rgba(255,210,63,.55)}}
+.qmc{background:var(--panel);border:3px solid var(--edge);box-shadow:4px 4px 0 var(--shadow);padding:12px;margin-bottom:16px;font-family:'Press Start 2P',monospace}
+.qm-h{display:flex;align-items:center;gap:8px;font-size:11px;margin-bottom:12px}
+.qm-vs{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}.qm-vs>div{display:grid;grid-template-columns:44px 1fr 72px;align-items:center;gap:8px}
+.qm-vs small{font-size:7px;color:var(--muted)}.qm-vs b{font-size:10px;font-weight:400;text-align:right;white-space:nowrap}
+.qm-vs i{height:12px;background:var(--chip);border:2px solid var(--edge);display:block}.qm-vs u{display:block;height:100%}
+.qm-row{display:flex;align-items:center;gap:10px}.qm-pay{display:flex;align-items:center;gap:5px;color:var(--amber)}.qm-pay b{font-size:11px;font-weight:400;color:var(--ink)}.qm-pay small{font-size:6px;color:var(--muted)}
+.qm-go{margin-left:auto;font-size:13px!important;padding:12px 22px!important}
+.qm-set{display:flex;gap:10px;margin-top:12px;font-size:7px;color:var(--muted)}.qm-set label{display:flex;align-items:center;gap:5px}.qm-set select{font-size:12px}
+.sol-h{display:flex;justify-content:space-between;align-items:baseline;font-family:'Press Start 2P',monospace;font-size:10px;margin:4px 0 8px}.sol-h span{font-size:9px;color:var(--muted)}
+.sol-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:10px}.sol-bar i{position:relative;height:16px;background:var(--chip);border:2px solid var(--edge);display:block}.sol-bar u{position:absolute;left:0;top:0;bottom:0;background:var(--c)}.sol-bar em{position:absolute;inset:0;font-style:normal;font-family:'Press Start 2P',monospace;font-size:5px;display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.sol-g{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.sol{position:relative;font-family:'Press Start 2P',monospace;color:var(--ink);background:var(--panel);border:3px solid var(--edge);border-top:6px solid var(--c);padding:8px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;min-height:74px}
+.sol .sn{position:absolute;left:4px;top:3px;font-size:6px;color:var(--muted)}.sol .sr{position:absolute;right:4px;top:3px;color:var(--turf)}.sol.lock .sr{color:var(--muted)}
+.sol b{font-size:14px;font-weight:400;margin-top:6px}.sol .sp{display:flex;align-items:center;gap:3px;font-size:6px;color:var(--amber)}
+.sol.done{opacity:.6}.sol.lock{opacity:.45;cursor:default}
+.sol.cur{background:var(--accent);color:#fff;box-shadow:3px 3px 0 var(--shadow)}.sol.cur .sn,.sol.cur .sp{color:#fff}.sol .sgo{font-size:7px;background:#000;color:#fff;padding:3px 5px 2px}
+.objs .oc{display:inline-flex;align-items:center;gap:5px;border:2px solid currentColor;padding:3px 6px;font-size:13px}.objs .oc.done{color:var(--turf);text-decoration:none}.objs .oc em{display:inline-flex;align-items:center;gap:2px}.objs .ob{display:inline-block;width:40px;height:8px;border:2px solid var(--ink);vertical-align:middle;margin-left:6px}.objs .ob u{display:block;height:100%;background:var(--turf)}
 .card.cool{opacity:.42;filter:grayscale(.8);position:relative}.card .cdn{position:absolute;top:4px;right:6px;font-family:'Press Start 2P',monospace;font-size:12px;color:#ff5a47;text-shadow:1px 1px 0 #000}
 .uabs{position:absolute!important;right:5px;top:24px;z-index:3!important;display:flex;flex-direction:column;gap:2px}
 .ucard.sig .usig{position:absolute!important;left:5px;top:40px;z-index:3!important;display:flex;gap:2px;align-items:center;margin:0;font-size:7px;padding:2px 3px}.ucard .usig u{display:none;text-decoration:none}.ucard.big .usig{position:relative!important;left:auto;top:auto;margin-top:3px}.ucard.big .usig b{display:none}.ucard.big .usig u{display:inline}.ucard.sm .uabs{display:none}.uabs i{font-style:normal;font-family:'Press Start 2P',monospace;font-size:6px;padding:2px 2px;background:#000;color:var(--ac);border:1px solid var(--ac)}
@@ -3001,7 +3025,7 @@ const OBJDEF=[
  {id:'zone',t:'Get a player In the Zone',c:300,g:()=>G.box.zoned>=1}];
 function pickObjs(){const hasSig=Object.values(G.userT.roster).some(p=>p&&p.sig);return shuffle(OBJDEF.filter(o=>o.id!=='zone'||hasSig).slice()).slice(0,3).map(o=>Object.assign({},o,{done:false}))}
 function objTick(e,end){if(!G.objs)return;for(const o of G.objs){if(o.done)continue;let ok=false;if(e&&o.f)ok=o.f(e);if(!ok&&o.g)ok=o.g(G.box.u);if(!ok&&end&&o.end)ok=o.end(G.box.u);if(ok){o.done=true;if(!end)setTimeout(()=>toast('OBJECTIVE DONE: +'+o.c,true),900)}}}
-const objHTML=()=>G&&G.objs?`<div class="objs"><b>Objectives</b>${G.objs.map(o=>`<span class="${o.done?'done':''}">${o.done?'✓':'○'} ${esc(o.t)} <em>+${o.c}</em></span>`).join('')}</div>`:'';
+const objHTML=()=>{if(!G||!G.objs)return'';const n=G.objs.filter(o=>o.done).length;return`<div class="objs"><b>GOALS ${n}/3<span class="ob"><u style="width:${Math.round(n/3*100)}%"></u></span></b>${G.objs.map(o=>`<span class="oc${o.done?' done':''}">${pxIco(o.done?'check':'ball',12)}${esc(o.t)} <em>${pxIco('coin',10)}${o.c}</em></span>`).join('')}</div>`};
 function boxPlay(r){if(!G.box||!G.play)return;const B=G.box.u,pl=G.play;B.plays++;
   const ey=r.kind==='td'?100:['inc','int'].includes(r.kind)?G.yard:clamp(Math.round(r.x-10),1,99),gain=ey-G.yard;
   const pass=pl.kind==='pass'||(pl.kind!=='run'&&!pl.rusher&&['inc','int'].includes(r.kind))||!!pl.rec,run=!!pl.rusher&&!pl.rec;
@@ -4564,19 +4588,34 @@ Object.assign(TABICO,{team:'\u{1F4CB}',cards:'\u{1F5C2}\uFE0F',store:'\u{1F381}'
 const UTSUBS={play:[['play','Quick play'],['season','Season']],team:[['lineup','Lineup & chips'],['abil','Ability guide']],cards:[['coll','My cards'],['cat','Every player']],store:[['packs','Packs'],['market','Market'],['trade','Trade-ins']],pu:[['pu','Power Ups']],club:[['club','Club']]};
 const UTPARENT={season:'play',play:'play',lineup:'team',abil:'team',coll:'cards',cat:'cards',packs:'store',market:'store',upgrade:'store',trade:'store',path:'pu',pu:'pu',club:'club',team:'team',cards:'cards',store:'store'};
 let UTSUB={play:'play',team:'lineup',cards:'coll',store:'packs',pu:'pu',club:'club'};
+// ---------- hub pixel icons ----------
+const PXI={
+ pack:['..XXXXXXXX..','.X........X.','.X.XXXXXX.X.','.X.X....X.X.','.X.X.XX.X.X.','.X.X....X.X.','.X.XXXXXX.X.','.X........X.','.XXXXXXXXXX.','.X.X.X.X.X..','.XXXXXXXXXX.','............'],
+ chip:['...XXXXXX...','..X......X..','.X..XXXX..X.','X..X....X..X','X..X.XX.X..X','X..X.XX.X..X','X..X....X..X','.X..XXXX..X.','..X......X..','...XXXXXX...','............','............'],
+ pu:['.....XX.....','....XXXX....','...XXXXXX...','..XXXXXXXX..','.....XX.....','.....XX.....','..XX.XX.XX..','.XXX.XX.XXX.','.....XX.....','..XXXXXXXX..','..XXXXXXXX..','............'],
+ coin:['...XXXXXX...','..XXXXXXXX..','.XXX....XXX.','.XX..XX..XX.','XXX.XXXX.XXX','XXX..XX..XXX','XXX..XX..XXX','XXX.XXXX.XXX','.XX..XX..XX.','.XXX....XXX.','..XXXXXXXX..','...XXXXXX...'],
+ ball:['............','....XXXX....','..XXXXXXXX..','.XXXX..XXXX.','XXX.XXXX.XXX','XXXX....XXXX','XXX.XXXX.XXX','.XXXX..XXXX.','..XXXXXXXX..','....XXXX....','............','............'],
+ trophy:['XXXXXXXXXXXX','X.XXXXXXXX.X','X.XXXXXXXX.X','.XXXXXXXXXX.','..XXXXXXXX..','...XXXXXX...','....XXXX....','.....XX.....','.....XX.....','...XXXXXX...','..XXXXXXXX..','............'],
+ sell:['.....XX.....','...XXXXXX...','..XX.XX.XX..','..XX.XX.....','...XXXXX....','.....XX.XX..','..XX.XX.XX..','...XXXXXX...','.....XX.....','............','XXXXXXXXXXXX','............'],
+ trade:['........X...','........XX..','XXXXXXXXXXX.','........XX..','........X...','............','...X........','..XX........','.XXXXXXXXXXX','..XX........','...X........','............'],
+ lock:['....XXXX....','...X....X...','..X......X..','..X......X..','.XXXXXXXXXX.','.XXXXXXXXXX.','.XXXX..XXXX.','.XXXX..XXXX.','.XXXXX.XXXX.','.XXXXXXXXXX.','.XXXXXXXXXX.','............'],
+ check:['............','..........XX','.........XXX','........XXX.','XX.....XXX..','XXX...XXX...','.XXX.XXX....','..XXXXX.....','...XXX......','....X.......','............','............'],
+ sword:['..........XX','.........XXX','........XXX.','.......XXX..','..X...XXX...','..XX.XXX....','...XXXX.....','...XXX......','..XX.XX.....','.XX...X.....','XX..........','............']};
+function pxIco(k,sz=22){const R=PXI[k]||PXI.ball;let r='';R.forEach((row,y)=>[...row].forEach((ch,x)=>{if(ch==='X')r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`}));return`<svg class="pxi" viewBox="0 0 12 12" width="${sz}" height="${sz}" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true">${r}</svg>`}
+const kN=n=>n>=1000?(Math.round(n/100)/10+'K').replace('.0K','K'):String(n);
 // what to do next, in order: the one clear thing, with a button that takes you there
-function nextUp(){const L=[];const go=(t,sub,msg,btn)=>L.push({t,sub,msg,btn});
-  if(UT.packs.length)go('store','packs',`You have ${UT.packs.length} unopened pack${UT.packs.length>1?'s':''}.`,'Open packs');
-  const ur=UT.cards.find(unlReady);if(ur)go('pu','pu',`${ur.n}'s Power Up is ready to claim.`,'Claim it');
-  const pick=UT.cards.find(c=>c.pu&&c.puPick);if(pick)go('pu','pu',`${pick.n} leveled up. Pick his free reward.`,'Pick reward');
+function nextUp(){const L=[];const go=(t,sub,msg,btn,ic,big,lab)=>L.push({t,sub,msg,btn,ic,big,lab});
+  if(UT.packs.length)go('store','packs',`You have ${UT.packs.length} unopened pack${UT.packs.length>1?'s':''}.`,'Open packs','pack',UT.packs.length,'OPEN');
+  const ur=UT.cards.find(unlReady);if(ur)go('pu','pu',`${ur.n}'s Power Up is ready to claim.`,'Claim it','pu',lastNameOf(ur.n),'CLAIM');
+  const pick=UT.cards.find(c=>c.pu&&c.puPick);if(pick)go('pu','pu',`${pick.n} leveled up. Pick his free reward.`,'Pick reward','chip','FREE','CHIP');
   const st=SLOTK.map(k=>cardById(UT.lineup[k])).filter(Boolean),spare=Object.entries(UT.chips||{}).filter(([,n])=>n>0).map(([k])=>k);
-  if(spare.some(k=>st.some(c=>!chipWhy(c,k))))go('team','lineup','You have spare chips a starter can use.','Equip chips');
-  const pus=UT.cards.filter(c=>c.pu&&!c.puPick&&(c.up||0)<puMax(c));if(!UT.cards.some(c=>c.pu)||UT.fantasy>0)go('pu','pu',UT.fantasy>0?`You have ${UT.fantasy} free Fantasy Pack${UT.fantasy>1?'s':''}. Pick a Power Up.`:'Get your first Power Up from a Fantasy Pack.','Get a Power Up');else if(pus.some(c=>(UT.tp||0)>=puCost(c)))go('pu','pu',`You have ${fmtN(UT.tp)} training. Upgrade a Power Up.`,'Train');
-  const junk=UT.cards.filter(c=>!starterSlot(c.id)&&!c.pu&&(c.tier==='bronze'||c.tier==='silver'));if(junk.length>=5)go('cards','coll',`${junk.length} bronze and silver bench cards could be training.`,'Quick sell');
-  if(CHIPTR.some(m=>trPool(m).length>=m.cnt))go('store','trade','You have enough bench cards to trade in for a chip.','Trade in');
-  const S=UT.season,g=S&&nextGame();if(g)go('play','season',`Season game next: ${g.label}.`,'Play season game');else go('play','play','Win games to earn coins and chips.','Play');
+  if(spare.some(k=>st.some(c=>!chipWhy(c,k))))go('team','lineup','You have spare chips a starter can use.','Equip chips','chip',spare.length,'EQUIP');
+  const pus=UT.cards.filter(c=>c.pu&&!c.puPick&&(c.up||0)<puMax(c));if(!UT.cards.some(c=>c.pu)||UT.fantasy>0)go('pu','pu',UT.fantasy>0?`You have ${UT.fantasy} free Fantasy Pack${UT.fantasy>1?'s':''}. Pick a Power Up.`:'Get your first Power Up from a Fantasy Pack.','Get a Power Up','pu',UT.fantasy>0?UT.fantasy:'+','FREE PU');else if(pus.some(c=>(UT.tp||0)>=puCost(c)))go('pu','pu',`You have ${fmtN(UT.tp)} training. Upgrade a Power Up.`,'Train','pu',kN(UT.tp),'TRAIN');
+  const junk=UT.cards.filter(c=>!starterSlot(c.id)&&!c.pu&&(c.tier==='bronze'||c.tier==='silver'));if(junk.length>=5)go('cards','coll',`${junk.length} bronze and silver bench cards could be training.`,'Quick sell','sell',junk.length,'SELL');
+  if(CHIPTR.some(m=>trPool(m).length>=m.cnt))go('store','trade','You have enough bench cards to trade in for a chip.','Trade in','trade','','TRADE');
+  const S=UT.season,g=S&&nextGame();if(g)go('play','season',`Season game next: ${g.label}.`,'Play season game','trophy','WK','SEASON');else go('play','play','Win games to earn coins and chips.','Play','ball','GO','PLAY');
   return L}
-function nextUpHTML(){const L=nextUp().slice(0,3);return`<div class="action" style="border-left:6px solid ${UT.club.c2}"><h2 style="margin-top:0">Next up</h2>${L.map((x,i)=>`<div class="solo"><div><b>${i+1}. ${esc(x.msg)}</b></div><button class="btn${i===0?' primary':''}" data-go="${x.t}:${x.sub}">${esc(x.btn)}</button></div>`).join('')}</div>`}
+function nextUpHTML(){const L=nextUp().slice(0,4);return`<div class="nxu">${L.map((x,i)=>`<button class="nxt${i===0?' hot':''}" data-go="${x.t}:${x.sub}" title="${esc(x.msg)}" aria-label="${esc(x.msg)}">${pxIco(x.ic||'ball',26)}<b>${esc(String(x.big??''))}</b><span>${esc(x.lab||x.btn)}</span></button>`).join('')}</div>`}
 function renderUT(){
   if(UT&&!UT.noToe){UT.chips=UT.chips||{};let n=UT.chips.toetap||0;delete UT.chips.toetap;for(const c of UT.cards){if(c.eq&&c.eq.includes('toetap')){c.eq=c.eq.filter(a=>a!=='toetap');n++}if(c.abO==='toetap')c.abO=null}for(let i=0;i<n;i++)chipGive(pick(ABPOS.WR));UT.noToe=1;utSave();if(n)setTimeout(()=>toastUT(`Toe Tap was retired. You got ${n} other chip${n>1?'s':''} instead.`),300)}
   if(UT&&UT.fantasy===undefined){UT.fantasy=1;for(const c of UT.cards)if(c.pu)c.pot=99;utSave()}
@@ -4707,10 +4746,16 @@ function examineTpl(tid){
   const sd=$('#setDream');if(sd)sd.onclick=()=>{const keep=UT.dream&&UT.dream.pts?Math.round(UT.dream.pts*.5):0;UT.dream={tid,pts:keep};utSave();closeModal();renderUT();toastUT('Dream Card set'+(keep?', kept '+keep+' points':''))};
 }
 function uPlay(){
-  const o=teamOvr();let h=`<div class="action"><h2>Quick match</h2><p class="muted">Face a team a little better than you (your overall is ${o.all}). Difficulty adds more on top and makes defenses smarter and more likely to pick you off.</p><div class="row"><button class="btn primary" id="qm">Play quick match</button><label>Difficulty <select id="diff2">${Object.entries(DIFFS).map(([k,d])=>`<option value="${k}"${DIFF===k?' selected':''}>${d.n}</option>`).join('')}</select></label><label>Quarter length <select id="qlen2">${[2,3,5,8].map(n=>`<option value="${n}"${UT.qlen===n?' selected':''}>${n} min</option>`).join('')}</select></label></div></div><h2 style="margin-top:16px">Solo challenges</h2>`;
-  let last='';for(const s of SOLOS){if(s.tier!==last){h+=`${last?'</div>':''}<h3>${s.tier}</h3><div class="solos">`;last=s.tier}
-    const done=UT.solos[s.i],open=s.i===0||UT.solos[s.i-1];
-    h+=`<div class="solo${done?' done':''}${open?'':' locked'}"><div><b>${s.i+1}. ${s.tb[0]} ${s.tb[1]}</b><span class="muted">OVR ${s.ovr}</span></div><div class="muted">${done?'Completed. Replay pays '+fmtN(Math.round(s.coins*.3))+' coins':`Reward ${fmtN(s.coins)} coins${s.pack?' + '+PACKS[s.pack].n:''}`}</div><button class="btn${open?' primary':''}" data-solo="${s.i}" ${open?'':'disabled'}>${open?'Play':'Locked'}</button></div>`}
+  const o=teamOvr(),lo=o.all-2,hi=o.all+5,w0=clamp(ECON.qWin-2*ECON.qWinPerOvr,ECON.qWinMin,ECON.qWinMax),w1=clamp(ECON.qWin+5*ECON.qWinPerOvr,ECON.qWinMin,ECON.qWinMax),bar=v=>Math.round(clamp((v-50)/49,0,1)*100);
+  let h=`<div class="qmc"><div class="qm-h">${pxIco('ball',18)}<b>QUICK MATCH</b></div>
+   <div class="qm-vs"><div><small>YOU</small><i><u style="width:${bar(o.all)}%;background:${UT.club.c1}"></u></i><b>${o.all}</b></div><div><small>THEM</small><i><u style="width:${bar(hi)}%;background:#9aa3c0"></u></i><b>${lo}-${hi}</b></div></div>
+   <div class="qm-row"><span class="qm-pay">${pxIco('coin',16)}<b>${kN(w0)}-${kN(w1)}</b><small>WIN</small></span><span class="qm-pay">${pxIco('check',16)}<b>3</b><small>GOALS</small></span><button class="btn primary qm-go" id="qm">PLAY</button></div>
+   <div class="qm-set"><label>${pxIco('sword',12)}<select id="diff2" aria-label="Difficulty">${Object.entries(DIFFS).map(([k,d])=>`<option value="${k}"${DIFF===k?' selected':''}>${d.n}</option>`).join('')}</select></label><label>QTR <select id="qlen2" aria-label="Quarter length">${[2,3,5,8].map(n=>`<option value="${n}"${UT.qlen===n?' selected':''}>${n} min</option>`).join('')}</select></label></div></div>`;
+  const nd=SOLOS.filter(x=>UT.solos[x.i]).length,TC={Rookie:'#c0803f',Pro:'#d5dde6','All-Pro':'#f5cd4c',Legend:'#ff5577'};
+  h+=`<div class="sol-h"><b>SOLO CHALLENGES</b><span>${nd} / ${SOLOS.length}</span></div><div class="sol-bar">${['Rookie','Pro','All-Pro','Legend'].map(t=>{const L=SOLOS.filter(x=>x.tier===t),d=L.filter(x=>UT.solos[x.i]).length;return`<i style="--c:${TC[t]}"><u style="width:${Math.round(d/L.length*100)}%"></u><em>${t.toUpperCase()}</em></i>`}).join('')}</div><div class="sol-g">`;
+  for(const x of SOLOS){const done=UT.solos[x.i],open=x.i===0||UT.solos[x.i-1],cur=open&&!done,pay=done?Math.round(x.coins*.3):x.coins;
+    h+=`<button class="sol${done?' done':''}${cur?' cur':''}${open?'':' lock'}" style="--c:${TC[x.tier]}" data-solo="${x.i}" ${open?'':'disabled'} aria-label="Solo ${x.i+1}, ${esc(x.tb[0]+' '+x.tb[1])}, OVR ${x.ovr}"><span class="sn">${x.i+1}</span><b>${x.ovr}</b><span class="sr">${done?pxIco('check',12):open?'':pxIco('lock',12)}</span>
+      <span class="sp">${pxIco('coin',11)}${kN(pay)}${x.pack&&!done?pxIco('pack',11):''}</span>${cur?'<span class="sgo">PLAY</span>':''}</button>`}
   return h+'</div>';
 }
 function bPlay(){
@@ -4844,13 +4889,13 @@ function sellCard(c,how){if(starterSlot(c.id))return;chipReturn(c);UT.cards=UT.c
 // ================= TUTORIAL: Ultimate Team tour =================
 const TOUR=[
   {t:'Welcome to Ultimate Team',b:()=>`<p>The loop: <b>win games</b> for coins, open packs, <b>quick sell</b> extras for training, and <b>train Power Ups</b> to 99. The <b>Next up</b> box on the Play tab always tells you the one thing to do next.</p>`},
-  {tab:'play',sel:'#utBody .action',t:'Next up',b:()=>`<p>Your to-do list. Tap the button and it takes you right there: open packs, equip chips, pick Power Up rewards, or play your next game.</p>`},
+  {tab:'play',sel:'#utBody .nxu',t:'Next up',b:()=>`<p>Your to-do tiles. The glowing one is the best thing to do now. Tap it and it takes you right there.</p>`},
   {tab:'team',sel:'#auto',t:'Team',b:()=>`<p>Your lineup. Tap a slot to swap a player, or let it pick your best lineup. Same-team starters give chemistry boosts.</p>`},
   {tab:'team',sel:'#utBody h3',t:'Ability chips',b:()=>`<p>Abilities and X-Factors are <b>chips</b>. Tap a spare chip to put it on a starter. Better players have more slots, and some chips need a skill rating.</p><p>Only <b>5 abilities and 3 X-Factors</b> work in a game, so you choose which.</p>`},
   {tab:'cards',sel:'#utBody .row',t:'Cards',b:()=>`<p>Your collection and every player in the game, including <b>Throwback legends</b>. Tap a card to start, sell or look at it. Selling keeps its chips.</p>`},
   {tab:'store',sel:'#utBody .row',t:'Store',b:()=>`<p>Packs (with exact odds and bonus chips), the Market for one specific player, and <b>Trade-ins</b> that turn bench cards into chips and packs. The Featured pack changes every week.</p>`},
   {tab:'pu',sel:'#fantasy',up:'.action',t:'Power Ups',b:()=>`<p>Every player has a <b>Power Up</b> card that grows to <b>99</b>. Get one from a Fantasy Pack (your first is free), buy any player's in Cards, or unlock it free by playing a card of him you pulled.</p><p>Power Ups level up from the <b>fantasy points</b> they score while starting. You pick a free chip at 80, 85, 90 and 95, and an X-Factor at 99. Training from quick sells is a shortcut.</p>`},
-  {tab:'play',sel:'#qm',up:'.action',t:'Go play',b:()=>`<p>That's it. Play a game and check Next up after.</p>`}
+  {tab:'play',sel:'#qm',up:'.qmc',t:'Go play',b:()=>`<p>That's it. Play a game and check Next up after.</p>`}
 ];
 let TOURI=-1;
 function tourStart(i){if(!UT)return;closeModal&&$('#utm')&&!$('#utm').classList.contains('hidden')&&closeModal();TOURI=i||0;tourShow()}
