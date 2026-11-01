@@ -429,6 +429,9 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 #rv{position:fixed;inset:0;z-index:96;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#03040a;cursor:pointer;--tc:#f5cd4c;--tm:#e84a3a;--tm2:#ffd23f;font-family:'Press Start 2P',monospace;color:#fff}
 #rv.hidden{display:none}
 
+.pg{display:flex;flex-wrap:wrap;align-items:center;gap:3px;font-family:'Press Start 2P',monospace;font-size:6px}.pg span{border:2px solid var(--edge);padding:3px 4px 2px;color:var(--muted)}.pg span b{font-weight:400;font-size:8px;margin-right:3px;color:var(--ink)}.pg span.done{background:#2fae4e;color:#000;border-color:#000}.pg span.done b{color:#000}.pg span.has{border-color:#ffd23f;color:#ffd23f}.pg i{font-style:normal;color:var(--muted)}
+.pp-gate{border:2px dashed var(--muted);padding:6px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}.pp-gate b{font-family:'Press Start 2P',monospace;font-size:8px;color:#ffd23f}.pp-gate span{flex:1;min-width:160px;font-size:12px}.pp-gate.has{border-color:#ffd23f;border-style:solid}.pp-gate .btn{font-size:8px}
+
 /* ===== auction house ===== */
 .ah-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}.ah-tabs{display:flex;gap:4px}.ah-tabs button{font-family:'Press Start 2P',monospace;font-size:7px;padding:8px 9px 6px;border:2px solid var(--edge);background:var(--panel);color:var(--muted);cursor:pointer}.ah-tabs button.on{background:var(--ink);color:var(--bg)}.ah-top select{margin-left:auto}
 .ah-log{display:flex;flex-direction:column;gap:3px;margin-bottom:8px}.ah-log span{font-size:12px;border-left:4px solid #ffd23f;padding:3px 8px;background:var(--panel)}
@@ -1153,7 +1156,7 @@ function chipWhy(c,k){if(!c)return'No player';const xf=k.startsWith('x_');if(!((
   const q=ABREQ[k];if(q&&cRat(c,q[0])<q[1])return'Needs '+RLAB[q[0]]+' '+q[1];return''}
 function chipEquip(c,k){if(chipWhy(c,k)||!(UT.chips[k]>0))return false;UT.chips[k]--;if(k.startsWith('x_'))c.eqX=k;else c.eq=[...cardAbs(c),k];utSave();return true}
 function chipRemove(c,k){chipInit(c);if(k.startsWith('x_')){if(c.eqX!==k)return;c.eqX=null}else{if(!c.eq.includes(k))return;c.eq=c.eq.filter(a=>a!==k)}UT.chips[k]=(UT.chips[k]||0)+1;utSave()}
-function chipReturn(c){if(!c||!UT)return;chipInit(c);for(const k of c.eq||[])UT.chips[k]=(UT.chips[k]||0)+1;if(c.eqX)UT.chips[c.eqX]=(UT.chips[c.eqX]||0)+1;c.eq=[];c.eqX=null}
+function chipReturn(c){if(!c||!UT)return;UT.chips=UT.chips||{};chipInit(c);for(const k of c.eq||[])UT.chips[k]=(UT.chips[k]||0)+1;if(c.eqX)UT.chips[c.eqX]=(UT.chips[c.eqX]||0)+1;c.eq=[];c.eqX=null}
 function chipGive(k,n=1){UT.chips=UT.chips||{};UT.chips[k]=(UT.chips[k]||0)+n}
 const ALLAB=[...new Set(Object.values(ABPOS).flat())],ALLXF=[...new Set(Object.values(XFPOS).flat())];
 function chipRandom(x){const L=x?ALLXF:ALLAB;return L[Math.floor(Math.random()*L.length)]}
@@ -4678,14 +4681,15 @@ function chemAvg(){let t=0,n=0;for(const k of SLOTK){const c=cardById(UT.lineup[
 const portCache=new Map();
 function tinted(img,col){const c=document.createElement('canvas');c.width=img.width;c.height=img.height;const g=c.getContext('2d');g.drawImage(img,0,0);g.globalCompositeOperation='source-in';g.fillStyle=col;g.fillRect(0,0,c.width,c.height);return c}
 const ART_POSE=[{QB:'hold',RB:'carry',WR:'ready',TE:'ready',OL:'stance',DL:'stance',LB:'ready',CB:'ready',S:'ready',K:'flex',P:'flex'},{QB:'throw0',RB:'carry',WR:'catch',TE:'stiff',OL:'block',DL:'lunge',LB:'lunge',CB:'ready',S:'lunge',K:'flex',P:'flex'},{QB:'throw1',RB:'hurdle',WR:'onehand',TE:'stiff',OL:'block',DL:'lunge',LB:'lunge',CB:'lunge',S:'lunge',K:'point',P:'point'},{QB:'point',RB:'hurdle',WR:'onehand',TE:'stiff',OL:'flex',DL:'flex',LB:'celebrate',CB:'celebrate',S:'celebrate',K:'point',P:'point'}];
-function artTier(c){const pk=c.pk||progKey(c.prog);return c.pu?'power':pk==='peak'?'hof':c.tier}
+const artPk=c=>c.pu&&c.artP?c.artP:(c.pk||progKey(c.prog)||'core');
+function artTier(c){const pk=artPk(c);return c.pu&&!c.artP?'power':pk==='peak'?'hof':c.tier}
 const CSSART=new Set(['breakout','prime','feared','icon','ignition','throwback']);
 const ANIMPROG=new Set(['prime','feared','icon','ignition','peak']);
 const ANIM2={QB:['throw0','throw1'],RB:['carry','hurdle'],WR:['catch','onehand'],TE:['stiff','catch'],OL:['stance','block'],DL:['stance','lunge'],LB:['ready','lunge'],CB:['ready','lunge'],S:['ready','lunge'],K:['flex','point'],P:['flex','point']};
 const BALLP=['hold','carry','throw0','throw1','hurdle','stiff','onehand','catch'];
-function portraitAnimated(c){const pk=c.pk||progKey(c.prog);return ANIMPROG.has(pk)||c.tier==='legend'}
+function portraitAnimated(c){const pk=artPk(c);return ANIMPROG.has(pk)||c.tier==='legend'}
 function portrait(c){
-  const pk=c.pk||progKey(c.prog)||'core',tier=artTier(c),bare=CSSART.has(pk),anim=portraitAnimated(c);
+  const pk=artPk(c),tier=artTier(c),bare=CSSART.has(pk),anim=portraitAnimated(c);
   const key=[c.team,c.pos,c.skin,tier,bare?pk:'',anim?'a':''].join('|');let u=portCache.get(key);if(u)return u;
   const tb=tbOf(c.team),pal=palFor({c1:tb[3],c2:tb[4]},true,c.skin),lvl={bronze:0,silver:1,gold:2,power:2,elite:3,legend:4,hof:5}[tier];
   const poses=anim?ANIM2[c.pos]:[ART_POSE[lvl<=1?lvl:lvl<=3?2:3][c.pos]];
@@ -4757,11 +4761,11 @@ const ABC={burner:['BR','#ff6a1a'],cannon:['CN','#5ad1ff'],dime:['DM','#6cff8a']
 const abChips=(ab,sg)=>{const l=ab.filter(k=>ABC[k]&&k!==sg).slice(0,4);return l.length?`<span class="uabs">${l.map(k=>`<i style="--ac:${ABC[k][1]}" title="${esc(ABDEF[k].n)}">${ABC[k][0]}</i>`).join('')}</span>`:''};
 function cardHTML(c,o={}){
   const T=TIERS[c.tier],tb=tbOf(c.team),st=starterSlot(c.id),sg=cardXf(c),star=cardAb(c);
-  const pk=c.pk||progKey(c.prog)||'core';
-  return`<button class="ucard t-${c.tier} p-${pk}${c.pu?' pu':''}${sg?' sig':''}${o.sm?' sm':''}${o.big?' big':''}${o.ghost?' ghost':''}" data-id="${c.id}"${o.tid?` data-tid="${o.tid}"`:''} style="--tc:${c.pu?'#2bd9a0':T.c};--tc2:${c.pu?'#06382a':T.c2};--tm:${tb[3]}" aria-label="${esc(c.n)}, ${c.pos}, ${effOvr(c)} overall">
+  const pk=artPk(c);
+  return`<button class="ucard t-${c.tier} p-${pk}${c.pu?' pu':''}${sg?' sig':''}${o.sm?' sm':''}${o.big?' big':''}${o.ghost?' ghost':''}" data-id="${c.id}"${o.tid?` data-tid="${o.tid}"`:''} style="--tc:${c.pu&&!c.artP?'#2bd9a0':T.c};--tc2:${c.pu&&!c.artP?'#06382a':T.c2};--tm:${tb[3]}" aria-label="${esc(c.n)}, ${c.pos}, ${effOvr(c)} overall">
   <span class="uo">${effOvr(c)}</span><span class="up">${c.pos}</span>${c.pu?`<span class="ug">${c.up?'+'+c.up:'PU'}</span>`:c.up?`<span class="ug">+${c.up}</span>`:''}
   <span class="ufx" aria-hidden="true"></span>${cardArt(c,pk,o)}${pk==='origins'?'<span class="urib">ROOKIE</span>':''}<span class="ubg">${portraitTag(c)}</span>
-  <span class="un">${esc(c.n)}</span><span class="ut">${esc(c.team)}, ${esc(c.prog)}</span>
+  <span class="un">${esc(c.n)}</span><span class="ut">${esc(c.team)}, ${esc(c.pu&&c.artP?PROGRAMS[c.artP].n+' PU':c.prog)}</span>
   ${o.sm?'':`<span class="us">${RSET[c.pos].map(k=>`<b>${RLAB[k]} ${cRat(c,k)}</b>`).join('')}</span>${star?`<span class="uab">${NEWAB[star].i} ${NEWAB[star].n}</span>`:''}${sg?`<span class="usig">${NEWAB[sg].i}<b>X</b><u>X-FACTOR: ${NEWAB[sg].n}</u></span>`:''}`}${o.sm&&(star||sg)?`<span class="usg">${sg?NEWAB[sg].i:NEWAB[star].i}</span>`:''}
   ${c.pu?`<span class="uxp"><i style="width:${capUp(c)?Math.round(c.up/capUp(c)*100):100}%"></i></span>`:''}
   ${c.ser?`<i class="user${c.par==='oneone'?' oo':''}">#${c.ser}</i>`:''}${c.auto?'<i class="uaut">AUTO</i>':''}${o.big?(()=>{const P=cardPatches(c);return P.length?`<span class="upat">${P.map(([t,cl])=>`<i style="--pc:${cl}">${t}</i>`).join('')}</span>`:''})():''}${st&&!o.noStar?`<i class="ul">${st}</i>`:''}${o.price?`<i class="upr">${fmtN(o.price)}</i>`:''}${o.ghost?'<i class="ugh">MISSING</i>':''}</button>`;
@@ -5036,7 +5040,19 @@ const puCost=c=>Math.max(2,Math.ceil(gpl(c.ovr+(c.up||0))*ECON.tpLevel));
 const puFPtoMax=c=>{let t=0;for(let u=c.up||0;u<puMax(c);u++)t+=Math.max(2,Math.round((ECON.posFP[c.pos]||8)*gpl(c.ovr+u)));return Math.max(0,t-(c.pxp||0))};
 function puLevelUp(c){c.up=(c.up||0)+1;const o=c.ovr+c.up;if(o>=99)(c.puQ=c.puQ||[]).push('x');else if(ECON.milestones.includes(o))(c.puQ=c.puQ||[]).push('a');c.tier=tierOf(o);puNextPick(c)}
 function puNextPick(c){if(c.puPick||!c.puQ||!c.puQ.length)return;const k=c.puQ.shift();c.puPick=puOffer(c,k==='x')}
-function puTrain(c,n=1){let done=0;while(done<n&&!c.puPick&&(c.up||0)<puMax(c)&&(c.pxp||0)>=puNeed(c)&&(UT.tp||0)>=puCost(c)){UT.tp-=puCost(c);c.pxp=r1(c.pxp-puNeed(c));puLevelUp(c);done++}if(done){recalcChem();utSave()}return done}
+
+// ---- Power Up gates: every regular version of the player is a checkpoint on his climb ----
+function puGates(c){if(!c||!c.pu||!c.pid)return[];const by=new Map();for(const t of buildCatalog().filter(t=>t.pid===c.pid&&t.p!=='power'&&t.ovr>c.ovr).sort((a,b)=>a.ovr-b.ovr||PROG_ORDER.indexOf(a.p)-PROG_ORDER.indexOf(b.p))){if(!by.has(t.ovr))by.set(t.ovr,[]);by.get(t.ovr).push(t)}return[...by].map(([ovr,ts])=>({ovr,ts}))}
+const puGateAt=(c,o)=>puGates(c).find(g=>g.ovr===o)||null;
+const puGateBlock=c=>{const g=puGateAt(c,c.ovr+(c.up||0)+1);return g&&!(c.gates||{})[g.ovr]?g:null};
+const puGateCard=(c,g)=>UT.cards.filter(x=>!x.pu&&x.pid===c.pid&&x.ovr===g.ovr).sort((a,b)=>(starterSlot(a.id)?1:0)-(starterSlot(b.id)?1:0))[0]||null;
+const gateName=g=>g.ts.map(t=>PROGRAMS[t.p].n).join(' or ')+' '+g.ovr;
+function puPassGate(c){const g=puGateBlock(c);if(!g)return false;const x=puGateCard(c,g);if(!x)return toastUT(`You need his ${gateName(g)} card`),false;
+  if((c.pxp||0)<puNeed(c)||(UT.tp||0)<puCost(c))return toastUT('He needs the fantasy points and training for this level too'),false;
+  const sl=starterSlot(x.id);chipReturn(x);UT.cards=UT.cards.filter(y=>y!==x);if(sl)UT.lineup[sl]=starterSlot(c.id)?(UT.cards.find(y=>y.pos===x.pos&&!starterSlot(y.id))||{}).id:c.id;
+  (c.gates=c.gates||{})[g.ovr]=1;c.artP=x.pk||progKey(x.prog)||'core';puTrain(c,1);for(const k of SLOTK)if(!cardById(UT.lineup[k])){const b=UT.cards.filter(y=>y.pos===SLOTGRP[k]&&!starterSlot(y.id)).sort((p,q)=>effOvr(q)-effOvr(p))[0];if(b)UT.lineup[k]=b.id;else{const f=genCard(SLOTGRP[k],null,50,61);UT.cards.push(f);UT.lineup[k]=f.id}}recalcChem();utSave();toastUT(`${c.n} absorbed his ${PROGRAMS[c.artP].n} card and is now ${effOvr(c)}`);return true}
+function puGateHTML(c){const G=puGates(c);if(!G.length)return'';const cur=c.ovr+(c.up||0);return`<div class="pg">${G.map(g=>{const ok=(c.gates||{})[g.ovr]||cur>=g.ovr&&!(c.gates||{})[g.ovr]&&false,has=!!puGateCard(c,g),passed=(c.gates||{})[g.ovr];return`<span class="${passed?'done':has?'has':''}" title="${esc(gateName(g))}"><b>${g.ovr}</b>${esc(PROGRAMS[g.ts[0].p].n.toUpperCase())}${passed?' ✓':has?' ●':''}</span>`}).join('<i>›</i>')}</div>`}
+function puTrain(c,n=1){let done=0;while(done<n&&!c.puPick&&!puGateBlock(c)&&(c.up||0)<puMax(c)&&(c.pxp||0)>=puNeed(c)&&(UT.tp||0)>=puCost(c)){UT.tp-=puCost(c);c.pxp=r1(c.pxp-puNeed(c));puLevelUp(c);done++}if(done){recalcChem();utSave()}return done}
 const puReady=c=>c.pu&&!c.puPick&&(c.up||0)<puMax(c)&&(c.pxp||0)>=puNeed(c);
 const puToMax=c=>{let t=0,u=c.up||0;for(;u<puMax(c);u++)t+=Math.max(2,Math.ceil(gpl(c.ovr+u)*ECON.tpLevel));return t};
 function puGain(c,xp){let cap=0;for(let u=c.up||0,i=0;i<ECON.fpBank&&u<puMax(c);u++,i++)cap+=Math.max(2,Math.round((ECON.posFP[c.pos]||8)*gpl(c.ovr+u)));c.pxp=r1(Math.min(cap,(c.pxp||0)+xp));if((c.up||0)>=puMax(c))c.pxp=0;return[]}
@@ -5064,7 +5080,7 @@ function fantasyOpen(){const fp=UT.fantasy||0;if(!fp&&UT.coins<FANTASY_COST)retu
     const top=by.slice(0,Math.max(3,Math.ceil(by.length*.25)));pick3.push(pick(top));while(pick3.length<3&&pick3.length<pool.length){const t=pick(pool);if(!pick3.includes(t))pick3.push(t)}
     utModal(`<h2>Choose your ${g}</h2><p class="muted">He joins as a Power Up you can train to 99.</p><div class="cgrid pick">${pick3.map(t=>`<div class="pcand">${cardHTML(tplCard(t),{sm:true})}<small>${esc(t.team)} · real ${t.B}</small><button class="btn primary" data-fp="${t.tid}">Take him</button></div>`).join('')}</div>`,[]);
     document.querySelectorAll('[data-fp]').forEach(x=>x.onclick=()=>{const t=pick3.find(q=>q.tid===x.dataset.fp);const c=inst(t);UT.cards.push(c);utSave();closeModal();utTab='pu';renderUT();toastUT(c.n+' Power Up added. Start him to level him up.')})})}
-function bPU(){bindUnl(document);document.querySelectorAll('#utBody [data-lvl]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.lvl);if(puTrain(c,1))toastUT(`${c.n} is now ${effOvr(c)}`);renderUT()});const fb=$('#fantasy');if(fb)fb.onclick=fantasyOpen;document.querySelectorAll('[data-tr]').forEach(b=>b.onclick=()=>{puTrain(cardById(+b.dataset.tr),1);renderUT()});document.querySelectorAll('[data-trm]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.trm),n=puTrain(c,99);toastUT(`${c.n} +${n}, now ${effOvr(c)}`);renderUT()});document.querySelectorAll('[data-pup]').forEach(b=>b.onclick=()=>{puClaim(cardById(+b.dataset.pup),b.dataset.k);renderUT()});
+function bPU(){bindUnl(document);document.querySelectorAll('#utBody [data-gate]').forEach(b=>b.onclick=()=>{if(puPassGate(cardById(+b.dataset.gate)))renderUT()});document.querySelectorAll('#utBody [data-lvl]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.lvl);if(puTrain(c,1))toastUT(`${c.n} is now ${effOvr(c)}`);renderUT()});const fb=$('#fantasy');if(fb)fb.onclick=fantasyOpen;document.querySelectorAll('[data-tr]').forEach(b=>b.onclick=()=>{puTrain(cardById(+b.dataset.tr),1);renderUT()});document.querySelectorAll('[data-trm]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.trm),n=puTrain(c,99);toastUT(`${c.n} +${n}, now ${effOvr(c)}`);renderUT()});document.querySelectorAll('[data-pup]').forEach(b=>b.onclick=()=>{puClaim(cardById(+b.dataset.pup),b.dataset.k);renderUT()});
   document.querySelectorAll('[data-pust]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.pust),k=SLOTK.filter(k=>SLOTGRP[k]===c.pos).sort((a,b2)=>effOvr(cardById(UT.lineup[a]))-effOvr(cardById(UT.lineup[b2])))[0];if(k){setSlot(k,c.id);toastUT(c.n+' starting at '+k);renderUT()}});
   document.querySelectorAll('#utBody .ucard[data-id]').forEach(b=>b.onclick=()=>{const id=+b.dataset.id;if(cardById(id))cardDetail(id)})}
 function dreamPanel(){const D=UT.dream,t=D&&buildCatalog().find(x=>x.tid===D.tid);if(!t)return`<div class="dreamp dempty"><b>Dream Card</b><p class="muted">Pick any Power Up in the Catalog and set it as your Dream Card. The higher his potential, the more points he costs. Every game, win, objective and pack adds Dream points until you earn it.</p></div>`;
@@ -5243,7 +5259,7 @@ function utMatch(opp,label,info){
     for(const c of starters){c.s=c.s||{};c.s.gp=(c.s.gp||0)+1;if(win)c.s.w=(c.s.w||0)+1}
     const pathDone=starters.filter(c=>c.path&&pathReady(c)),unlDone=starters.filter(c=>c.unl&&unlReady(c)),unlGo=starters.filter(c=>c.unl&&!unlReady(c));
     refreshMarket();try{ahTick(true)}catch(e){}recalcChem();utSave();
-    lines.push(`+${fmtN(coins)} coins`);if(winChip)lines.push(`Win bonus: ${(NEWAB[winChip]||{}).n} chip`);if(fpTop&&fpTop[1]>0)lines.push(`Top fantasy score: ${fpTop[0].n} ${fpTop[1]} FP`);for(const c of starters.filter(c=>c.pu&&fpOf.has(c)))if((c.up||0)<puMax(c))lines.push(`${c.n}: +${fpOf.get(c)} FP${puReady(c)?' · READY TO LEVEL UP':` (${r1(c.pxp||0)} / ${puNeed(c)})`}`);{const tg=ECON.tpGame+(win?ECON.tpWin:0);UT.tp=(UT.tp||0)+tg;lines.push(`+${tg} training`)}for(const [c,n,o0] of puUps)lines.push(`${c.n} +${fpOf.get(c)} FP: up ${n} to ${effOvr(c)} OVR${c.puPick?', pick his free chip in Power Ups':''}`);if(r.objN)lines.push(`${r.objN} of 3 objectives done (${fmtN(r.objCoins)} coins of that)`);if(UT.dream)lines.push(`+${dp} Dream Card points`);if(pack)lines.push(`+${PACKS[pack].n}`);if(sx)lines.push(...sx.lines);for(const c of unlDone)lines.push(`${c.n}'s Power Up is ready. Claim it in Power Ups.`);if(unlGo.length)lines.push('Power Up unlocks: '+unlGo.map(c=>c.n+' '+unlPct(c)+'%').join(', '));
+    lines.push(`+${fmtN(coins)} coins`);if(winChip)lines.push(`Win bonus: ${(NEWAB[winChip]||{}).n} chip`);if(fpTop&&fpTop[1]>0)lines.push(`Top fantasy score: ${fpTop[0].n} ${fpTop[1]} FP`);for(const c of starters.filter(c=>c.pu&&fpOf.has(c)))if((c.up||0)<puMax(c))lines.push(`${c.n}: +${fpOf.get(c)} FP${puReady(c)?(puGateBlock(c)?` · CHECKPOINT: needs his ${gateName(puGateBlock(c))} card`:' · READY TO LEVEL UP'):` (${r1(c.pxp||0)} / ${puNeed(c)})`}`);{const tg=ECON.tpGame+(win?ECON.tpWin:0);UT.tp=(UT.tp||0)+tg;lines.push(`+${tg} training`)}for(const [c,n,o0] of puUps)lines.push(`${c.n} +${fpOf.get(c)} FP: up ${n} to ${effOvr(c)} OVR${c.puPick?', pick his free chip in Power Ups':''}`);if(r.objN)lines.push(`${r.objN} of 3 objectives done (${fmtN(r.objCoins)} coins of that)`);if(UT.dream)lines.push(`+${dp} Dream Card points`);if(pack)lines.push(`+${PACKS[pack].n}`);if(sx)lines.push(...sx.lines);for(const c of unlDone)lines.push(`${c.n}'s Power Up is ready. Claim it in Power Ups.`);if(unlGo.length)lines.push('Power Up unlocks: '+unlGo.map(c=>c.n+' '+unlPct(c)+'%').join(', '));
     const upHtml=ups.length?`<h3>Level ups</h3><div class="cgrid pick">${[...new Set(ups)].map(c=>cardHTML(c,{sm:true,noStar:true})).join('')}</div>`:'';
     renderUT();show('ut');
     utModal(`${FBX}<div class="fbx-rw"><div><p class="kicker">${esc(label)}</p><h2>${win?'Victory':tie?'Tie':'Defeat'}</h2><p class="big">${esc(UT.club.abbr)} ${r.su} - ${r.so} ${esc(opp.abbr)}</p></div><p>${lines.join('<br>')}</p></div><p class="muted">Power Ups bank fantasy points. Spend training to level them up.</p>${upHtml}${pathDone.length?`<h3>Path to Peak complete</h3><p>${pathDone.map(c=>esc(c.n)).join(', ')} finished ${pathDone.length>1?'their':'his'} tasks. Open the Path to Peak tab to upgrade.</p>`:''}${starters.some(c=>c.path&&!pathReady(c))?`<p class="muted">Path to Peak progress: ${starters.filter(c=>c.path&&!pathReady(c)).map(c=>esc(c.n)+' '+pathPct(c)+'%').join(', ')}</p>`:''}`,pack?[['Open pack now',()=>{closeModal();openPackFromInv(UT.packs.length-1)}],['Close',closeModal,'alt']]:[['Close',closeModal]]);if(FBX){const pn=$('#utm .panel');if(pn)pn.classList.add('fbxp')}
@@ -5354,7 +5370,8 @@ function puPanel(c){const lv=c.up||0,mx=puMax(c);if(c.puPick)return`<div class="
   const need=puNeed(c),have=r1(c.pxp||0),cost=puCost(c),tp=UT.tp||0,fpOk=have>=need,tpOk=tp>=cost,ms=ECON.milestones.find(m=>m>c.ovr+lv);
   return`<div class="pp"><div class="pp-row"><span>${pxIco('ball',12)} FANTASY PTS</span>${csBar(have,need,fpOk?'#6cff8a':'#4fd8ff')}<em>${fpOk?'READY':`${have} / ${need}`}</em></div>
     <div class="pp-row"><span>${pxIco('pu',12)} TRAINING</span>${csBar(tp,cost,tpOk?'#6cff8a':'#ffd23f')}<em>${fmtN(Math.min(tp,cost))} / ${cost}</em></div>
-    <div class="pp-act"><button class="btn${fpOk&&tpOk?' primary':''}" data-lvl="${c.id}" ${fpOk&&tpOk?'':'disabled'}>LEVEL UP to ${c.ovr+lv+1}</button><small>${ms?`Free chip at ${ms}`:'X-Factor at 99'}${!fpOk?' · Start him to earn FP':!tpOk?' · Quick sell cards for training':''}</small></div></div>`}
+    ${puGateHTML(c)}${(()=>{const g=puGateBlock(c);if(!g)return'';const x=puGateCard(c,g);return`<div class="pp-gate${x?' has':''}"><b>CHECKPOINT ${g.ovr}</b><span>${x?`Trade in his ${esc(gateName(g))} card to pass. His art becomes ${esc(PROGRAMS[x.pk||'core'].n)}.`:`Needs his ${esc(gateName(g))} card. Get it from packs, the auction house or the market.`}</span>${x?`<button class="btn${fpOk&&tpOk?' primary':''}" data-gate="${c.id}" ${fpOk&&tpOk?'':'disabled'}>TRADE IN + LEVEL UP</button>`:''}</div>`})()}
+    <div class="pp-act"${puGateBlock(c)?' style="display:none"':''}><button class="btn${fpOk&&tpOk?' primary':''}" data-lvl="${c.id}" ${fpOk&&tpOk?'':'disabled'}>LEVEL UP to ${c.ovr+lv+1}</button><small>${ms?`Free chip at ${ms}`:'X-Factor at 99'}${!fpOk?' · Start him to earn FP':!tpOk?' · Quick sell cards for training':''}</small></div></div>`}
 function csOverview(c,own){const R=RSET[c.pos]||[],ovr=effOvr(c),T=TIERS[c.tier]||TIERS.gold;
   return`<div class="cs-ov"><div class="cs-rt">${R.map(k=>`<div class="cs-r"><span>${RLAB[k]}</span>${csBar(cRat(c,k))}<b>${cRat(c,k)}</b></div>`).join('')}</div>
     ${csAbChips(c)}${own&&c.pu?puPanel(c):''}${own&&c.unl?`<div class="pp"><div class="pp-row"><span>${pxIco('pu',12)} UNLOCK PU</span>${csBar(c.unl.got||0,c.unl.need)}<em>${r1(Math.min(c.unl.got||0,c.unl.need))} / ${c.unl.need} FP</em></div>${unlReady(c)?`<div class="pp-act"><button class="btn primary" data-uclaim="${c.id}">CLAIM HIS POWER UP</button></div>`:''}</div>`:''}</div>`}
@@ -5367,7 +5384,7 @@ function csStats(c,own){const t=(k)=>gs(c,k),T=[];if(own){T.push(['GAMES',t('gp'
 function csHigh(c){const L=(typeof reelsFor==='function'?reelsFor(c):[]),q=encodeURIComponent(c.n+' highlights');
   return`<div class="cs-reels">${L.length?L.map((r,i)=>`<button class="cs-reel" data-reel="${i}">${pxIco('ball',14)}<b>${esc(r.title)}</b><small>${esc(r.sub||'')}</small></button>`).join(''):'<p class="muted">Make a big play with him and it gets saved here.</p>'}</div>
     <a class="btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">Watch real highlights on YouTube</a>`}
-function csUpgrade(c){return`${c.pu?puPanel(c):''}${c.pu?`<div class="pathbox">${pathSection(c)}</div>`:''}${!c.pu?`<div class="pathbox">${unlSection(c)||'<p class="muted">Regular cards keep their rating. Unlock or buy his Power Up to upgrade him.</p>'}</div>`:''}`}
+function csUpgrade(c){return`${c.pu?puPanel(c):''}${c.pu?`<p class="muted">Checkpoints are his other cards' ratings. Owning that card (packs, auction house, market) lets him pass, and his art changes to that program.</p>`:''}${!c.pu?`<div class="pathbox">${unlSection(c)||'<p class="muted">Regular cards keep their rating. Unlock or buy his Power Up to upgrade him.</p>'}</div>`:''}`}
 function cardScreen(c,ctx={}){if(!c)return;const own=ctx.kind==='own'||(!ctx.kind&&cardById(c.id)===c);ctx.kind=ctx.kind||(own?'own':'view');CS={c,ctx,tab:ctx.tab||'ov'};csRender()}
 function csRender(){if(!CS)return;const {c,ctx}=CS,own=ctx.kind==='own',T=TIERS[c.tier]||TIERS.gold,st=own?starterSlot(c.id):null,tb=tbOf(c.team);
   const tabs=[['ov','OVERVIEW'],['rt','RATINGS'],['stt','STATS'],['hl','HIGHLIGHTS']];if(own)tabs.push(['up','UPGRADE']);
@@ -5387,6 +5404,7 @@ function csRender(){if(!CS)return;const {c,ctx}=CS,own=ctx.kind==='own',T=TIERS[
   const m=$('#utm');m.querySelector('.panel').classList.add('cscr');bindFlip(m);bindPath(m);bindUnl(m);
   m.querySelectorAll('[data-cst]').forEach(b=>b.onclick=()=>{CS.tab=b.dataset.cst;csRender()});
   m.querySelectorAll('[data-abk]').forEach(b=>b.onclick=()=>{const k=b.dataset.abk,fx=$('#csFx');if(fx)fx.textContent=(NEWAB[k]&&NEWAB[k].fx)||(ABINFO[k]&&ABINFO[k].fx)||''});
+  m.querySelectorAll('[data-gate]').forEach(b=>b.onclick=()=>{if(puPassGate(c)){renderUT();csRender()}});
   m.querySelectorAll('[data-lvl]').forEach(b=>b.onclick=()=>{const n=puTrain(c,1);if(n){SND.coin&&SND.coin();toastUT(`${c.n} is now ${effOvr(c)}`)}renderUT();csRender()});
   m.querySelectorAll('[data-reel]').forEach(b=>b.onclick=()=>{const r=reelsFor(c)[+b.dataset.reel];if(r)playReel(r)});
   m.querySelectorAll('[data-pup]').forEach(b=>b.onclick=()=>{puClaim(c,b.dataset.k);renderUT();csRender()})}
@@ -5641,14 +5659,14 @@ const unlFix=c=>{if(c.unl&&typeof c.unl.need==='object')c.unl={got:0,need:unlNee
 const unlReady=c=>{unlFix(c);return!!(c.unl&&(c.unl.got||0)>=c.unl.need)};
 const unlPct=c=>{unlFix(c);return Math.min(100,Math.round((c.unl.got||0)/c.unl.need*100))};
 function unlTasksHTML(c){unlFix(c);const v=c.unl.need,pv=Math.min(v,r1(c.unl.got||0));return`<div class="ptasks"><div class="ptask${pv>=v?' done':''}"><span>${pv>=v?'\u2713 ':''}fantasy points as a starter</span><i><u style="width:${Math.round(pv/v*100)}%"></u></i><em>${pv} / ${v}</em></div></div>`}
-function unlClaim(c){if(!unlReady(c))return;const t=puTplFor(c);if(!t)return;const p=inst(t);UT.cards.push(p);(UT.puUnl=UT.puUnl||{})[c.pid]=1;delete c.unl;utSave();renderUT();
-  utModal(`<div class="detail"><div style="flex:0 0 auto">${flipHTML(p,{big:true})}</div><div><p class="kicker">Power Up unlocked</p><h2>${esc(p.n)}</h2><p>You earned his Power Up by playing him. It starts at ${p.ovr} and you can train it all the way to 99 in Power Ups.</p><p class="muted">You still keep his regular card.</p></div></div>`,[['Nice',closeModal]]);bindFlip($('#utm'))}
+function unlClaim(c){if(!unlReady(c))return;const t=puTplFor(c);if(!t)return;const p=inst(t);const sl=starterSlot(c.id);chipReturn(c);UT.cards=UT.cards.filter(x=>x!==c);UT.cards.push(p);if(sl)UT.lineup[sl]=p.id;(UT.puUnl=UT.puUnl||{})[c.pid]=1;recalcChem();utSave();renderUT();
+  utModal(`<div class="detail"><div style="flex:0 0 auto">${flipHTML(p,{big:true})}</div><div><p class="kicker">Power Up unlocked</p><h2>${esc(p.n)}</h2><p>You traded in his ${esc(c.prog)} card for his Power Up. It starts at ${p.ovr}${sl?' and took his spot at '+sl:''}.</p><p class="muted">Level him with fantasy points and training. At each of his other versions' ratings you'll need that card to pass the checkpoint.</p></div></div>`,[['Nice',closeModal]]);bindFlip($('#utm'))}
 function unlSection(c){if(c.pu)return'';const t=puTplFor(c);if(!t)return'';
   if(ownsPU(c.pid))return`<h3>His Power Up</h3><p class="muted">You already own his Power Up.</p>`;
-  if(c.unl)return`<h3>Unlocking his Power Up</h3>${unlTasksHTML(c)}${unlReady(c)?`<button class="btn primary" data-uclaim="${c.id}">Claim his Power Up</button>`:`<p class="muted">${starterSlot(c.id)?'He is starting, so every game counts.':'He is on the bench. Start him so his goals count.'}</p>`}<button class="btn" data-ustop="${c.id}">Stop</button>`;
+  if(c.unl)return`<h3>Unlocking his Power Up</h3>${unlTasksHTML(c)}${unlReady(c)?`<button class="btn primary" data-uclaim="${c.id}">Trade him in for his Power Up</button>`:`<p class="muted">${starterSlot(c.id)?'He is starting, so every game counts.':'He is on the bench. Start him so his goals count.'}</p>`}<button class="btn" data-ustop="${c.id}">Stop</button>`;
   const other=UT.cards.find(x=>x.unl&&x.pid===c.pid);if(other)return`<h3>His Power Up</h3><p class="muted">Another copy of him is already unlocking it.</p>`;
   const full=unlActive().length>=UNL_MAX;
-  return`<h3>Unlock his Power Up</h3><p>You pulled him, so you can earn his Power Up for free. Start this card and score ${unlNeed(c)} fantasy points with him, usually a game or two.</p><button class="btn primary" data-ustart="${c.id}" ${full?'disabled':''}>${full?'3 unlocks already running':'Start unlocking'}</button>`}
+  return`<h3>Unlock his Power Up</h3><p>You pulled him, so you can earn his Power Up. When it's ready you trade this card in for it. Start him and score ${unlNeed(c)} fantasy points with him, usually a game or two.</p><button class="btn primary" data-ustart="${c.id}" ${full?'disabled':''}>${full?'3 unlocks already running':'Start unlocking'}</button>`}
 function bindUnl(root){root=root||document;const re=c=>{if(root.id==='utm')cardDetail(c.id);renderUT()};
   root.querySelectorAll('[data-ustart]').forEach(b=>b.onclick=e=>{e.stopPropagation();const c=cardById(+b.dataset.ustart);if(unlStart(c))re(c)});
   root.querySelectorAll('[data-uclaim]').forEach(b=>b.onclick=e=>{e.stopPropagation();unlClaim(cardById(+b.dataset.uclaim))});
@@ -6200,6 +6218,9 @@ try{const R=JSON.parse(localStorage.getItem('gr_resume')||'null');if(R&&Date.now
 </script>
 <script>
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+// update check: when the app comes back to the front, fetch the newest page and reload if it changed (never mid-game)
+const BUILD='20261101133529';
+(()=>{let busy=0;const chk=()=>{if(busy||location.protocol!=='https:')return;busy=1;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const BUILD='(\d+)'/);if(m&&m[1]>BUILD){const ok=()=>!(typeof G!=='undefined'&&G&&!G.demo)&&!(typeof PK!=='undefined'&&PK)&&!(typeof RV!=='undefined'&&RV);let tried='';try{tried=sessionStorage.getItem('gr_upd')||''}catch(_){}if(tried===m[1])return;if(ok()){try{sessionStorage.setItem('gr_upd',m[1])}catch(_){}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(g=>g&&g.update())}catch(_){}location.reload()}}}).catch(()=>{}).finally(()=>{busy=0})};document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});addEventListener('pageshow',chk);setTimeout(chk,4000)})();
 </script>
 </body>
 </html>
