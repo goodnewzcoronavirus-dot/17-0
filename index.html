@@ -428,6 +428,60 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 /* ===== card reveal ===== */
 #rv{position:fixed;inset:0;z-index:96;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#03040a;cursor:pointer;--tc:#f5cd4c;--tm:#e84a3a;--tm2:#ffd23f;font-family:'Press Start 2P',monospace;color:#fff}
 #rv.hidden{display:none}
+/* ===== card art v2 ===== */
+.uart{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.uart *{animation-play-state:paused!important}
+.ucard.big .uart *,#rv .uart *,.pk-slot .uart *{animation-play-state:running!important}
+.ubg{position:relative;z-index:1}
+.ubg canvas.pxph{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;opacity:0;transition:opacity .2s}
+.ubg canvas.pxph.ok{opacity:1}
+.ucard .un,.ucard .ut,.ucard .us{position:relative;z-index:2}.ucard .uo,.ucard .up,.ucard .ug{z-index:2}
+.uart .sky{position:absolute;left:0;right:0;top:30%;height:26%;width:100%;opacity:.85}
+.a-origins .sky{filter:grayscale(.6);opacity:.5}
+.uart .rc{position:absolute;right:6%;top:18%;width:22%;aspect-ratio:1;border-radius:50%;border:2px solid #ffd23f;color:#ffd23f;font-size:7px;display:grid;place-items:center;transform:rotate(-14deg);font-style:normal;background:rgba(0,0,0,.4)}
+.uart .scuff{position:absolute;inset:0;background:radial-gradient(circle at 12% 20%,rgba(255,255,255,.18) 0 2px,transparent 3px) 0 0/23px 19px,radial-gradient(circle at 70% 80%,rgba(0,0,0,.25) 0 1px,transparent 2px) 0 0/17px 13px;mix-blend-mode:normal}
+.uart .shard{position:absolute;background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(200,230,255,.25));width:22%;height:16%;clip-path:polygon(0 0,100% 30%,40% 100%)}
+.uart .s1{left:4%;top:24%;transform:rotate(-20deg)}.uart .s2{right:2%;top:30%;transform:rotate(30deg) scale(.8)}.uart .s3{left:12%;top:52%;transform:rotate(160deg) scale(.6)}.uart .s4{right:10%;top:56%;transform:rotate(-120deg) scale(.7)}
+.ucard.big .uart .shard{animation:shardF 2.4s ease-in-out infinite alternate}
+@keyframes shardF{to{transform:translate(4px,-4px) rotate(10deg)}}
+.uart .vhs{position:absolute;left:30%;right:6%;top:6%;height:7%;background:#111;color:#f3e2b8;font-size:6px;display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-style:normal;border:1px solid #f3e2b8}.uart .vhs b{background:#e8402a;color:#fff;padding:0 3px}
+.uart .trk{position:absolute;left:0;right:0;top:40%;height:6%;background:linear-gradient(90deg,rgba(255,255,255,.0),rgba(255,255,255,.35),rgba(255,255,255,0));animation:trk 3.2s steps(16) infinite}
+@keyframes trk{0%{top:20%}100%{top:80%}}
+.uart .wood{position:absolute;inset:0;border:5px solid transparent;border-image:repeating-linear-gradient(90deg,#6b3f1a 0 3px,#8a5426 3px 6px,#5a3214 6px 8px) 5}
+.uart .emb{position:absolute;bottom:6%;width:3px;height:3px;background:#ffd23f;box-shadow:0 0 4px #ff7a1a;animation:emb 1.8s linear infinite}
+.uart .e1{left:20%}.uart .e2{left:42%;animation-delay:.5s}.uart .e3{left:64%;animation-delay:1s}.uart .e4{left:82%;animation-delay:1.4s}
+@keyframes emb{from{transform:translateY(0);opacity:1}to{transform:translateY(-140px);opacity:0}}
+.uart .sun{position:absolute;left:50%;top:22%;width:56%;aspect-ratio:1;margin-left:-28%;border-radius:50%;background:repeating-linear-gradient(180deg,#ffd23f 0 4px,#ff3bd1 4px 6px,transparent 6px 7px),linear-gradient(#ffd23f,#ff3bd1);background-blend-mode:normal;-webkit-mask:linear-gradient(#000 0 52%,transparent 52% 56%,#000 56% 62%,transparent 62% 66%,#000 66%);mask:linear-gradient(#000 0 52%,transparent 52% 56%,#000 56% 62%,transparent 62% 66%,#000 66%);opacity:.75}
+.uart .grid{position:absolute;left:-30%;right:-30%;top:52%;height:40%;background:repeating-linear-gradient(90deg,rgba(57,242,255,.6) 0 1px,transparent 1px 12px),repeating-linear-gradient(0deg,rgba(57,242,255,.6) 0 1px,transparent 1px 9px);transform:perspective(60px) rotateX(55deg);transform-origin:top}
+.ucard.big .uart .grid{animation:gridM 1s linear infinite}
+@keyframes gridM{to{background-position:0 0,0 9px}}
+.uart .eyes{position:absolute;left:34%;right:34%;top:9%;height:3%;background:radial-gradient(circle at 25% 50%,#ff2a1a 0 30%,transparent 35%),radial-gradient(circle at 75% 50%,#ff2a1a 0 30%,transparent 35%);filter:drop-shadow(0 0 4px #ff2a1a);animation:eyes 3s steps(1) infinite}
+@keyframes eyes{0%,92%{opacity:1}93%,96%{opacity:0}}
+.uart .bolt{position:absolute;right:12%;top:8%;width:10%;height:40%;background:#fff;clip-path:polygon(60% 0,20% 50%,50% 50%,30% 100%,80% 40%,50% 40%);opacity:0;animation:bolt 4s steps(1) infinite}
+@keyframes bolt{0%,80%{opacity:0}81%,84%{opacity:.9}85%{opacity:0}87%,88%{opacity:.6}89%{opacity:0}}
+.uart .glass{position:absolute;left:10%;right:10%;top:14%;height:46%;border-radius:50% 50% 0 0/40% 40% 0 0;background:conic-gradient(from 0deg at 50% 100%,#3b6fd8 0 20deg,#d8a93b 20deg 40deg,#b8283b 40deg 60deg,#2fae4e 60deg 80deg,#7b3cff 80deg 100deg,#3b6fd8 100deg 120deg,#d8a93b 120deg 140deg,#b8283b 140deg 160deg,#2fae4e 160deg 180deg,transparent 180deg);opacity:.35;border:2px solid #b88a24}
+.uart .plaque{position:absolute;left:14%;right:14%;bottom:30%;height:5%;background:linear-gradient(90deg,#7a5608,#f5cd4c,#7a5608);border:1px solid #3a2608}
+.uart .neb{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 30%,rgba(255,80,200,.45),transparent 45%),radial-gradient(ellipse at 70% 55%,rgba(60,160,255,.45),transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(255,210,63,.3),transparent 45%);animation:neb 8s ease-in-out infinite alternate}
+@keyframes neb{to{transform:scale(1.15) rotate(6deg)}}
+.uart .stars{position:absolute;inset:0;background:radial-gradient(circle,#fff 0 1px,transparent 1.5px) 0 0/13px 11px,radial-gradient(circle,#fff 0 .7px,transparent 1.2px) 6px 5px/19px 17px;opacity:.7;animation:tw 2s steps(2) infinite}
+@keyframes tw{50%{opacity:.35}}
+.uart .cst{position:absolute;left:10%;right:10%;top:14%;width:80%;height:50%}.uart .cst polygon{fill:rgba(255,246,192,.12);stroke:#fff6c0;stroke-width:.4}.uart .cst circle{fill:#fff}
+.uart .pustg{position:absolute;inset:0}.uart .cir{width:100%;height:100%}.uart .cir path{fill:none;stroke-width:.7}.uart .cir rect{opacity:.9}
+.uart .st1 path{stroke:#1a8f6a}.uart .st1 rect{fill:#6cffd0}
+.uart .st2 path{stroke:#2bd9a0}.uart .st2 rect{fill:#bfffe8}
+.uart .st3 path{stroke:#39c8ff}.uart .st3 rect{fill:#e0f6ff}
+.uart .st4 path{stroke:#b06bff}.uart .st4 rect{fill:#f0e0ff}
+.uart .st5 path{stroke:#ffd23f}.uart .st5 rect{fill:#fff6c0}
+.uart .st6 path{stroke:#ff3bd1}.uart .st6 rect{fill:#fff}
+.uart .st4,.uart .st5,.uart .st6{filter:drop-shadow(0 0 2px currentColor)}
+.ucard.big .uart .pustg rect{animation:tw 1.2s steps(2) infinite}
+.uart .chrome{position:absolute;inset:0;background:linear-gradient(135deg,#000 0,#3a3a3a 30%,#000 45%,#555 60%,#000 100%);opacity:.55}
+.ucard:has(.chrome){box-shadow:0 0 0 2px #fff,0 0 16px #fff}
+.uart .sigs{position:absolute;left:8%;right:8%;bottom:30%;width:84%;height:16%;z-index:3}.uart .sigs path{fill:none;stroke:#1b4fd8;stroke-width:1.3;stroke-linecap:round;filter:drop-shadow(0 0 1px #fff)}
+.ucard .user{position:absolute;right:4px;bottom:3px;z-index:3;font-style:normal;font-size:6px;background:#000;color:#ffd23f;padding:1px 3px;border:1px solid #ffd23f}.ucard .user.oo{color:#fff;border-color:#fff;background:linear-gradient(90deg,#000,#444)}
+.ucard.sm .user{font-size:5px}
+.ucard .upat{position:absolute;left:3px;bottom:3px;z-index:3;display:flex;gap:2px}.ucard .upat i{font-style:normal;font-size:5px;background:var(--pc);color:#000;padding:1px 2px;border:1px solid #000}
+.ucard .uaut{position:absolute;right:4px;top:22px;z-index:3;font-style:normal;font-size:5px;background:#1b4fd8;color:#fff;padding:1px 3px}
 
 /* ===== title menu: arcade buttons ===== */
 #title .row::before,#title .btn::before{content:none!important}
@@ -578,8 +632,8 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 .ucard.t-elite::after,.ucard.t-legend::after,.ucard.p-peak::after,.ucard.p-icon::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:6;animation:none;
   background:radial-gradient(circle at calc(var(--hx,.5)*100%) calc(var(--hy,.35)*100%),rgba(255,255,255,.7),rgba(255,255,255,0) 34%),
    repeating-linear-gradient(calc(105deg + var(--hx,.5)*50deg),#ff2a7a 0,#ffd23f 5%,#3dffb0 10%,#2aa8ff 15%,#b14dff 20%,#ff2a7a 25%);
-  background-size:100% 100%,320% 320%;background-position:center,calc(var(--hx,.5)*100%) calc(var(--hy,.5)*100%);opacity:.22}
-.ucard.t-legend::after,.ucard.p-peak::after{opacity:.3;background:radial-gradient(circle at calc(var(--hx,.5)*100%) calc(var(--hy,.35)*100%),rgba(255,255,255,.8),rgba(255,255,255,0) 36%),
+  background-size:100% 100%,320% 320%;background-position:center,calc(var(--hx,.5)*100%) calc(var(--hy,.5)*100%);opacity:.13}
+.ucard.t-legend::after,.ucard.p-peak::after{opacity:.17;background:radial-gradient(circle at calc(var(--hx,.5)*100%) calc(var(--hy,.35)*100%),rgba(255,255,255,.8),rgba(255,255,255,0) 36%),
    radial-gradient(circle,rgba(255,255,255,.9) 0 1px,transparent 1.5px) 0 0/9px 9px,
    repeating-linear-gradient(calc(105deg + var(--hx,.5)*50deg),#ff2a7a 0,#ffd23f 5%,#3dffb0 10%,#2aa8ff 15%,#b14dff 20%,#ff2a7a 25%);
   background-size:100% 100%,9px 9px,320% 320%;background-position:center,calc(var(--hx,.5)*40px) calc(var(--hy,.5)*40px),calc(var(--hx,.5)*100%) calc(var(--hy,.5)*100%)}
@@ -4606,7 +4660,45 @@ function portrait(c){
   });
   u=cv.toDataURL();portCache.set(key,u);return u;
 }
-function portraitTag(c){const u=portrait(c);return portraitAnimated(c)?`<span class="uimg anim" style="background-image:url(${u})"></span>`:`<img class="uimg" src="${u}" alt="">`}
+// ================= CARD ART v2: a world for every program, real faces, serials, autos, patches =================
+const ARTC=new Map();
+const hsN=s=>{let h=7;for(const ch of String(s))h=(h*31+ch.charCodeAt(0))|0;return Math.abs(h)};
+function skylineSVG(team,col){const k='sky|'+team+col;let v=ARTC.get(k);if(v)return v;let h=hsN(team),r='';for(let x=0;x<40;){const w=2+(h%4),bh=5+((h>>3)%13);r+=`<rect x="${x}" y="${20-bh}" width="${w}" height="${bh}"/>`;for(let wy=20-bh+2;wy<19;wy+=3)for(let wx=x+1;wx<x+w-0;wx+=2)if((h>>(wx%7))&1)r+=`<rect x="${wx}" y="${wy}" width="1" height="1" fill="#ffe58a" opacity=".8"/>`;x+=w+(h%2);h=(h*1103515245+12345)&0x7fffffff}
+  v=`<svg class="sky" viewBox="0 0 40 20" preserveAspectRatio="none" shape-rendering="crispEdges" fill="${col}">${r}</svg>`;ARTC.set(k,v);return v}
+function circuitSVG(c){const k='cir|'+(c.n||'');let v=ARTC.get(k);if(v)return v;let h=hsN(c.n),p='';for(let i=0;i<9;i++){const x=2+(h%36),y=2+((h>>5)%30),dx=(h>>9)%2?8:-8,dy=(h>>11)%2?6:-6;p+=`<path d="M${x} ${y}h${dx}v${dy}"/><rect x="${x+dx-1}" y="${y+dy-1}" width="2" height="2"/>`;h=(h*1103515245+12345)&0x7fffffff}
+  v=`<svg class="cir" viewBox="0 0 40 40" shape-rendering="crispEdges">${p}</svg>`;ARTC.set(k,v);return v}
+function constellSVG(c){const R=RSET[c.pos]||[],pts=R.map((k,i)=>{const a=-Math.PI/2+i/R.length*6.283,rr=6+(cRat(c,k)-50)/49*12;return[20+Math.cos(a)*rr,18+Math.sin(a)*rr]});
+  return`<svg class="cst" viewBox="0 0 40 36"><polygon points="${pts.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' ')}"/>${pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="1"/>`).join('')}</svg>`}
+function sigSVG(name){const k='sig|'+name;let v=ARTC.get(k);if(v)return v;let h=hsN(name),d='M2 14';const n=String(name||'').replace(/[^a-z]/gi,'').length;for(let i=0;i<Math.min(14,n+4);i++){const x=4+i*3.2,y=6+((h>>(i%9))%9);d+=` Q${(x-1.5).toFixed(1)} ${y+((h>>i)&1?-6:6)} ${x.toFixed(1)} ${y}`}d+=' L50 9';
+  v=`<svg class="sigs" viewBox="0 0 52 20"><path d="${d}"/></svg>`;ARTC.set(k,v);return v}
+const puStage=c=>{const o=c.ovr+(c.up||0);return o>=99?6:o>=95?5:o>=90?4:o>=85?3:o>=80?2:1};
+function cardPatches(c){const s=c.s||{},P=[];const yds=(s.ry||0)+(s.cy||0);if(yds>=1000)P.push(['1K','#ffd23f']);if((s.py||0)>=3000)P.push(['3K','#4fd8ff']);if((s.rtd||0)+(s.ctd||0)+(s.ptd||0)>=10)P.push(['10TD','#ff5a47']);if((s.sck||0)>=10)P.push(['10SK','#ff7a1a']);if((s.dint||0)>=5)P.push(['5INT','#6cff8a']);if((s.gp||0)>=17)P.push(['VET','#c9ced6']);if(c.mvp)P.push(['MVP','#ffb03a']);return P}
+function cardArt(c,pk,o){const tb=tbOf(c.team),bits=[];
+  if(pk==='core'||pk==='origins')bits.push(skylineSVG(c.team,shade(tb[3]||'#334',-.35)));
+  if(pk==='origins')bits.push('<i class="rc">RC</i><i class="scuff"></i>');
+  if(pk==='breakout')bits.push('<i class="shard s1"></i><i class="shard s2"></i><i class="shard s3"></i><i class="shard s4"></i>');
+  if(pk==='throwback')bits.push('<i class="vhs">VHS<b>SP</b></i><i class="trk"></i><i class="wood"></i>');
+  if(pk==='ignition')bits.push('<i class="emb e1"></i><i class="emb e2"></i><i class="emb e3"></i><i class="emb e4"></i>');
+  if(pk==='prime')bits.push('<i class="sun"></i><i class="grid"></i>');
+  if(pk==='feared')bits.push('<i class="eyes"></i><i class="bolt"></i>');
+  if(pk==='icon')bits.push('<i class="glass"></i><i class="plaque"></i>');
+  if(pk==='peak')bits.push('<i class="neb"></i><i class="stars"></i>'+constellSVG(c));
+  if(c.pu)bits.push(`<span class="pustg st${puStage(c)}">${circuitSVG(c)}</span>`);
+  if(c.par==='oneone')bits.push('<i class="chrome"></i>');
+  if(c.auto)bits.push(sigSVG(c.n));
+  return`<span class="uart a-${pk}${c.pu?' a-pu':''}" aria-hidden="true">${bits.join('')}</span>`}
+function cardFlair(c){if(!c||c.ser||c.pu)return c;const pk=c.pk||'core',ti=TORD.indexOf(c.tier),run=pk==='peak'?10:c.tier==='legend'?25:pk==='icon'?50:ti>=3||(pk!=='core'&&pk!=='origins')?99:0;
+  if(run){c.ser=`${1+Math.floor(Math.random()*run)}/${run}`;if(c.tier==='legend'&&Math.random()<.03){c.par='oneone';c.ser='1/1'}if(Math.random()<(ti>=3?.06:.03))c.auto=1}return c}
+// real headshots become chunky pixel portraits tinted in team colors (drawn on a tiny canvas, shown pixelated)
+const PXIMG=new Map();
+function pxPhotoDraw(cv){if(cv.dataset.done)return;cv.dataset.done=1;const url=cv.dataset.ph;let im=PXIMG.get(url);
+  const draw=()=>{try{const g=cv.getContext('2d');g.imageSmoothingEnabled=true;g.clearRect(0,0,32,36);const W=im.naturalWidth,H=im.naturalHeight,sw=W*.62,sh=sw*36/32;g.filter='contrast(1.35) saturate(1.25)';g.drawImage(im,(W-sw)/2,H*.02,sw,Math.min(sh,H),0,0,32,36);g.filter='none';
+      g.globalCompositeOperation='source-atop';g.fillStyle=cv.dataset.tc||'#000';g.globalAlpha=.2;g.fillRect(0,0,32,36);g.globalAlpha=1;g.fillStyle='rgba(0,0,0,.35)';g.fillRect(0,30,32,6);g.globalCompositeOperation='source-over';cv.classList.add('ok');const b=cv.previousElementSibling;if(b)b.style.visibility='hidden'}catch(e){}};
+  if(!im){im=new Image();im.referrerPolicy='no-referrer';im.src=url;PXIMG.set(url,im)}if(im.complete&&im.naturalWidth)draw();else{im.addEventListener('load',draw,{once:true});im.addEventListener('error',()=>{cv.remove()},{once:true})}}
+function pxPhotoScan(root){(root||document).querySelectorAll('canvas.pxph:not([data-done])').forEach(pxPhotoDraw)}
+try{new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1){if(n.matches&&n.matches('canvas.pxph'))pxPhotoDraw(n);else if(n.querySelector)pxPhotoScan(n)}}).observe(document.body,{childList:true,subtree:true})}catch(e){}
+
+function portraitTag(c){const u=portrait(c),ph=photoFor({name:c.n}),tb=tbOf(c.team);const base=portraitAnimated(c)?`<span class="uimg anim" style="background-image:url(${u})"></span>`:`<img class="uimg" src="${u}" alt="">`;return ph?base+`<canvas class="pxph" width="32" height="36" data-ph="${esc(ph)}" data-tc="${tb[3]||'#000'}"></canvas>`:base}
 const ABC={burner:['BR','#ff6a1a'],cannon:['CN','#5ad1ff'],dime:['DM','#6cff8a'],escape:['EA','#b48cff'],onehand:['1H','#ffd23f'],edge:['ET','#ff3b2a'],lockdown:['LD','#39f2ff'],ballhawk:['BH','#ffd23f'],enforcer:['EN','#ff5a47'],bigleg:['BL','#c0c0c0'],ankle:['AB','#ffd23f'],matrix:['MX','#ff4fd8'],superman:['SM','#5ad1ff'],truck:['TS','#ff8a1a']};
 const abChips=(ab,sg)=>{const l=ab.filter(k=>ABC[k]&&k!==sg).slice(0,4);return l.length?`<span class="uabs">${l.map(k=>`<i style="--ac:${ABC[k][1]}" title="${esc(ABDEF[k].n)}">${ABC[k][0]}</i>`).join('')}</span>`:''};
 function cardHTML(c,o={}){
@@ -4614,11 +4706,11 @@ function cardHTML(c,o={}){
   const pk=c.pk||progKey(c.prog)||'core';
   return`<button class="ucard t-${c.tier} p-${pk}${c.pu?' pu':''}${sg?' sig':''}${o.sm?' sm':''}${o.big?' big':''}${o.ghost?' ghost':''}" data-id="${c.id}"${o.tid?` data-tid="${o.tid}"`:''} style="--tc:${c.pu?'#2bd9a0':T.c};--tc2:${c.pu?'#06382a':T.c2};--tm:${tb[3]}" aria-label="${esc(c.n)}, ${c.pos}, ${effOvr(c)} overall">
   <span class="uo">${effOvr(c)}</span><span class="up">${c.pos}</span>${c.pu?`<span class="ug">${c.up?'+'+c.up:'PU'}</span>`:c.up?`<span class="ug">+${c.up}</span>`:''}
-  <span class="ufx" aria-hidden="true"></span>${pk==='origins'?'<span class="urib">ROOKIE</span>':''}<span class="ubg">${portraitTag(c)}</span>
+  <span class="ufx" aria-hidden="true"></span>${cardArt(c,pk,o)}${pk==='origins'?'<span class="urib">ROOKIE</span>':''}<span class="ubg">${portraitTag(c)}</span>
   <span class="un">${esc(c.n)}</span><span class="ut">${esc(c.team)}, ${esc(c.prog)}</span>
   ${o.sm?'':`<span class="us">${RSET[c.pos].map(k=>`<b>${RLAB[k]} ${cRat(c,k)}</b>`).join('')}</span>${star?`<span class="uab">${NEWAB[star].i} ${NEWAB[star].n}</span>`:''}${sg?`<span class="usig">${NEWAB[sg].i}<b>X</b><u>X-FACTOR: ${NEWAB[sg].n}</u></span>`:''}`}${o.sm&&(star||sg)?`<span class="usg">${sg?NEWAB[sg].i:NEWAB[star].i}</span>`:''}
   ${c.pu?`<span class="uxp"><i style="width:${capUp(c)?Math.round(c.up/capUp(c)*100):100}%"></i></span>`:''}
-  ${st&&!o.noStar?`<i class="ul">${st}</i>`:''}${o.price?`<i class="upr">${fmtN(o.price)}</i>`:''}${o.ghost?'<i class="ugh">MISSING</i>':''}</button>`;
+  ${c.ser?`<i class="user${c.par==='oneone'?' oo':''}">#${c.ser}</i>`:''}${c.auto?'<i class="uaut">AUTO</i>':''}${o.big?(()=>{const P=cardPatches(c);return P.length?`<span class="upat">${P.map(([t,cl])=>`<i style="--pc:${cl}">${t}</i>`).join('')}</span>`:''})():''}${st&&!o.noStar?`<i class="ul">${st}</i>`:''}${o.price?`<i class="upr">${fmtN(o.price)}</i>`:''}${o.ghost?'<i class="ugh">MISSING</i>':''}</button>`;
 }
 function cardBack(c){const T=TIERS[c.tier],pk=c.pk||progKey(c.prog)||'core',ab=cAbil(c),tb=tbOf(c.team),st=c.st?Object.entries(c.st).slice(0,3):[];
   return`<div class="ucard back t-${c.tier} p-${pk}${c.pu?' pu':''}" style="--tc:${c.pu?'#2bd9a0':T.c};--tc2:${c.pu?'#06382a':T.c2};--tm:${tb[3]}"><span class="bn">${esc(c.n)}</span><span class="bp">${GRPNAME[c.pos]}, #${c.num}, ${esc(c.team)}</span><span class="bpr">${esc(c.prog)}</span>
@@ -5277,7 +5369,7 @@ function rollPack(type){
   return out.sort((a,b)=>a.ovr-b.ovr);
 }
 function openPack(type){
-  const cards=rollPack(type);UT.cards.push(...cards);const uc=cards.filter(c=>unlEligible(c)&&TORD.indexOf(c.tier)>=2).sort((a,b)=>b.ovr-a.ovr)[0];const unlGot=uc&&unlStart(uc,true)?uc:null;const co=CHIPODDS[type]||[0,0],gotChips=[];if(Math.random()<co[0]){const k=chipRandom(false);chipGive(k);gotChips.push(k)}if(Math.random()<co[1]){const k=chipRandom(true);chipGive(k);gotChips.push(k)}UT.opened++;if(UT.dream)UT.dream.pts=(UT.dream.pts||0)+5;utSave();
+  const cards=rollPack(type);cards.forEach(cardFlair);UT.cards.push(...cards);const uc=cards.filter(c=>unlEligible(c)&&TORD.indexOf(c.tier)>=2).sort((a,b)=>b.ovr-a.ovr)[0];const unlGot=uc&&unlStart(uc,true)?uc:null;const co=CHIPODDS[type]||[0,0],gotChips=[];if(Math.random()<co[0]){const k=chipRandom(false);chipGive(k);gotChips.push(k)}if(Math.random()<co[1]){const k=chipRandom(true);chipGive(k);gotChips.push(k)}UT.opened++;if(UT.dream)UT.dream.pts=(UT.dream.pts||0)+5;utSave();
   const ov=$('#packov');ov.classList.remove('hidden');
   ov.innerHTML=`<div class="pk-stage">${packArt(type)}<p class="pk-hint">Click or press Space to open</p></div>`;
   PK={cards,i:-1,state:'closed',type,timer:null,chips:gotChips,unl:unlGot};ov.onclick=e=>{if(e.target.closest('button'))return;pkAdvance()};
