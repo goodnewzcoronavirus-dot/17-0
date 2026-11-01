@@ -1335,9 +1335,9 @@ const MV={juke:.35,spin:.45,hurdle:.55,stiff:.5},RUNZ=2.1;
 // tackle types: what the tackler is doing, and the move that beats it
 const TKT={low:{n:'DIVING LOW',c:'#ffd23f',m:'hurdle',mn:'HURDLE'},high:{n:'CROWD',c:'#ff5a47',m:'spin',mn:'SPIN'},arm:{n:'FROM THE SIDE',c:'#c07bff',m:'stiff',mn:'STIFF ARM'},sq:{n:'HEAD ON',c:'#4fd8ff',m:'juke',mn:'JUKE'}};
 const MVCOL={hurdle:'#ffd23f',spin:'#ff5a47',stiff:'#c07bff',juke:'#4fd8ff'},MVICO={hurdle:'\u2934',spin:'\u21BB',stiff:'\u270A',juke:'\u21D5'};
-const MVPX={hurdle:['...XX...','..XXXX..','.X.XX.X.','...XX...','...XX...','........','XXXXXXXX','........'],spin:['..XXXX..','XX...XX.','.......X','.......X','X.......','X.......','..XX...X','..XXXX..'],stiff:['........','...XXX..','..XXXXX.','XXXXXXXX','XXXXXXXX','..XXXXX.','...XXX..','........'],juke:['...XXXX.','..XXX...','..XX....','XXXX....','....XXXX','....XX..','...XXX..','.XXXX...']};
-function mvSVG(type){const rows=MVPX[type];let r='';rows.forEach((row,y)=>[...row].forEach((ch,x)=>{if(ch==='X')r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`}));return`<svg viewBox="0 0 8 8" shape-rendering="crispEdges" fill="currentColor" width="20" height="20">${r}</svg>`}
-function drawMvPx(g,type,cx,cy,ps,col){const rows=MVPX[type];if(!rows)return;g.fillStyle=col;const ox=cx-4*ps,oy=cy-4*ps;for(let r=0;r<8;r++){const row=rows[r];for(let c=0;c<8;c++)if(row[c]==='X')g.fillRect(Math.round(ox+c*ps),Math.round(oy+r*ps),Math.ceil(ps),Math.ceil(ps))}}
+const MVPX={'hurdle':['.........XX...','.........XX...','......XXXXXXX.','.....X.XXX....','.......XXX....','.XXXXXXXXX....','X.......XXXXX.','............X.','..............','..............','XX............','XX.XXXXXXXXXX.','...XXXXXXXXXXX','..............'],'spin':['....XXXXX.....','..XX.....XX...','.X.........X..','.X....XX..XXXX','X.....XX...XX.','X....XXXX...X.','X...X.XX.X....','X.....XX......','X....X..X.....','.X...X..X.....','.X..XX..XX....','..XX.......XX.','....XXXXXXX...','..............'],'stiff':['..............','..XX.......XX.','..XX......XXXX','.XXXXXXXXXXXX.','XXXX......XXX.','.XXX.....XXXX.','.XXX....XX.XX.','.XXX.......XX.','.X.X......X.X.','XX..X....XX..X','X...XX...X...X','X....X..XX....','..............','..............'],'juke':['......XX......','......XX......','....XXXXXX....','...X.XXXX.X...','.....XXXX.....','.....X..X.....','....XX..XX....','....X....X....','..............','..X........X..','.XX........XX.','XXXXX....XXXXX','.XX........XX.','..X........X..']};
+function mvSVG(type){const rows=MVPX[type];let r='';rows.forEach((row,y)=>[...row].forEach((ch,x)=>{if(ch==='X')r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`}));const n=rows.length;return`<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges" fill="currentColor" width="30" height="30">${r}</svg>`}
+function drawMvPx(g,type,cx,cy,ps,col){const rows=MVPX[type];if(!rows)return;g.fillStyle=col;const n=rows.length;ps=ps*8/n;const ox=cx-n*ps/2,oy=cy-n*ps/2;for(let r=0;r<n;r++){const row=rows[r];for(let c=0;c<row.length;c++)if(row[c]==='X')g.fillRect(Math.round(ox+c*ps),Math.round(oy+r*ps),Math.ceil(ps),Math.ceil(ps))}}
 const jMax=c=>3+(Rt(c.p,'agi')>=86?1:0);
 function fb(){}
 function fxWave(e,col,big){if(!G||G.demo||!e)return;(G.wv=G.wv||[]).push({x:e.x,y:e.y,col,t:0,dur:big?.6:.4,r:big?34:20})}
@@ -4377,6 +4377,7 @@ let UTSUB={play:'play',team:'lineup',cards:'coll',store:'packs',pu:'pu',club:'cl
 // what to do next, in order: the one clear thing, with a button that takes you there
 function nextUp(){const L=[];const go=(t,sub,msg,btn)=>L.push({t,sub,msg,btn});
   if(UT.packs.length)go('store','packs',`You have ${UT.packs.length} unopened pack${UT.packs.length>1?'s':''}.`,'Open packs');
+  const ur=UT.cards.find(unlReady);if(ur)go('pu','pu',`${ur.n}'s Power Up is ready to claim.`,'Claim it');
   const pick=UT.cards.find(c=>c.pu&&c.puPick);if(pick)go('pu','pu',`${pick.n} leveled up. Pick his free reward.`,'Pick reward');
   const st=SLOTK.map(k=>cardById(UT.lineup[k])).filter(Boolean),spare=Object.entries(UT.chips||{}).filter(([,n])=>n>0).map(([k])=>k);
   if(spare.some(k=>st.some(c=>!chipWhy(c,k))))go('team','lineup','You have spare chips a starter can use.','Equip chips');
@@ -4394,7 +4395,7 @@ function renderUT(){
   $('#hubHelp').onclick=()=>tourStart(0);
   chipsMigrate();PACKS.featured.n=PROGRAMS[featProg()].n+' Pack';
   if(UTPARENT[utTab]&&!UTSUBS[utTab]){UTSUB[UTPARENT[utTab]]=utTab==='upgrade'?'trade':utTab==='path'?'pu':utTab;utTab=UTPARENT[utTab]}else if(!UTSUBS[utTab])utTab='play';
-  const pend=(UT.packs.length?1:0),puN=UT.cards.filter(c=>c.pu&&c.puPick).length;
+  const pend=(UT.packs.length?1:0),puN=UT.cards.filter(c=>(c.pu&&c.puPick)||unlReady(c)).length;
   $('#utTabs').innerHTML=UTTABS.map(([k,l])=>`<button class="tab${k===utTab?' on':''}" data-k="${k}"><i>${TABICO[k]||''}</i><span>${l}${k==='store'&&UT.packs.length?` (${UT.packs.length})`:''}${k==='pu'&&puN?' !':''}</span></button>`).join('');
   document.querySelectorAll('#utTabs .tab').forEach(b=>b.onclick=()=>{utTab=b.dataset.k;renderUT()});
   const subs=UTSUBS[utTab],sub=UTSUB[utTab]||subs[0][0];
@@ -4448,7 +4449,8 @@ function uPU(){const L=UT.cards.filter(c=>c.pu).sort((a,b)=>(starterSlot(b.id)?1
   <div class="solo"><div><b>Fantasy Pack</b><span class="muted">Pick a position, then choose 1 of 3 Power Ups.${fp?` You have ${fp} free.`:''}</span></div><button class="btn primary" id="fantasy">${fp?'Open free':fmtN(FANTASY_COST)+' coins'}</button></div>
   <div class="solo"><div><b>Pick any player</b><span class="muted">Find him in Cards, Every player, then tap Get his Power Up.</span></div><button class="btn" data-go="cards:cat">Browse players</button></div></div>
   <p class="muted lhint">You have <b>${fmtN(UT.tp||0)} training</b>. Get training by quick selling cards you don't need (Cards tab, or right after opening a pack). Each +1 costs a bit more the higher he gets.</p>
-  <h3>Your Power Ups</h3>${L.length?L.map(row).join(''):'<p class="muted">No Power Ups yet. Open a Fantasy Pack above.</p>'}`}
+  ${uUnl()}
+  <h3>Your Power Ups</h3>${L.length?L.map(row).join(''):'<p class="muted">No Power Ups yet. Unlock one above or open a Fantasy Pack.</p>'}`}
 const FANTASY_COST=2000,puPrice=t=>1500+Math.max(0,t.B-65)*150;
 function fantasyOpen(){const fp=UT.fantasy||0;if(!fp&&UT.coins<FANTASY_COST)return toastUT('Not enough coins. Win games to earn more.');
   utModal(`<h2>Fantasy Pack</h2><p class="muted">Pick a position. You'll choose 1 of 3 Power Ups.</p><div class="row">${GROUPS.map(g=>`<button class="btn primary" data-fpos="${g}">${g}</button>`).join('')}</div>`,[['Cancel',closeModal,'alt']]);
@@ -4457,7 +4459,7 @@ function fantasyOpen(){const fp=UT.fantasy||0;if(!fp&&UT.coins<FANTASY_COST)retu
     const top=by.slice(0,Math.max(3,Math.ceil(by.length*.25)));pick3.push(pick(top));while(pick3.length<3&&pick3.length<pool.length){const t=pick(pool);if(!pick3.includes(t))pick3.push(t)}
     utModal(`<h2>Choose your ${g}</h2><p class="muted">He joins as a Power Up you can train to 99.</p><div class="cgrid pick">${pick3.map(t=>`<div class="pcand">${cardHTML(tplCard(t),{sm:true})}<small>${esc(t.team)} · real ${t.B}</small><button class="btn primary" data-fp="${t.tid}">Take him</button></div>`).join('')}</div>`,[]);
     document.querySelectorAll('[data-fp]').forEach(x=>x.onclick=()=>{const t=pick3.find(q=>q.tid===x.dataset.fp);const c=inst(t);UT.cards.push(c);utSave();closeModal();utTab='pu';renderUT();toastUT(c.n+' Power Up added. Train him to 99.')})})}
-function bPU(){const fb=$('#fantasy');if(fb)fb.onclick=fantasyOpen;document.querySelectorAll('[data-tr]').forEach(b=>b.onclick=()=>{puTrain(cardById(+b.dataset.tr),1);renderUT()});document.querySelectorAll('[data-trm]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.trm),n=puTrain(c,99);toastUT(`${c.n} +${n}, now ${effOvr(c)}`);renderUT()});document.querySelectorAll('[data-pup]').forEach(b=>b.onclick=()=>{puClaim(cardById(+b.dataset.pup),b.dataset.k);renderUT()});
+function bPU(){bindUnl(document);const fb=$('#fantasy');if(fb)fb.onclick=fantasyOpen;document.querySelectorAll('[data-tr]').forEach(b=>b.onclick=()=>{puTrain(cardById(+b.dataset.tr),1);renderUT()});document.querySelectorAll('[data-trm]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.trm),n=puTrain(c,99);toastUT(`${c.n} +${n}, now ${effOvr(c)}`);renderUT()});document.querySelectorAll('[data-pup]').forEach(b=>b.onclick=()=>{puClaim(cardById(+b.dataset.pup),b.dataset.k);renderUT()});
   document.querySelectorAll('[data-pust]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.pust),k=SLOTK.filter(k=>SLOTGRP[k]===c.pos).sort((a,b2)=>effOvr(cardById(UT.lineup[a]))-effOvr(cardById(UT.lineup[b2])))[0];if(k){setSlot(k,c.id);toastUT(c.n+' starting at '+k);renderUT()}});
   document.querySelectorAll('#utBody .ucard[data-id]').forEach(b=>b.onclick=()=>{const id=+b.dataset.id;if(cardById(id))cardDetail(id)})}
 function dreamPanel(){const D=UT.dream,t=D&&buildCatalog().find(x=>x.tid===D.tid);if(!t)return`<div class="dreamp dempty"><b>Dream Card</b><p class="muted">Pick any Power Up in the Catalog and set it as your Dream Card. The higher his potential, the more points he costs. Every game, win, objective and pack adds Dream points until you earn it.</p></div>`;
@@ -4509,9 +4511,9 @@ function utMatch(opp,label,info){
       xp=0;
       while(false){if(c.ovr+c.up<xpCeil(c)&&c.up<capUp(c)){c.xp-=100+25*c.up;c.up++;ups.push(c)}else{c.xp=Math.min(c.xp,99+25*c.up);break}}}
     for(const c of starters){c.s=c.s||{};c.s.gp=(c.s.gp||0)+1;if(win)c.s.w=(c.s.w||0)+1}
-    const pathDone=starters.filter(c=>c.path&&pathReady(c));
+    const pathDone=starters.filter(c=>c.path&&pathReady(c)),unlDone=starters.filter(c=>c.unl&&unlReady(c)),unlGo=starters.filter(c=>c.unl&&!unlReady(c));
     refreshMarket();recalcChem();utSave();
-    lines.push(`+${fmtN(coins)} coins`);if(winChip)lines.push(`Win bonus: ${(NEWAB[winChip]||{}).n} chip`);for(const [c,lv] of puUps)lines.push(`${c.n} leveled up to ${c.up} (${effOvr(c)} OVR)${c.puPick?', pick his reward in Power Ups':''}`);if(r.objN)lines.push(`${r.objN} of 3 objectives done (${fmtN(r.objCoins)} coins of that)`);if(UT.dream)lines.push(`+${dp} Dream Card points`);if(pack)lines.push(`+${PACKS[pack].n}`);if(sx)lines.push(...sx.lines);
+    lines.push(`+${fmtN(coins)} coins`);if(winChip)lines.push(`Win bonus: ${(NEWAB[winChip]||{}).n} chip`);for(const [c,lv] of puUps)lines.push(`${c.n} leveled up to ${c.up} (${effOvr(c)} OVR)${c.puPick?', pick his reward in Power Ups':''}`);if(r.objN)lines.push(`${r.objN} of 3 objectives done (${fmtN(r.objCoins)} coins of that)`);if(UT.dream)lines.push(`+${dp} Dream Card points`);if(pack)lines.push(`+${PACKS[pack].n}`);if(sx)lines.push(...sx.lines);for(const c of unlDone)lines.push(`${c.n}'s Power Up is ready. Claim it in Power Ups.`);if(unlGo.length)lines.push('Power Up unlocks: '+unlGo.map(c=>c.n+' '+unlPct(c)+'%').join(', '));
     const upHtml=ups.length?`<h3>Level ups</h3><div class="cgrid pick">${[...new Set(ups)].map(c=>cardHTML(c,{sm:true,noStar:true})).join('')}</div>`:'';
     renderUT();show('ut');
     utModal(`<p class="kicker">${esc(label)}</p><h2>${win?'Victory':tie?'Tie':'Defeat'}</h2><p class="big">${esc(UT.club.abbr)} ${r.su} - ${r.so} ${esc(opp.abbr)}</p><p>${lines.join('<br>')}</p><p class="muted">Starters earned experience. Power Ups earn 50% more.</p>${upHtml}${pathDone.length?`<h3>Path to Peak complete</h3><p>${pathDone.map(c=>esc(c.n)).join(', ')} finished ${pathDone.length>1?'their':'his'} tasks. Open the Path to Peak tab to upgrade.</p>`:''}${starters.some(c=>c.path&&!pathReady(c))?`<p class="muted">Path to Peak progress: ${starters.filter(c=>c.path&&!pathReady(c)).map(c=>esc(c.n)+' '+pathPct(c)+'%').join(', ')}</p>`:''}`,pack?[['Open pack now',()=>{closeModal();openPackFromInv(UT.packs.length-1)}],['Close',closeModal,'alt']]:[['Close',closeModal]]);
@@ -4600,13 +4602,13 @@ function cardDetail(id){
   const next=Object.keys(ABDEF).filter(k=>!ab.includes(k)).map(k=>{for(const add of [1,2,3,4,5,6,8,10,12,15,20,25]){const r={};for(const rk of RSET[c.pos])r[rk]=clamp(cRat(c,rk)+add,20,99);if(abilities(c.pos,r).includes(k))return[k,add]}return null}).filter(Boolean).sort((a,b)=>a[1]-b[1]).slice(0,3);
   const stl=c.st&&Object.keys(c.st).length?`<p class="muted">Imported stats: ${Object.entries(c.st).slice(0,6).map(([k,v])=>`${k} ${v}`).join(', ')}</p>`:'';
   const line=[gs(c,'py')&&`${gs(c,'py')} pass yds`,gs(c,'ry')&&`${gs(c,'ry')} rush yds`,gs(c,'cy')&&`${gs(c,'cy')} rec yds`,(gs(c,'ptd')+gs(c,'rtd')+gs(c,'ctd'))&&`${gs(c,'ptd')+gs(c,'rtd')+gs(c,'ctd')} TD`,gs(c,'tkl')&&`${gs(c,'tkl')} tackles`].filter(Boolean).join(', ');
-  const PS='';
+  const PS=unlSection(c);
   utModal(`<div class="detail"><div>${flipHTML(c,{big:true})}<p class="muted" style="text-align:center">Click the card to flip it</p></div><div>${PS?`<div class="pathbox">${PS}</div>`:''}<h3>${esc(c.n)}</h3><p>${GRPNAME[c.pos]}, #${c.num}, ${c.pu?'Power Up':T.n+' '+esc(c.prog)}</p>
   <p>Overall ${effOvr(c)}: card ${c.ovr}, upgraded +${c.up}${st?`, chemistry +${effOvr(c)-c.ovr-c.up}`:''}. Player baseline ${c.B||c.ovr}. ${c.pu?'Power Up: train him with training points all the way to 99 in the Power Ups tab.':'Regular cards stay at this rating. Only Power Ups upgrade.'}</p>${versionsHTML(c)}
   <table>${RSET[c.pos].map(k=>`<tr><td><b>${RLAB[k]}</b></td><td class="n">${cRat(c,k)}</td><td class="muted">${RDESC[k]}</td></tr>`).join('')}</table>
   <p><b>Abilities</b></p>${abInfoHTML(ab,sigOf(c))}
   ${next.length?`<p class="muted">Next unlocks: ${next.map(([k,a])=>`${ABDEF[k].n} at about +${a}`).join(', ')}</p>`:''}
-  <p class="muted">${st?'Starting at '+st+'. Starters cannot be sold.':'On the bench.'} Value about ${fmtN(cardVal(c))} coins.</p>${line?`<p class="muted">Career: ${line}</p>`:''}${stl}</div></div>`,btns);bindFlip($('#utm'));bindPath($('#utm'));
+  <p class="muted">${st?'Starting at '+st+'. Starters cannot be sold.':'On the bench.'} Value about ${fmtN(cardVal(c))} coins.</p>${line?`<p class="muted">Career: ${line}</p>`:''}${stl}</div></div>`,btns);bindFlip($('#utm'));bindPath($('#utm'));bindUnl($('#utm'));
 }
 function versionsHTML(c){if(!c.pid)return'';const own=ownedTids(),vs=buildCatalog().filter(t=>t.pid===c.pid).sort((a,b)=>a.ovr-b.ovr);return`<p><b>Versions of this player:</b> ${vs.map(t=>`<span class="abl" style="${own.has(t.tid)?'':'opacity:.5'}">${PROGRAMS[t.p].n} ${t.ovr}${own.has(t.tid)?' (owned)':''}</span>`).join(' ')}</p><p class="muted">Merge a duplicate or another version of him into this card for +2, or +3 if it is at or above his baseline.</p>`}
 function sellCard(c,how){if(starterSlot(c.id))return;chipReturn(c);UT.cards=UT.cards.filter(x=>x!==c);if(how==='coins')UT.coins+=qsCoins(c);else UT.tp+=qsTP(c)*(c.pu?3:1);utSave();closeModal();renderUT()}
@@ -4678,10 +4680,10 @@ function rollPack(type){
   return out.sort((a,b)=>a.ovr-b.ovr);
 }
 function openPack(type){
-  const cards=rollPack(type);UT.cards.push(...cards);const co=CHIPODDS[type]||[0,0],gotChips=[];if(Math.random()<co[0]){const k=chipRandom(false);chipGive(k);gotChips.push(k)}if(Math.random()<co[1]){const k=chipRandom(true);chipGive(k);gotChips.push(k)}UT.opened++;if(UT.dream)UT.dream.pts=(UT.dream.pts||0)+5;utSave();
+  const cards=rollPack(type);UT.cards.push(...cards);const uc=cards.filter(c=>unlEligible(c)&&TORD.indexOf(c.tier)>=2).sort((a,b)=>b.ovr-a.ovr)[0];const unlGot=uc&&unlStart(uc,true)?uc:null;const co=CHIPODDS[type]||[0,0],gotChips=[];if(Math.random()<co[0]){const k=chipRandom(false);chipGive(k);gotChips.push(k)}if(Math.random()<co[1]){const k=chipRandom(true);chipGive(k);gotChips.push(k)}UT.opened++;if(UT.dream)UT.dream.pts=(UT.dream.pts||0)+5;utSave();
   const ov=$('#packov');ov.classList.remove('hidden');
   ov.innerHTML=`<div class="pk-stage">${packArt(type)}<p class="pk-hint">Click or press Space to open</p></div>`;
-  PK={cards,i:-1,state:'closed',type,timer:null,chips:gotChips};ov.onclick=e=>{if(e.target.closest('button'))return;pkAdvance()};
+  PK={cards,i:-1,state:'closed',type,timer:null,chips:gotChips,unl:unlGot};ov.onclick=e=>{if(e.target.closest('button'))return;pkAdvance()};
 }
 function pkAdvance(){
   if(!PK)return;
@@ -4716,7 +4718,7 @@ function walkout(c){
 }
 function pkDone(){
   if(!PK||PK.state==='done')return;PK.state='done';const bronze=PK.cards.filter(c=>c.tier==='bronze'||c.tier==='silver'),val=bronze.reduce((s,c)=>s+qsTP(c),0);
-  const f=$('#pkfoot');f.innerHTML=`${PK.chips&&PK.chips.length?`<p class="pk-hint" style="color:#ffd23f">Bonus chip${PK.chips.length>1?'s':''}: ${PK.chips.map(k=>chipLabel(k)).join(', ')}. Equip it in Team.</p>`:''}<div class="row" style="justify-content:center"><button class="btn primary" id="pkOk">Send to collection</button>${bronze.length?`<button class="btn" id="pkQs">Quick sell ${bronze.length} bronze and silver (+${fmtN(val)} training)</button>`:''}</div>`;
+  const f=$('#pkfoot');f.innerHTML=`${PK.unl?`<p class="pk-hint" style="color:#6cffd0">${esc(PK.unl.n)}: his Power Up unlock started. Start him and hit his goals (Power Ups tab).</p>`:''}${PK.chips&&PK.chips.length?`<p class="pk-hint" style="color:#ffd23f">Bonus chip${PK.chips.length>1?'s':''}: ${PK.chips.map(k=>chipLabel(k)).join(', ')}. Equip it in Team.</p>`:''}<div class="row" style="justify-content:center"><button class="btn primary" id="pkOk">Send to collection</button>${bronze.length?`<button class="btn" id="pkQs">Quick sell ${bronze.length} bronze and silver (+${fmtN(val)} training)</button>`:''}</div>`;
   $('#pkOk').onclick=pkClose;if(bronze.length)$('#pkQs').onclick=()=>{const ids=new Set(bronze.map(c=>c.id));for(const c0 of UT.cards)if(ids.has(c0.id))chipReturn(c0);UT.cards=UT.cards.filter(c=>!ids.has(c.id));UT.tp=(UT.tp||0)+val;utSave();pkClose()};
 }
 function pkClose(){PK=null;$('#packov').classList.add('hidden');$('#packov').innerHTML='';renderUT()}
@@ -4784,6 +4786,34 @@ function pathSection(c){const nx=pathNext(c);if(!c.pu)return`<h3>Path to Peak</h
 function bindPath(root){root=root||document;root.querySelectorAll('[data-pstart]').forEach(b=>b.onclick=e=>{e.stopPropagation();const c=cardById(+b.dataset.pstart);startPath(c);if($('#utm')&&!$('#utm').classList.contains('hidden')&&root.id==='utm')cardDetail(c.id);renderUT()});
   root.querySelectorAll('[data-pdone]').forEach(b=>b.onclick=e=>{e.stopPropagation();finishPath(cardById(+b.dataset.pdone))});
   root.querySelectorAll('[data-pstop]').forEach(b=>b.onclick=e=>{e.stopPropagation();const c=cardById(+b.dataset.pstop);delete c.path;utSave();if(root.id==='utm')cardDetail(c.id);renderUT()})}
+// ===== Unlock a Power Up: own his card, start him, hit a few goals, claim his Power Up =====
+const UNL_MAX=3;
+const puTplFor=c=>c&&c.pid&&!c.pu?buildCatalog().find(x=>x.pid===c.pid&&x.p==='power')||null:null;
+const ownsPU=pid=>UT.cards.some(x=>x.pu&&x.pid===pid);
+const unlActive=()=>UT.cards.filter(c=>c.unl);
+const unlEligible=c=>!!(c&&!c.pu&&c.pid&&!c.unl&&!ownsPU(c.pid)&&!(UT.puUnl||{})[c.pid]&&!UT.cards.some(x=>x.unl&&x.pid===c.pid)&&puTplFor(c));
+function unlStart(c,quiet){if(!unlEligible(c))return false;if(unlActive().length>=UNL_MAX){if(!quiet)toastUT('You can unlock 3 Power Ups at once');return false}
+  c.s=c.s||{};const base={};for(const k of Object.keys(PSTAT))base[k]=c.s[k]||0;c.unl={base,need:pathTasks(c.pos,'origins',null)};utSave();return true}
+const unlProg=(c,k)=>Math.max(0,((c.s||{})[k]||0)-((c.unl.base||{})[k]||0));
+const unlReady=c=>!!(c.unl&&Object.entries(c.unl.need).every(([k,v])=>unlProg(c,k)>=v));
+const unlPct=c=>{const e=Object.entries(c.unl.need);return Math.round(e.reduce((a,[k,v])=>a+Math.min(1,unlProg(c,k)/v),0)/e.length*100)};
+function unlTasksHTML(c){return`<div class="ptasks">${Object.entries(c.unl.need).map(([k,v])=>{const pv=Math.min(v,unlProg(c,k));return`<div class="ptask${pv>=v?' done':''}"><span>${pv>=v?'✓ ':''}${PSTAT[k]}</span><i><u style="width:${Math.round(pv/v*100)}%"></u></i><em>${pv} / ${v}</em></div>`}).join('')}</div>`}
+function unlClaim(c){if(!unlReady(c))return;const t=puTplFor(c);if(!t)return;const p=inst(t);UT.cards.push(p);(UT.puUnl=UT.puUnl||{})[c.pid]=1;delete c.unl;utSave();renderUT();
+  utModal(`<div class="detail"><div style="flex:0 0 auto">${flipHTML(p,{big:true})}</div><div><p class="kicker">Power Up unlocked</p><h2>${esc(p.n)}</h2><p>You earned his Power Up by playing him. It starts at ${p.ovr} and you can train it all the way to 99 in Power Ups.</p><p class="muted">You still keep his regular card.</p></div></div>`,[['Nice',closeModal]]);bindFlip($('#utm'))}
+function unlSection(c){if(c.pu)return'';const t=puTplFor(c);if(!t)return'';
+  if(ownsPU(c.pid))return`<h3>His Power Up</h3><p class="muted">You already own his Power Up.</p>`;
+  if(c.unl)return`<h3>Unlocking his Power Up</h3>${unlTasksHTML(c)}${unlReady(c)?`<button class="btn primary" data-uclaim="${c.id}">Claim his Power Up</button>`:`<p class="muted">${starterSlot(c.id)?'He is starting, so every game counts.':'He is on the bench. Start him so his goals count.'}</p>`}<button class="btn" data-ustop="${c.id}">Stop</button>`;
+  const other=UT.cards.find(x=>x.unl&&x.pid===c.pid);if(other)return`<h3>His Power Up</h3><p class="muted">Another copy of him is already unlocking it.</p>`;
+  const full=unlActive().length>=UNL_MAX;
+  return`<h3>Unlock his Power Up</h3><p>You pulled him, so you can earn his Power Up for free. Start this card and hit these goals: ${Object.entries(pathTasks(c.pos,'origins',null)).map(([k,v])=>v+' '+PSTAT[k]).join(', ')}.</p><button class="btn primary" data-ustart="${c.id}" ${full?'disabled':''}>${full?'3 unlocks already running':'Start unlocking'}</button>`}
+function bindUnl(root){root=root||document;const re=c=>{if(root.id==='utm')cardDetail(c.id);renderUT()};
+  root.querySelectorAll('[data-ustart]').forEach(b=>b.onclick=e=>{e.stopPropagation();const c=cardById(+b.dataset.ustart);if(unlStart(c))re(c)});
+  root.querySelectorAll('[data-uclaim]').forEach(b=>b.onclick=e=>{e.stopPropagation();unlClaim(cardById(+b.dataset.uclaim))});
+  root.querySelectorAll('[data-ustop]').forEach(b=>b.onclick=e=>{e.stopPropagation();const c=cardById(+b.dataset.ustop);delete c.unl;utSave();re(c)})}
+function uUnl(){const act=unlActive(),cand=UT.cards.filter(unlEligible).sort((a,b)=>(starterSlot(b.id)?1:0)-(starterSlot(a.id)?1:0)||effOvr(b)-effOvr(a)).slice(0,8),full=act.length>=UNL_MAX;
+  return`<h3>Unlock from your pulls (${act.length} of ${UNL_MAX})</h3><p class="muted">Pull a player and you can earn his Power Up for free. Start his card and hit a few goals, usually a game or two.</p>
+  ${act.map(c=>`<div class="pathrow"><div class="pcard">${cardHTML(c,{sm:true})}</div><div class="pbody"><b>${esc(c.n)}</b> <span class="muted">${unlPct(c)}%${starterSlot(c.id)?'':', on the bench, goals paused'}</span>${unlTasksHTML(c)}${unlReady(c)?`<button class="btn primary" data-uclaim="${c.id}">Claim his Power Up</button>`:starterSlot(c.id)?'':`<button class="btn" data-pust="${c.id}">Start him</button>`}</div></div>`).join('')}
+  ${cand.length?`<div class="cgrid">${cand.map(c=>`<div class="pcand">${cardHTML(c,{sm:true})}<button class="btn${full?'':' primary'}" data-ustart="${c.id}" ${full?'disabled':''}>Unlock</button></div>`).join('')}</div>`:act.length?'':'<p class="muted">Open packs to pull players you can unlock.</p>'}`}
 function uPath(){const act=activePaths(),cand=UT.cards.filter(c=>!c.path&&pathNext(c)).sort((a,b)=>(starterSlot(b.id)?1:0)-(starterSlot(a.id)?1:0)||pathLadder(b).at(-1).ovr-pathLadder(a).at(-1).ovr).slice(0,12);
   return`<p class="muted">Path to Peak is how Power Ups grow, and the only way. Finish his tasks while he starts for you and he climbs about 4 overall, step by step, up to his potential. You can run 3 paths at once.</p>
   <h3>Active paths (${act.length} of 3)</h3>${act.length?act.map(c=>{const t=pathTo(c);return`<div class="pathrow"><div class="pcard">${cardHTML(c,{sm:true})}</div><div class="pbody"><b>${esc(c.n)}</b> <span class="muted">to ${PROGRAMS[t.p].n} ${t.ovr}${starterSlot(c.id)?'':', on the bench, tasks paused'}</span>${ladderHTML(c)}${pathTasksHTML(c)}${pathReady(c)?`<button class="btn primary" data-pdone="${c.id}">Upgrade to ${PROGRAMS[t.p].n} ${t.ovr}</button>`:''}</div><div class="pnext">${cardHTML(t.pu?Object.assign({},c,{id:-2,up:t.ovr-c.ovr}):tplCard(t),{sm:true})}</div></div>`}).join(''):'<p class="muted">No paths running yet. Start one below.</p>'}
