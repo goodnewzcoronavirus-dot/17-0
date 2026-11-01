@@ -429,6 +429,27 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 #rv{position:fixed;inset:0;z-index:96;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#03040a;cursor:pointer;--tc:#f5cd4c;--tm:#e84a3a;--tm2:#ffd23f;font-family:'Press Start 2P',monospace;color:#fff}
 #rv.hidden{display:none}
 
+/* ===== title menu: arcade buttons ===== */
+#title .row::before,#title .btn::before{content:none!important}
+#title .row{padding:10px!important;gap:8px!important;min-width:0}
+#title .tmain{display:flex!important;flex-direction:column;gap:7px}
+#title .tbtn{display:grid!important;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;width:100%;text-align:left;font-family:'Press Start 2P',monospace;color:#fff;background:#10142a!important;border:3px solid #fff!important;border-radius:0!important;box-shadow:inset 6px 0 0 var(--bc),4px 4px 0 #000!important;padding:8px 10px 8px 14px!important;min-height:0!important;cursor:pointer;animation:none!important;transition:transform .08s}
+#title .tbtn.hidden{display:none!important}
+#title .tbtn:active{transform:translate(3px,3px);box-shadow:inset 6px 0 0 var(--bc),1px 1px 0 #000!important}
+#title .tbtn .pxi{color:var(--bc)}
+#title .tbtn b{display:block;font-weight:400;font-size:11px;line-height:1.2}
+#title .tbtn small{display:block;font-family:system-ui,sans-serif;font-size:11px;color:#9aa3c0;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#title .tbtn em{font-style:normal;font-size:10px;color:var(--bc)}
+#title .tbtn.hero{--bc:#ffd23f;background:linear-gradient(90deg,#3a1208,#10142a)!important;padding-top:12px!important;padding-bottom:12px!important}
+#title .tbtn.hero b{font-size:14px}
+#title .tbtn.hero em{animation:tblink 1s steps(2) infinite}
+#title .tsub{display:none!important}
+#title .row.set .tmain{display:none!important}
+#title .row.set .tsub{display:flex!important;flex-wrap:wrap;gap:6px}
+#title .tsub .btn{font-size:8px!important;padding:9px 10px!important;background:#10142a!important;color:#fff!important;border:2px solid #fff!important;border-radius:0!important;box-shadow:3px 3px 0 #000!important}
+#title .tsub label{width:100%;color:#fff!important;font-family:'Press Start 2P',monospace;font-size:8px!important}
+#title .tgear{align-self:flex-end;font-family:'Press Start 2P',monospace;font-size:8px;background:transparent;border:2px solid #9aa3c0;color:#cfd5ff;padding:7px 9px;cursor:pointer}
+
 #reel{position:fixed;inset:0;z-index:97;background:rgba(3,4,10,.92);display:none;align-items:center;justify-content:center;padding:8px}
 #reel.on{display:flex}
 #reel .rl-box{width:min(96vw,calc((100dvh - 70px) * 16 / 9));display:flex;flex-direction:column;gap:8px}
@@ -557,8 +578,8 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 .ucard.t-elite::after,.ucard.t-legend::after,.ucard.p-peak::after,.ucard.p-icon::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:6;animation:none;
   background:radial-gradient(circle at calc(var(--hx,.5)*100%) calc(var(--hy,.35)*100%),rgba(255,255,255,.7),rgba(255,255,255,0) 34%),
    repeating-linear-gradient(calc(105deg + var(--hx,.5)*50deg),#ff2a7a 0,#ffd23f 5%,#3dffb0 10%,#2aa8ff 15%,#b14dff 20%,#ff2a7a 25%);
-  background-size:100% 100%,320% 320%;background-position:center,calc(var(--hx,.5)*100%) calc(var(--hy,.5)*100%);mix-blend-mode:overlay;opacity:.5}
-.ucard.t-legend::after,.ucard.p-peak::after{opacity:.55;background:radial-gradient(circle at calc(var(--hx,.5)*100%) calc(var(--hy,.35)*100%),rgba(255,255,255,.8),rgba(255,255,255,0) 36%),
+  background-size:100% 100%,320% 320%;background-position:center,calc(var(--hx,.5)*100%) calc(var(--hy,.5)*100%);opacity:.22}
+.ucard.t-legend::after,.ucard.p-peak::after{opacity:.3;background:radial-gradient(circle at calc(var(--hx,.5)*100%) calc(var(--hy,.35)*100%),rgba(255,255,255,.8),rgba(255,255,255,0) 36%),
    radial-gradient(circle,rgba(255,255,255,.9) 0 1px,transparent 1.5px) 0 0/9px 9px,
    repeating-linear-gradient(calc(105deg + var(--hx,.5)*50deg),#ff2a7a 0,#ffd23f 5%,#3dffb0 10%,#2aa8ff 15%,#b14dff 20%,#ff2a7a 25%);
   background-size:100% 100%,9px 9px,320% 320%;background-position:center,calc(var(--hx,.5)*40px) calc(var(--hy,.5)*40px),calc(var(--hx,.5)*100%) calc(var(--hy,.5)*100%)}
@@ -4787,7 +4808,7 @@ function nextUp(){const L=[];const go=(t,sub,msg,btn,ic,big,lab)=>L.push({t,sub,
   const S=UT.season,g=S&&nextGame();if(g)go('play','season',`Season game next: ${g.label}.`,'Play season game','trophy','WK','SEASON');else go('play','play','Win games to earn coins and chips.','Play','ball','GO','PLAY');
   return L}
 function nextUpHTML(){const L=nextUp().slice(0,4);return`<div class="nxu">${L.map((x,i)=>`<button class="nxt${i===0?' hot':''}" data-go="${x.t}:${x.sub}" title="${esc(x.msg)}" aria-label="${esc(x.msg)}">${pxIco(x.ic||'ball',26)}<b>${esc(String(x.big??''))}</b><span>${esc(x.lab||x.btn)}</span></button>`).join('')}</div>`}
-function renderUT(){
+function renderUT(){try{localStorage.setItem('gr_resume',JSON.stringify({s:'ut',t:Date.now()}))}catch(_){}
   if(UT&&!UT.noToe){UT.chips=UT.chips||{};let n=UT.chips.toetap||0;delete UT.chips.toetap;for(const c of UT.cards){if(c.eq&&c.eq.includes('toetap')){c.eq=c.eq.filter(a=>a!=='toetap');n++}if(c.abO==='toetap')c.abO=null}for(let i=0;i<n;i++)chipGive(pick(ABPOS.WR));UT.noToe=1;utSave();if(n)setTimeout(()=>toastUT(`Toe Tap was retired. You got ${n} other chip${n>1?'s':''} instead.`),300)}
   if(UT&&UT.fantasy===undefined){UT.fantasy=1;for(const c of UT.cards)if(c.pu)c.pot=99;utSave()}
   const c=UT.club,o=teamOvr();
@@ -5434,11 +5455,11 @@ function pfxHTML(pk){const R=(n,f)=>Array.from({length:n},(_,i)=>f(i)).join('');
     default:return'';}}
 
 // ===== shiny cards: one shared tilt value drives every foil card =====
-(()=>{const R=document.documentElement;let hx=.5,hy=.35,last=0,asked=false;const set=(x,y)=>{hx=clamp(x,0,1);hy=clamp(y,0,1);last=performance.now();R.style.setProperty('--hx',hx.toFixed(3));R.style.setProperty('--hy',hy.toFixed(3))};
+(()=>{const R=document.documentElement;let hx=.5,hy=.35,last=0,asked=false;const set=(x,y)=>{x=clamp(x,0,1);y=clamp(y,0,1);const n=performance.now();if(n-last<60||Math.abs(x-hx)+Math.abs(y-hy)<.03)return;hx=x;hy=y;last=n;R.style.setProperty('--hx',hx.toFixed(2));R.style.setProperty('--hy',hy.toFixed(2))};
   addEventListener('deviceorientation',e=>{if(e.gamma==null)return;set(.5+e.gamma/60,.5+(e.beta-40)/70)},{passive:true});
   addEventListener('pointermove',e=>{if(e.pointerType==='mouse')set(e.clientX/innerWidth,e.clientY/innerHeight)},{passive:true});
   addEventListener('pointerdown',()=>{if(asked)return;asked=true;try{const D=window.DeviceOrientationEvent;if(D&&typeof D.requestPermission==='function'&&document.querySelector('.ucard.t-elite,.ucard.t-legend,.ucard.t-gold'))D.requestPermission().catch(()=>{})}catch(_){}},{passive:true});
-  const idle=t=>{if(performance.now()-last>2500&&document.querySelector('.ucard.t-elite,.ucard.t-legend,.ucard.t-gold')){const a=t/1600;R.style.setProperty('--hx',(.5+Math.sin(a)*.35).toFixed(3));R.style.setProperty('--hy',(.4+Math.cos(a*.7)*.25).toFixed(3))}requestAnimationFrame(idle)};requestAnimationFrame(idle)})();
+  })();
 const STLAB={passingyards:'PASS YDS',passingtouchdowns:'PASS TD',rushingyards:'RUSH YDS',rushingtouchdowns:'RUSH TD',receivingyards:'REC YDS',receptions:'REC',receivingtouchdowns:'REC TD',touchdowns:'TD',tackles:'TKL',sacks:'SACKS',interceptions:'INT',passesdefended:'PD',fieldgoalsmade:'FG',puntyards:'PUNT YDS'};
 function realLine(c){const st=c.st||{},L=[];for(const [k,v] of Object.entries(st)){const lab=STLAB[String(k).toLowerCase()];if(lab&&v>0&&L.length<3)L.push(fmtN(Math.round(v))+' '+lab)}return L.join(' · ')}
 function walkFace(c){const p={name:c.n,num:c.num,skin:c.skin||0},ph=photoFor(p),tb=tbOf(c.team);const px=(()=>{try{return faceURL(p,{c1:tb[3],c2:tb[4]},true)}catch(e){return''}})();return ph?`<img referrerpolicy="no-referrer" alt="" src="${esc(ph)}" onerror="this.className='px';this.src='${px}'">`:px?`<img class="px" alt="" src="${px}">`:''}
@@ -5472,7 +5493,10 @@ const effOvrSafe=c=>(c.ovr||0)+(c.up||0);
 // ================= retro title: night stadium attract loop + PRESS START =================
 (()=>{const T=$('#title');if(!T)return;const row=T.querySelector('.row');if(row&&!row.querySelector('.tmain')){const M=document.createElement('div');M.className='tmain';const S=document.createElement('div');S.className='tsub';
     for(const id of['bUT','bCont','bFD','bNew']){const e=$('#'+id);if(e)M.appendChild(e)}
-    for(const e of [...row.children])S.appendChild(e);const how=document.createElement('button');how.className='btn';how.textContent='How to play';how.onclick=()=>utModal(T.querySelector('.howto').innerHTML,[['Got it',closeModal]]);S.appendChild(how);row.appendChild(M);row.appendChild(S)}
+    for(const e of [...row.children])S.appendChild(e);const how=document.createElement('button');how.className='btn';how.textContent='How to play';how.onclick=()=>utModal(T.querySelector('.howto').innerHTML,[['Got it',closeModal]]);S.appendChild(how);
+    const gear=document.createElement('button');gear.className='tgear';gear.textContent='SETTINGS';gear.onclick=()=>{row.classList.toggle('set');gear.textContent=row.classList.contains('set')?'BACK':'SETTINGS'};row.appendChild(M);row.appendChild(S);row.appendChild(gear);
+    const L={bUT:['hero','#ffd23f','chip','ULTIMATE TEAM','Your club, packs, Power Ups, seasons','PLAY'],bCont:['','#6cff8a','trophy','CONTINUE FRANCHISE','Pick up your season',''],bFD:['','#b98cff','pack','FANTASY DRAFT','Draft a squad from every player',''],bNew:['','#4fd8ff','ball','NEW FRANCHISE','Classic 17-week season','']};
+    for(const [id,[cls,c,ic,t,sub,em]] of Object.entries(L)){const b=$('#'+id);if(!b)continue;b.classList.add('tbtn');if(cls)b.classList.add(cls);b.style.setProperty('--bc',c);const ex=id==='bCont'?(b.textContent.replace(/continue franchise/i,'').trim()):'';b.innerHTML=`${pxIco(ic,26)}<span><b>${t}</b><small>${esc(ex||sub)}</small></span><em>${em?em+' \u25B6':''}</em>`}}
   let started=false;try{started=sessionStorage.getItem('gr_started')==='1'}catch(_){}const st=$('#tstart');
   const go=()=>{if(started)return;started=true;try{sessionStorage.setItem('gr_started','1')}catch(_){}st.classList.add('gone');T.classList.remove('pre');try{SND.coin&&SND.coin();SND.cheer&&SND.cheer(.6)}catch(_){}};
   if(started)st.classList.add('gone');else T.classList.add('pre');st.onclick=go;addEventListener('keydown',e=>{if(!started&&!T.classList.contains('hidden')&&(e.key==='Enter'||e.key===' ')){e.preventDefault();go()}});
@@ -5806,7 +5830,7 @@ function fdRender(){const S=FDS,body=$('#fdBody'),c=fdCoins();
   $('#fdPlay').onclick=fdPlay}
 $('#bFD').onclick=()=>{FDS=fdLoad();show('fd');fdRender()};$('#fdMenu').onclick=renderTitle;
 $('#bXfer').onclick=openTransfer;$('#bBooth').onclick=boothCycle;$('#bBoothAI').onclick=openAudio;boothBtn();{const h=$('#instHint');if(h&&!STANDALONE&&/iPhone|iPad|Android/.test(navigator.userAgent))h.classList.remove('hidden')}
-$('#bUT').onclick=enterUT;$('#utMenu').onclick=renderTitle;
+$('#bUT').onclick=enterUT;$('#utMenu').onclick=()=>{try{localStorage.removeItem('gr_resume')}catch(_){}renderTitle()};
 addEventListener('keydown',e=>{
   if(PK&&(e.key===' '||e.key==='Enter')){e.preventDefault();if(PK.state==='done')pkClose();else pkAdvance();return}
   if(!$('#utdraft').classList.contains('hidden')&&UT&&UT.draft&&['1','2','3'].includes(e.key)){pickDraft(+e.key-1);return}
@@ -5925,6 +5949,7 @@ async function autoLeague(){if(location.protocol==='file:')return;const get=asyn
     if(!$('#title').classList.contains('hidden'))renderTitle()}catch(e){console.warn('league.json',e)}}
 const LEAGUE_P=autoLeague();
 renderTitle();
+try{const R=JSON.parse(localStorage.getItem('gr_resume')||'null');if(R&&Date.now()-R.t<3*3600e3&&utLoad()){const st=$('#tstart');if(st)st.classList.add('gone');$('#title').classList.remove('pre');setTimeout(()=>{const b=$('#bUT');if(b)b.click()},0)}}catch(_){}
 </script>
 <script>
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
