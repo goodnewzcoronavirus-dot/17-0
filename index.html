@@ -907,6 +907,11 @@ body.touch #booth{top:calc(env(safe-area-inset-top,0px) + 50px)}
 </section>
 
 <script>
+// startup safety: phone layout first, and any crash shows on screen so it can be reported
+(function(){try{var pc=function(){var co=false;try{co=matchMedia('(pointer:coarse)').matches}catch(e){}co=co||navigator.maxTouchPoints>0;var sm=Math.min(innerWidth,innerHeight)<=600||innerWidth<=640;if(document.body)document.body.classList.toggle('phone',co&&sm)};pc();}catch(e){}
+  var shown=0;window.addEventListener('error',function(ev){try{if(shown>2)return;shown++;var d=document.getElementById('errbar');if(!d){d=document.createElement('div');d.id='errbar';d.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:999;background:#c0261d;color:#fff;font:12px/1.4 system-ui;padding:6px 10px;white-space:pre-wrap';d.onclick=function(){d.remove()};document.body.appendChild(d)}d.textContent+=(d.textContent?'\n':'')+'Error: '+(ev.message||ev.error)+' (line '+(ev.lineno||'?')+') - tap to hide';}catch(e){}});})();
+</script>
+<script>
 // ================= utils =================
 const $=s=>document.querySelector(s);
 const rnd=(a,b)=>a+Math.random()*(b-a), ri=(a,b)=>Math.floor(rnd(a,b+1)), clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
