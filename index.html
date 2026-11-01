@@ -429,6 +429,22 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 #rv{position:fixed;inset:0;z-index:96;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#03040a;cursor:pointer;--tc:#f5cd4c;--tm:#e84a3a;--tm2:#ffd23f;font-family:'Press Start 2P',monospace;color:#fff}
 #rv.hidden{display:none}
 
+/* ===== fantasy box score ===== */
+.modal .panel.fbxp{max-width:1000px;width:min(98vw,1000px);max-height:96dvh;padding:10px}
+.fbx{background:#f3f4f6;color:#111;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;border-radius:6px;padding:10px;margin-bottom:10px}
+.fbx-top{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:.06em;color:#6b7280;margin-bottom:8px}.fbx-top b{font-size:15px;color:#111;letter-spacing:0}.fbx-top b.w{color:#0a7a32}.fbx-top b.l{color:#c0261d}
+.fbx-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fbx-s{background:#fff;border:1px solid #d1d5db;border-radius:6px;overflow:hidden}
+.fbx-h{display:flex;align-items:center;gap:10px;padding:10px;border-bottom:3px solid var(--c1)}.fbx-h b{display:block;font-size:14px}.fbx-h small{display:block;font-size:11px;color:#6b7280}.fbx-h em{margin-left:auto;font-style:normal;font-size:30px;font-weight:800;letter-spacing:-.02em}
+.fbx-crest{flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:var(--c1);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;box-shadow:inset 0 0 0 3px var(--c2)}
+.fbx-t{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}.fbx-t th:nth-child(1){width:46px}.fbx-t th:nth-child(3){width:38px}.fbx-t th:nth-child(4){width:46px}.fbx-t td:nth-child(2){overflow:hidden}.fbx-t th{font-size:10px;color:#6b7280;font-weight:700;text-align:left;padding:5px 8px;background:#f9fafb;border-bottom:1px solid #e5e7eb}.fbx-t th:nth-child(n+3){text-align:right}
+.fbx-t td{padding:5px 8px;border-bottom:1px solid #f0f1f3;vertical-align:middle}.fbx-t td.n{text-align:right;color:#6b7280;font-variant-numeric:tabular-nums;padding-left:2px}.fbx-t td.f{color:#111;font-weight:800;font-size:14px}.fbx-t tr.up td.f{color:#0a7a32}
+.fbx-sl{display:inline-block;min-width:30px;text-align:center;font-size:10px;font-weight:800;color:#374151;background:#e5e7eb;border-radius:3px;padding:2px 3px}
+.fbx-p{display:flex;align-items:center;gap:8px;min-width:0}.fbx-p img,.fbx-p>i{flex:0 0 auto;width:32px;height:32px;border-radius:50%;object-fit:cover;object-position:50% 12%;background:#e5e7eb}.fbx-p img.px{image-rendering:pixelated;object-fit:contain}
+.fbx-p{overflow:hidden}.fbx-p>div{min-width:0}.fbx-p b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fbx-p small.ln{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fbx-p small{display:block;font-size:10px;color:#6b7280}.fbx-p small.ln{color:#374151}
+.fbx-t tfoot td{font-weight:800;font-size:11px;background:#f9fafb;border-top:2px solid #e5e7eb}
+.fbx-rw{display:flex;gap:16px;align-items:flex-start}.fbx-rw h2{margin:2px 0}.fbx-rw p{margin:4px 0}
+
 /* ===== lineup: formation + chip tray ===== */
 .lu{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:10px;align-items:start}
 .lu-f{min-width:0}
@@ -444,6 +460,8 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 .ltk .lk{font-size:5px;color:#9aa3c0}.ltk b{font-size:13px;font-weight:400}.ltk em{font-style:normal;font-family:system-ui,sans-serif;font-size:10px;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ltk .ld,.lu-key{display:flex;gap:2px}.ltk .ld i,.lu-key i{display:inline-block;width:7px;height:7px;border:1px solid #fff;background:transparent}
 .ltk .ld i.on,.lu-key i.on{background:#ffd23f;border-color:#ffd23f}.ltk .ld i.lk,.lu-key i.lk{border-color:#444;background:#222}.ltk .ld i.x,.lu-key i.x{border-radius:50%;border-color:#ff8a7a}.ltk .ld i.x.on,.lu-key i.x.on{background:#ff3b2a;border-color:#ff3b2a}
+.ltk.card{background:transparent;border:0;box-shadow:none;padding:0;width:66px;flex:0 1 66px;gap:3px;cursor:pointer}.ltk.card .lk{background:#000;color:#fff;padding:2px 4px;font-size:6px;border:1px solid var(--tc)}.ltk.card .flip,.ltk.card .ucard{width:100%;max-width:none}.ltk.card .ld{background:rgba(0,0,0,.65);padding:2px 4px}.ltk.card.ok .ucard{box-shadow:0 0 0 3px #6cff8a,0 0 16px #6cff8a}.ltk.card.ok{box-shadow:none}
+.ltk .mback{overflow:hidden;aspect-ratio:5/7;background:linear-gradient(165deg,#1b2340,#0a0f1f);border:3px solid var(--tc);display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:4px 4px;gap:2px;cursor:pointer;color:#fff}.ltk .mback b{font-size:10px;font-weight:400;text-align:center;line-height:1}.ltk .mback em{display:block;font-style:normal;font-family:system-ui;font-weight:700;font-size:8px;line-height:1.1;color:#ffd23f;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px}.ltk .mback span{display:flex;justify-content:space-between;font-size:6px;line-height:1.35}.ltk .mback span i{font-style:normal;color:#9aa3c0}.ltk .mback span.fp{margin-top:auto;color:#6cff8a}
 .ltk.empty{border-style:dashed;border-top-width:3px;background:rgba(0,0,0,.25);min-height:60px;justify-content:center}.ltk.empty b{font-size:18px}
 .ltk.ok{box-shadow:0 0 0 3px #6cff8a,0 0 14px #6cff8a;animation:ltkPulse 1s ease-in-out infinite}.ltk.dim{opacity:.35}
 .ltk small{position:absolute;left:-4px;right:-4px;top:100%;margin-top:2px;font-family:system-ui;font-size:9px;color:#fff;background:#000;padding:1px 2px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
@@ -4873,8 +4891,27 @@ function bPlay(){
   $('#qlen2').onchange=e=>{UT.qlen=+e.target.value;utSave()};$('#diff2').onchange=e=>setDiff(e.target.value);
   document.querySelectorAll('[data-solo]').forEach(b=>b.onclick=()=>{const s=SOLOS[+b.dataset.solo];utMatch(oppSquad(s.ovr,s.tb),`Solo ${s.i+1}, ${s.tier}`,{solo:s})});
 }
+
+// ================= ESPN-style fantasy box score after every Ultimate Team game =================
+const FBX_ROWS=[['QB',['QB']],['RB',['RB']],['WR',['WR1']],['WR',['WR2']],['WR',['WR3']],['TE',['TE']],['OL',['LT','LG','C','RG','RT']],['D/ST',['DE1','DT1','DT2','DE2','LB1','LB2','LB3','CB1','CB2','S1','S2']],['K',['K']]];
+function fbxLine(pos,d,ctx){const g=k=>d[k]||0,j=a=>a.filter(Boolean).join(', ');
+  if(pos==='QB')return j([`${g('pc')}/${g('pa')}`,`${g('py')} YDS`,g('ptd')&&`${g('ptd')} TD`,g('pint')&&`${g('pint')} INT`,g('ry')&&`${g('ry')} RUSH`]);
+  if(pos==='RB')return j([`${g('ra')} CAR`,`${g('ry')} YDS`,g('rtd')&&`${g('rtd')} TD`,g('rec')&&`${g('rec')} REC ${g('cy')} YDS`]);
+  if(pos==='WR'||pos==='TE')return j([`${g('rec')} REC`,`${g('cy')} YDS`,g('ctd')&&`${g('ctd')} TD`]);
+  if(pos==='K')return j([`${g('fgm')}/${g('fga')} FG`,`${g('xpm')} XP`]);
+  if(pos==='OL')return j([`${ctx.yds} TEAM YDS`,`${ctx.sacks} SACKS ALLOWED`]);
+  return j([`${g('tkl')} TKL`,g('sck')&&`${g('sck')} SCK`,g('dint')&&`${g('dint')} INT`,`${ctx.pa} PTS ALLOWED`])}
+function fbxSide(R,team,home,tot){return`<div class="fbx-s"><div class="fbx-h" style="--c1:${team.c1};--c2:${team.c2}"><span class="fbx-crest">${esc(team.abbr)}</span><div><b>${esc(team.city||'')} ${esc(team.name||'')}</b><small>${esc(team.rec||'')}</small></div><em>${r1(tot)}</em></div>
+  <table class="fbx-t"><thead><tr><th>SLOT</th><th>PLAYER</th><th>PROJ</th><th>FPTS</th></tr></thead><tbody>${R.map(x=>`<tr${x.fp>x.proj?' class="up"':''}><td><span class="fbx-sl">${x.slot}</span></td><td><div class="fbx-p">${x.face?`<img class="${x.px?'px':''}" referrerpolicy="no-referrer" alt="" src="${esc(x.face)}" onerror="this.style.visibility='hidden'">`:'<i></i>'}<div><b>${esc(x.name)}</b><small>${esc(x.meta)}</small><small class="ln">${esc(x.line)}</small></div></div></td><td class="n">${r1(x.proj)}</td><td class="n f">${r1(x.fp)}</td></tr>`).join('')}</tbody>
+  <tfoot><tr><td colspan="2">TOTAL</td><td class="n">${r1(R.reduce((a,x)=>a+x.proj,0))}</td><td class="n f">${r1(tot)}</td></tr></tfoot></table></div>`}
+function fbxBuild(roster,getD,ctx,team,home,isMe){const R=[];let tot=0;for(const [slot,ks] of FBX_ROWS){const ps=ks.map(k=>[k,roster[k]]).filter(x=>x[1]);if(!ps.length)continue;
+    const pos=slot==='D/ST'?'DEF':slot,dsum={};let fp=0,proj=0;for(const [k,p] of ps){const d=getD(k,p),g=SLOTGRP[k];for(const kk in d)dsum[kk]=(dsum[kk]||0)+d[kk];fp+=fantasyPts(g,d,ctx);proj+=ECON.posFP[g]||8}
+    const one=ps.length===1?ps[0][1]:null,nm=one?(one.n||one.name):slot==='OL'?'Offensive Line':'Defense',ph=one?photoFor({name:nm}):null;
+    R.push({slot,name:nm,meta:one?`${team.abbr} - ${slot==='D/ST'?SLOTGRP[ps[0][0]]:slot}`:`${team.abbr} - ${ps.length} starters`,line:fbxLine(slot==='D/ST'?'DEF':slot,dsum,ctx),fp:r1(fp),proj:r1(proj),face:one?(ph||(()=>{try{return faceURL({name:nm,num:one.num,skin:one.skin||0},team,home)}catch(e){return''}})()):'',px:!ph});tot+=fp}
+  return{R,tot:r1(tot)}}
+function fbxHTML(me,them,r){const w=me.tot>them.tot,t=me.tot===them.tot;return`<div class="fbx"><div class="fbx-top"><span>FANTASY MATCHUP</span><b class="${w?'w':t?'':'l'}">${w?'YOU WON':t?'TIED':'YOU LOST'} ${r1(me.tot)} - ${r1(them.tot)}</b><span>FINAL ${r.su}-${r.so}</span></div><div class="fbx-g">${me.html}${them.html}</div></div>`}
 function utMatch(opp,label,info){
-  const userT=utTeam(),home=Math.random()<.5,starters=SLOTK.map(k=>cardById(UT.lineup[k])),snap=new Map(starters.map(c=>[c.id,Object.assign({},c.s||{})]));
+  const userT=utTeam(),home=Math.random()<.5,starters=SLOTK.map(k=>cardById(UT.lineup[k])),snap=new Map(starters.map(c=>[c.id,Object.assign({},c.s||{})]));for(const p of Object.values(opp.roster||{}))p.s=p.s||{};const osnap=new Map(Object.entries(opp.roster||{}).map(([k,p])=>[k,Object.assign({},p.s)]));
   startMatch({userT,oppT:opp,userHome:home,playoff:!!info.po,label,qlen:UT.qlen,custom:()=>UT.custom,save:utSave,onEnd:r=>{
     const win=r.su>r.so,tie=r.su===r.so;let coins=0,pack=null;const lines=[];
     if(info.solo){const s=info.solo,first=!UT.solos[s.i];if(win){coins=first?s.coins:Math.round(s.coins*.3);if(first){UT.solos[s.i]=1;if(s.pack)pack=s.pack}}else coins=60}
@@ -4892,13 +4929,19 @@ function utMatch(opp,label,info){
         if(c.unl){unlFix(c);c.unl.got=r1((c.unl.got||0)+fp)}
         if(c.pu&&(c.up||0)<puMax(c)){const o0=effOvr(c),g=puGain(c,fp);if(g.length)puUps.push([c,g.length,o0])}}}
     const fpTop=[...fpOf].sort((x,y)=>y[1]-x[1])[0];
+    let FBX='';try{const dOf=(a,b)=>{const d={};for(const k in b)d[k]=(b[k]||0)-((a||{})[k]||0);return d};
+      const myR={};SLOTK.forEach((k,i)=>{if(starters[i])myR[k]=starters[i]});let myY=0,myT=0,myS=0;for(const c of starters){const d=dOf(snap.get(c.id),c.s||{});if(['QB','RB','WR','TE'].includes(c.pos)){myY+=(d.ry||0)+(c.pos==='QB'?(d.py||0):0);myT+=(d.rtd||0)+(c.pos==='QB'?(d.ptd||0):0)}if(c.pos==='QB')myS+=d.psk||0}
+      const me=fbxBuild(myR,(k,c)=>dOf(snap.get(c.id),c.s||{}),{yds:myY,td:myT,sacks:myS,pa:r.so,win},{abbr:UT.club.abbr,city:UT.club.city,name:UT.club.name,c1:UT.club.c1,c2:UT.club.c2,rec:`${UT.rec.w}-${UT.rec.l}${UT.rec.t?'-'+UT.rec.t:''}`},true,true);
+      const OR=opp.roster||{};let oY=0,oT=0,oS=0;for(const [k,p] of Object.entries(OR)){const g=SLOTGRP[k],d=dOf(osnap.get(k),p.s);if(['QB','RB','WR','TE'].includes(g)){oY+=(d.ry||0)+(g==='QB'?(d.py||0):0);oT+=(d.rtd||0)+(g==='QB'?(d.ptd||0):0)}if(g==='QB')oS+=d.psk||0}
+      const th=fbxBuild(OR,(k,p)=>dOf(osnap.get(k),p.s),{yds:oY,td:oT,sacks:oS,pa:r.su,win:r.so>r.su},{abbr:opp.abbr,city:opp.city,name:opp.name,c1:opp.c1,c2:opp.c2,rec:''},false,false);
+      me.html=fbxSide(me.R,{abbr:UT.club.abbr,city:UT.club.city,name:UT.club.name,c1:UT.club.c1,c2:UT.club.c2,rec:`${UT.rec.w}-${UT.rec.l}${UT.rec.t?'-'+UT.rec.t:''}`},true,me.tot);th.html=fbxSide(th.R,{abbr:opp.abbr,city:opp.city,name:opp.name,c1:opp.c1,c2:opp.c2,rec:''},false,th.tot);FBX=fbxHTML(me,th,r)}catch(e){console.error(e)}
     for(const c of starters){c.s=c.s||{};c.s.gp=(c.s.gp||0)+1;if(win)c.s.w=(c.s.w||0)+1}
     const pathDone=starters.filter(c=>c.path&&pathReady(c)),unlDone=starters.filter(c=>c.unl&&unlReady(c)),unlGo=starters.filter(c=>c.unl&&!unlReady(c));
     refreshMarket();recalcChem();utSave();
     lines.push(`+${fmtN(coins)} coins`);if(winChip)lines.push(`Win bonus: ${(NEWAB[winChip]||{}).n} chip`);if(fpTop&&fpTop[1]>0)lines.push(`Top fantasy score: ${fpTop[0].n} ${fpTop[1]} FP`);for(const c of starters.filter(c=>c.pu&&fpOf.has(c)))if((c.up||0)<puMax(c))lines.push(`${c.n}: +${fpOf.get(c)} FP${puReady(c)?' · READY TO LEVEL UP':` (${r1(c.pxp||0)} / ${puNeed(c)})`}`);{const tg=ECON.tpGame+(win?ECON.tpWin:0);UT.tp=(UT.tp||0)+tg;lines.push(`+${tg} training`)}for(const [c,n,o0] of puUps)lines.push(`${c.n} +${fpOf.get(c)} FP: up ${n} to ${effOvr(c)} OVR${c.puPick?', pick his free chip in Power Ups':''}`);if(r.objN)lines.push(`${r.objN} of 3 objectives done (${fmtN(r.objCoins)} coins of that)`);if(UT.dream)lines.push(`+${dp} Dream Card points`);if(pack)lines.push(`+${PACKS[pack].n}`);if(sx)lines.push(...sx.lines);for(const c of unlDone)lines.push(`${c.n}'s Power Up is ready. Claim it in Power Ups.`);if(unlGo.length)lines.push('Power Up unlocks: '+unlGo.map(c=>c.n+' '+unlPct(c)+'%').join(', '));
     const upHtml=ups.length?`<h3>Level ups</h3><div class="cgrid pick">${[...new Set(ups)].map(c=>cardHTML(c,{sm:true,noStar:true})).join('')}</div>`:'';
     renderUT();show('ut');
-    utModal(`<p class="kicker">${esc(label)}</p><h2>${win?'Victory':tie?'Tie':'Defeat'}</h2><p class="big">${esc(UT.club.abbr)} ${r.su} - ${r.so} ${esc(opp.abbr)}</p><p>${lines.join('<br>')}</p><p class="muted">Power Ups bank fantasy points. Spend training to level them up.</p>${upHtml}${pathDone.length?`<h3>Path to Peak complete</h3><p>${pathDone.map(c=>esc(c.n)).join(', ')} finished ${pathDone.length>1?'their':'his'} tasks. Open the Path to Peak tab to upgrade.</p>`:''}${starters.some(c=>c.path&&!pathReady(c))?`<p class="muted">Path to Peak progress: ${starters.filter(c=>c.path&&!pathReady(c)).map(c=>esc(c.n)+' '+pathPct(c)+'%').join(', ')}</p>`:''}`,pack?[['Open pack now',()=>{closeModal();openPackFromInv(UT.packs.length-1)}],['Close',closeModal,'alt']]:[['Close',closeModal]]);
+    utModal(`${FBX}<div class="fbx-rw"><div><p class="kicker">${esc(label)}</p><h2>${win?'Victory':tie?'Tie':'Defeat'}</h2><p class="big">${esc(UT.club.abbr)} ${r.su} - ${r.so} ${esc(opp.abbr)}</p></div><p>${lines.join('<br>')}</p></div><p class="muted">Power Ups bank fantasy points. Spend training to level them up.</p>${upHtml}${pathDone.length?`<h3>Path to Peak complete</h3><p>${pathDone.map(c=>esc(c.n)).join(', ')} finished ${pathDone.length>1?'their':'his'} tasks. Open the Path to Peak tab to upgrade.</p>`:''}${starters.some(c=>c.path&&!pathReady(c))?`<p class="muted">Path to Peak progress: ${starters.filter(c=>c.path&&!pathReady(c)).map(c=>esc(c.n)+' '+pathPct(c)+'%').join(', ')}</p>`:''}`,pack?[['Open pack now',()=>{closeModal();openPackFromInv(UT.packs.length-1)}],['Close',closeModal,'alt']]:[['Close',closeModal]]);if(FBX){const pn=$('#utm .panel');if(pn)pn.classList.add('fbxp')}
   }});
 }
 const OFFROWS=[['WR1','LT','LG','C','RG','RT','TE','WR2'],['WR3','QB','RB']],DEFROWS=[['CB1','DE1','DT1','DT2','DE2','CB2'],['LB1','LB2','LB3'],['S1','S2']],STROWS=[['K','P']];
@@ -4929,12 +4972,12 @@ function chipPicker(k){const st=SLOTK.map(s=>[s,cardById(UT.lineup[s])]).filter(
   const row=([s,c],can)=>`<button class="btn${can?' primary':''}" data-eq="${c.id}" ${can?'':'disabled'} style="display:flex;justify-content:space-between;gap:10px;width:100%;margin:4px 0;text-align:left"><span>${s} ${esc(c.n)} <span class="muted">${effOvr(c)}</span></span><span>${can?'Equip':esc(chipWhy(c,k))}</span></button>`;
   utModal(`<h2>${chipLabel(k)}</h2><p class="muted">${esc((NEWAB[k]||{}).fx||'')}</p>${ABREQ[k]?`<p class="muted">Needs ${RLAB[ABREQ[k][0]]} ${ABREQ[k][1]}+ and a free slot.</p>`:''}${ok.length?ok.map(r=>row(r,true)).join(''):'<p>None of your starters can take this one right now.</p>'}${no.length?`<h3>Can't take it</h3>${no.map(r=>row(r,false)).join('')}`:''}`,[['Close',closeModal,'alt']]);
   document.querySelectorAll('#utm [data-eq]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.eq);if(chipEquip(c,k)){closeModal();toastUT(`${(NEWAB[k]||{}).n} equipped on ${c.n}`);renderUT()}})}
-let LSEL={side:'off',chip:null};
+let LSEL={side:'off',chip:null,back:false};
 const abName=k=>esc((NEWAB[k]||ABDEF[k]||{n:k}).n);
 function lnToken(k){const c=cardById(UT.lineup[k]),ch=LSEL.chip;if(!c)return`<button class="ltk empty" data-slot="${k}"><span class="lk">${k}</span><b>+</b></button>`;
   const n=abSlots(c),eq=cardAbs(c),xf=cardXf(c),T=TIERS[c.tier]||TIERS.gold,why=ch?chipWhy(c,ch):'',ok=ch&&!why,dim=ch&&why;
   const dots=[0,1,2].map(i=>eq[i]?'<i class="on"></i>':i<n?'<i></i>':'<i class="lk"></i>').join('')+(XFPOS[c.pos]?(xf?'<i class="x on"></i>':xSlot(c)?'<i class="x"></i>':'<i class="x lk"></i>'):'');
-  return`<button class="ltk${ok?' ok':''}${dim?' dim':''}" data-slot="${k}" style="--tc:${T.c}"><span class="lk">${k}</span><b>${effOvr(c)}</b><em>${esc(lastNameOf(c.n))}</em><span class="ld">${dots}</span>${dim&&!why.startsWith('Not for')?`<small>${esc(why)}</small>`:''}</button>`}
+  return`<div class="ltk card${ok?' ok':''}${dim?' dim':''}" data-slot="${k}" style="--tc:${T.c}"><span class="lk">${k}</span>${LSEL.back?`<div class="ucard mback" data-id="${c.id}" style="--tc:${T.c}"><b>${effOvr(c)}</b><em>${esc(lastNameOf(c.n))}</em>${(RSET[c.pos]||[]).map(rk=>`<span><i>${RLAB[rk]}</i>${cRat(c,rk)}</span>`).join('')}<span class="fp"><i>FP</i>${Math.round(c.fpT||0)}</span></div>`:flipHTML(c,{sm:true,noStar:true})}<span class="ld">${dots}</span>${dim&&!why.startsWith('Not for')?`<small>${esc(why)}</small>`:''}</div>`}
 function uLineup(){
   const o=teamOvr(),base=Math.round(SLOTK.reduce((a,k)=>a+effOvr(cardById(UT.lineup[k])),0)/SLOTK.length),ch=chemAvg(),A=abPick('ab'),X=abPick('xf');
   const R=LSEL.side==='off'?OFFROWS:LSEL.side==='def'?DEFROWS:STROWS;
@@ -4945,7 +4988,7 @@ function uLineup(){
    <div class="lu-f"><div class="lu-top"><div class="lu-ovr"><b>${o.all}</b><small>TEAM OVR</small></div><div class="lu-sub"><span>CARDS ${base}</span>${ch?`<span class="chem">+${ch} CHEM</span>`:''}<span>OFF ${o.o}</span><span>DEF ${o.d}</span></div>
      <div class="lu-side">${[['off','OFFENSE'],['def','DEFENSE'],['st','KICKERS']].map(([k,l])=>`<button class="${LSEL.side===k?'on':''}" data-side="${k}">${l}</button>`).join('')}</div></div>
      <div class="lu-field ${LSEL.side}">${R.map(r=>`<div class="lu-row">${r.map(lnToken).join('')}</div>`).join('')}</div>
-     <div class="lu-key"><span><i class="on"></i>CHIP</span><span><i></i>EMPTY SLOT</span><span><i class="lk"></i>LOCKED</span><span><i class="x on"></i>X-FACTOR</span><button class="btn" id="auto">BEST LINEUP</button></div></div>
+     <div class="lu-key"><span><i class="on"></i>CHIP</span><span><i></i>EMPTY SLOT</span><span><i class="lk"></i>LOCKED</span><span><i class="x on"></i>X-FACTOR</span><button class="btn" id="luFlip">${LSEL.back?'SHOW FRONTS':'FLIP FOR STATS'}</button><button class="btn" id="auto">BEST LINEUP</button></div></div>
    <div class="lu-t"><div class="lu-th">CHIPS ${pxIco('chip',14)}</div>
      ${sel?`<div class="lu-sel"><b>${chipLabel(sel)}</b><p>${esc((NEWAB[sel]||{}).fx||'')}</p><small>${rq?`Needs ${RLAB[rq[0]]} ${rq[1]}. `:''}Tap a glowing player to equip.</small><button class="btn" id="chipX">CANCEL</button></div>`:''}
      <div class="lu-inv">${inv.length?inv.map(([k,n])=>`<button class="lu-chip${k===sel?' on':''}${k.startsWith('x_')?' xf':''}" data-chip="${k}">${pxIco(k.startsWith('x_')?'pu':'chip',12)}<span>${abName(k)}</span><b>×${n}</b></button>`).join(''):'<p class="muted">No spare chips. Win games and open packs to earn more.</p>'}</div>
@@ -4955,9 +4998,10 @@ function uLineup(){
 function bLineup(){
   $('#auto').onclick=()=>{const before=teamOvr().all;UT.lineup=bestLineup();recalcChem();utSave();renderUT();const after=teamOvr().all;toastUT(after>before?`Best lineup: OVR ${before} to ${after}`:`Already your best lineup (OVR ${after})`)};
   document.querySelectorAll('[data-side]').forEach(b=>b.onclick=()=>{LSEL.side=b.dataset.side;renderUT()});
-  document.querySelectorAll('.ltk').forEach(t=>t.onclick=e=>{e.stopPropagation();const k=t.dataset.slot,c=cardById(UT.lineup[k]);
+  const lf=$('#luFlip');if(lf)lf.onclick=()=>{LSEL.back=!LSEL.back;renderUT()};
+  document.querySelectorAll('.ltk').forEach(t=>{t.querySelectorAll('.flip,.ucard').forEach(x=>x.onclick=e=>{e.preventDefault();e.stopPropagation();t.onclick(e)});t.onclick=e=>{e&&e.stopPropagation&&e.stopPropagation();const k=t.dataset.slot,c=cardById(UT.lineup[k]);
     if(LSEL.chip){if(c&&!chipWhy(c,LSEL.chip)){const ch=LSEL.chip;if(chipEquip(c,ch)){toastUT(`${(NEWAB[ch]||{n:ch}).n} on ${c.n}`);if(!(UT.chips[ch]>0))LSEL.chip=null;renderUT()}}return}
-    if(!c)return slotPicker(k);cardScreen(c,{kind:'own'})});
+    if(!c)return slotPicker(k);cardScreen(c,{kind:'own'})}});
   document.querySelectorAll('[data-chip]').forEach(b=>b.onclick=()=>{LSEL.chip=LSEL.chip===b.dataset.chip?null:b.dataset.chip;const st=SLOTK.map(k=>cardById(UT.lineup[k])).filter(Boolean),fit=st.filter(c=>!chipWhy(c,LSEL.chip||'')),pos=fit[0]&&SLOTK.find(k=>UT.lineup[k]===fit[0].id);if(LSEL.chip&&pos)LSEL.side=OFFROWS.flat().includes(pos)?'off':DEFROWS.flat().includes(pos)?'def':'st';renderUT()});
   const cx=$('#chipX');if(cx)cx.onclick=()=>{LSEL.chip=null;renderUT()};
   document.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{abToggle(b.dataset.tg,b.dataset.id);renderUT()});
