@@ -429,6 +429,72 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 #rv{position:fixed;inset:0;z-index:96;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#03040a;cursor:pointer;--tc:#f5cd4c;--tm:#e84a3a;--tm2:#ffd23f;font-family:'Press Start 2P',monospace;color:#fff}
 #rv.hidden{display:none}
 
+/* ===== lineup: formation + chip tray ===== */
+.lu{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:10px;align-items:start}
+.lu-f{min-width:0}
+.lu-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.lu-ovr{font-family:'Press Start 2P',monospace;background:var(--accent);color:#fff;border:3px solid #000;box-shadow:3px 3px 0 #000;padding:6px 8px 4px;text-align:center}.lu-ovr b{font-size:18px;font-weight:400;display:block}.lu-ovr small{font-size:5px}
+.lu-sub{display:flex;flex-wrap:wrap;gap:4px;font-family:'Press Start 2P',monospace;font-size:7px}.lu-sub span{border:2px solid var(--edge);padding:4px 5px 3px}.lu-sub .chem{background:#2fae4e;color:#000;border-color:#000}
+.lu-side{display:flex;gap:4px;margin-left:auto}.lu-side button{font-family:'Press Start 2P',monospace;font-size:7px;padding:7px 8px 5px;border:2px solid var(--edge);background:var(--panel);color:var(--muted);cursor:pointer}.lu-side button.on{background:var(--ink);color:var(--bg)}
+.lu-field{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.2)),repeating-linear-gradient(90deg,#2f8a3f 0 40px,#37964a 40px 80px);border:3px solid #0b2a12;padding:12px 6px;display:flex;flex-direction:column;gap:12px;position:relative;min-height:190px;justify-content:center}
+.lu-field.off::before,.lu-field.def::before{content:'';position:absolute;left:0;right:0;height:2px;background:rgba(255,255,255,.45)}
+.lu-field.off::before{top:calc(50% - 4px)}.lu-field.def::before{top:22%}
+.lu-row{display:flex;justify-content:center;gap:5px;position:relative}
+.ltk{width:64px;flex:0 1 64px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;background:#10142a;border:3px solid #000;border-top:5px solid var(--tc,#fff);box-shadow:2px 2px 0 #000;color:#fff;padding:3px 2px 4px;cursor:pointer;font-family:'Press Start 2P',monospace;position:relative}
+.ltk .lk{font-size:5px;color:#9aa3c0}.ltk b{font-size:13px;font-weight:400}.ltk em{font-style:normal;font-family:system-ui,sans-serif;font-size:10px;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ltk .ld,.lu-key{display:flex;gap:2px}.ltk .ld i,.lu-key i{display:inline-block;width:7px;height:7px;border:1px solid #fff;background:transparent}
+.ltk .ld i.on,.lu-key i.on{background:#ffd23f;border-color:#ffd23f}.ltk .ld i.lk,.lu-key i.lk{border-color:#444;background:#222}.ltk .ld i.x,.lu-key i.x{border-radius:50%;border-color:#ff8a7a}.ltk .ld i.x.on,.lu-key i.x.on{background:#ff3b2a;border-color:#ff3b2a}
+.ltk.empty{border-style:dashed;border-top-width:3px;background:rgba(0,0,0,.25);min-height:60px;justify-content:center}.ltk.empty b{font-size:18px}
+.ltk.ok{box-shadow:0 0 0 3px #6cff8a,0 0 14px #6cff8a;animation:ltkPulse 1s ease-in-out infinite}.ltk.dim{opacity:.35}
+.ltk small{position:absolute;left:-4px;right:-4px;top:100%;margin-top:2px;font-family:system-ui;font-size:9px;color:#fff;background:#000;padding:1px 2px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
+@keyframes ltkPulse{50%{transform:translateY(-2px)}}
+.lu-key{align-items:center;gap:10px;margin-top:6px;font-family:'Press Start 2P',monospace;font-size:6px;color:var(--muted);flex-wrap:wrap}.lu-key span{display:flex;align-items:center;gap:4px}.lu-key i{border-color:var(--muted)}.lu-key .btn{margin-left:auto;font-size:8px;padding:8px 10px}
+.lu-t{border:3px solid var(--edge);background:var(--panel);padding:8px;max-height:calc(100dvh - 40px);overflow:auto;position:sticky;top:4px}
+.lu-th{font-family:'Press Start 2P',monospace;font-size:8px;display:flex;align-items:center;gap:6px;margin:4px 0 6px}.lu-th span{font-size:6px;color:var(--muted);margin-left:auto}
+.lu-inv{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.lu-chip{display:grid;grid-template-columns:14px 1fr auto;gap:6px;align-items:center;text-align:left;border:2px solid var(--edge);background:var(--bg);color:var(--ink);padding:6px;cursor:pointer;font-size:12px;font-weight:700}.lu-chip b{font-family:'Press Start 2P',monospace;font-size:8px;font-weight:400}
+.lu-chip.on{background:#ffd23f;color:#000;border-color:#000}.lu-chip.xf{color:#ff6a5a}.lu-chip.xf.on{background:#ff3b2a;color:#fff}
+.lu-sel{border:3px solid #ffd23f;padding:6px;margin-bottom:8px;font-size:12px}.lu-sel b{font-size:12px}.lu-sel p{margin:4px 0;font-size:12px}.lu-sel small{display:block;color:var(--muted);margin-bottom:6px}.lu-sel .btn{font-size:8px;padding:6px 8px}
+.lu-live{display:flex;flex-direction:column;gap:4px}
+.lv{display:grid;grid-template-columns:38px 1fr 22px;gap:6px;align-items:center;font-size:12px;font-weight:700;opacity:.6}.lv.on{opacity:1}.lv small{display:block;font-weight:400;font-size:10px;color:var(--muted)}
+.lv-t{font-family:'Press Start 2P',monospace;font-size:7px;border:2px solid #000;background:#555;color:#fff;padding:5px 0 4px;cursor:pointer}.lv.on .lv-t{background:#2fae4e}
+.lv-x{border:2px solid var(--edge);background:transparent;color:#ff5a47;cursor:pointer;font-size:11px;padding:2px 0}
+@media (max-width:720px){.lu{grid-template-columns:1fr}.lu-t{position:static;max-height:none}}
+/* ===== card screen ===== */
+.modal .panel.cscr{max-width:920px;width:min(96vw,920px);height:min(92dvh,560px);max-height:none;display:flex;flex-direction:column;padding:10px 12px;overflow:hidden}
+.modal .panel.cscr .ov-btns{flex:0 0 auto;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:2px solid var(--edge)}
+.modal .panel.cscr .ov-btns .btn{font-size:9px;padding:9px 12px}
+.cs{flex:1;min-height:0;display:flex;gap:14px}
+.cs-l{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:min(30%,240px)}
+.cs-l .flip.fbig{width:100%}.cs-l .ucard.big{width:100%;max-width:none}
+.cs-r0{flex:1;min-width:0;display:flex;flex-direction:column}
+.cs-hd{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.cs-hd b{display:block;font-family:'Press Start 2P',monospace;font-size:13px;line-height:1.3}.cs-hd small{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+.cs-ovr{flex:0 0 auto;font-family:'Press Start 2P',monospace;font-size:22px;background:var(--tc);color:#000;border:3px solid #000;box-shadow:3px 3px 0 #000;padding:7px 8px 5px;text-align:center;line-height:1}.cs-ovr small{display:block;font-size:7px;margin-top:3px}
+.cs-tabs{display:flex;gap:4px;border-bottom:3px solid var(--edge);margin-bottom:8px}
+.cs-tabs button{font-family:'Press Start 2P',monospace;font-size:7px;background:transparent;color:var(--muted);border:0;padding:8px 8px 6px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-3px}
+.cs-tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+.cs-body{flex:1;min-height:0;overflow:auto;padding-right:4px}
+.cs-body h4{font-family:'Press Start 2P',monospace;font-size:8px;margin:6px 0;color:var(--muted)}
+.cs-rt{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-bottom:10px}.cs-rt.big{grid-template-columns:1fr}
+.cs-r{display:grid;grid-template-columns:38px 1fr 26px;align-items:center;gap:8px;font-family:'Press Start 2P',monospace;font-size:8px}.cs-r b{font-weight:400;text-align:right;font-size:10px}.cs-r small{grid-column:2/4;font-family:system-ui,sans-serif;font-size:11px;color:var(--muted);margin-top:-3px}
+.cs-bar{display:block;height:10px;background:var(--chip);border:2px solid var(--edge)}.cs-bar u{display:block;height:100%;background:var(--turf)}
+.cs-sig{font-family:'Press Start 2P',monospace;font-size:7px;color:#000;background:#ffd23f;display:inline-block;padding:4px 6px 3px;border:2px solid #000;margin-bottom:6px}
+.cs-abs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.cs-abs{align-items:start}.cs-ab{display:flex;flex-direction:column;align-items:center;gap:4px;border:2px solid var(--edge);padding:7px 3px 5px;background:var(--panel);color:var(--ink);font-family:'Press Start 2P',monospace;height:50px;min-height:0!important;justify-content:center;box-sizing:border-box;margin:0}
+.cs-ab b{font-weight:400;font-size:6px;text-align:center;line-height:1.3}
+.cs-ab.on{background:var(--accent);color:#fff;cursor:pointer}.cs-ab.on.xf{background:#7b3cff}.cs-ab.empty{border-style:dashed;color:var(--turf)}.cs-ab.lock{opacity:.45}
+.cs-abfx{font-size:12px;color:var(--muted);min-height:1em;margin:6px 0}
+.cs-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:6px;margin-bottom:8px}
+.cs-tiles div{border:2px solid var(--edge);padding:8px 4px 6px;text-align:center;font-family:'Press Start 2P',monospace}.cs-tiles b{display:block;font-weight:400;font-size:12px}.cs-tiles small{display:block;font-size:6px;color:var(--muted);margin-top:4px}
+.cs-reels{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.cs-reel{display:grid;grid-template-columns:20px 1fr;gap:2px 8px;align-items:center;text-align:left;border:2px solid var(--edge);background:var(--panel);color:var(--ink);padding:8px;cursor:pointer;font-family:'Press Start 2P',monospace}.cs-reel b{font-weight:400;font-size:8px}.cs-reel small{grid-column:2;font-size:11px;font-family:system-ui;color:var(--muted)}
+.pp{border:2px solid var(--edge);padding:8px;margin:8px 0;display:flex;flex-direction:column;gap:6px}
+.pp-row{display:grid;grid-template-columns:118px 1fr 82px;gap:8px;align-items:center;font-family:'Press Start 2P',monospace;font-size:7px}.pp-row span{display:flex;align-items:center;gap:5px}.pp-row em{font-style:normal;text-align:right;font-size:8px}
+.pp-act{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pp-act small{font-size:11px;color:var(--muted)}.pp-act .btn{font-size:9px}
+.pp-max{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--turf)}
+@media (max-height:460px){.modal .panel.cscr{height:calc(100dvh - 8px);padding:6px 10px}.cs-l{width:min(26%,190px)}.cs-hd{margin-bottom:4px}.cs-ovr{font-size:17px}}
+
 /* ===== shiny cards: foil + glare follow phone tilt, finger, or an idle shimmer ===== */
 .ucard.t-elite::after,.ucard.t-legend::after,.ucard.p-peak::after,.ucard.p-icon::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:6;animation:none;
   background:radial-gradient(circle at calc(var(--hx,.5)*100%) calc(var(--hy,.35)*100%),rgba(255,255,255,.7),rgba(255,255,255,0) 34%),
@@ -656,7 +722,7 @@ body.ingame.touch #game{touch-action:none}
 #rot .ph::after{content:'';position:absolute;left:50%;bottom:6px;width:14px;height:4px;margin-left:-7px;background:#fff}
 @keyframes rotph{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
 #rot p{font-size:11px;line-height:1.7;max-width:280px}#rot small{font-family:'VT323',monospace;font-size:18px;color:#9aa2bd}
-@media (orientation:portrait){body.phone.ingame #rot{display:flex}}
+@media (orientation:portrait){body.phone #rot{display:flex}}
 @media (prefers-reduced-motion:reduce){#rot .ph{animation:none;transform:rotate(-90deg)}}
 body.phone.ingame #game .rotate{display:none!important}
 /* save transfer */
@@ -740,7 +806,7 @@ body.touch #booth{top:calc(env(safe-area-inset-top,0px) + 50px)}
 <section id="utnew" class="screen hidden"><div class="wrap"><h1>Create your club</h1><div id="utnewBody"></div><div class="row"><button class="btn primary" id="ucGo">Start the draft</button></div></div></section>
 <section id="utdraft" class="screen hidden"><div class="wrap"><div id="draftHead"></div><div id="draftOpts" class="dopts"></div><div id="draftPicks"></div></div></section>
 <section id="ut" class="screen hidden"><div class="wrap"><div id="utHead"></div><div class="tabs" id="utTabs"></div><div class="tabbody" id="utBody"></div><div class="row"><button class="btn" id="utMenu">Main menu</button></div></div></section>
-<div id="utm" class="modal hidden"></div><div id="packov" class="hidden"></div><div id="uttoast" class="uttoast"></div><div id="tut" class="hidden"></div><div id="rv" class="hidden"></div><div id="rot" role="alert"><div class="ph"></div><p>Turn your phone sideways to play</p><small>The game pauses until you do.</small></div><div id="ftip" class="hidden"></div>
+<div id="utm" class="modal hidden"></div><div id="packov" class="hidden"></div><div id="uttoast" class="uttoast"></div><div id="tut" class="hidden"></div><div id="rv" class="hidden"></div><div id="rot" role="alert"><div class="ph"></div><p>Turn your phone sideways</p><small>17&amp;0 is played in landscape.</small></div><div id="ftip" class="hidden"></div>
 <section id="lab" class="screen hidden"><div class="wrap">
   <div class="row" style="justify-content:space-between"><h1>Animation lab</h1><button class="btn" id="labBack">Main menu</button></div>
   <p class="muted">Every pose, move, tackle, celebration and replay in one place. Scenes run in the real game engine; press Esc to come back.</p>
@@ -4411,7 +4477,10 @@ const cRat=(c,k)=>clamp((c.r?.[k]??c.ovr)+(effOvr(c)-c.ovr),20,99);
 const cAbil=c=>{const r={};for(const k of RSET[c.pos])r[k]=cRat(c,k);const a=abilities(c.pos,r).filter(k=>!['juke','spin','hurdle','stiff'].includes(k)),xf=cardXf(c);a.unshift(...cardAbs(c));if(xf)a.push(xf);return a};
 const chemBonus=n=>n>=10?3:n>=7?2:n>=4?1:0;
 function recalcChem(){const cnt={};for(const k of SLOTK){const c=cardById(UT.lineup[k]);if(c)cnt[c.team]=(cnt[c.team]||0)+1}UT._chem=cnt;return cnt}
-function effOvr(c){if(!c)return 0;const b=starterSlot(c.id)?chemBonus((UT._chem||recalcChem())[c.team]||0):0;return Math.min(99,c.ovr+(c.up||0)+b)}
+// a card's OVR is the same everywhere; chemistry is a team boost applied on the field
+function effOvr(c){if(!c)return 0;return Math.min(99,c.ovr+(c.up||0))}
+function chemB(c){return c&&starterSlot(c.id)?chemBonus((UT._chem||recalcChem())[c.team]||0):0}
+function chemAvg(){let t=0,n=0;for(const k of SLOTK){const c=cardById(UT.lineup[k]);if(c){t+=Math.min(99,effOvr(c)+chemB(c))-effOvr(c);n++}}return n?Math.round(t/n*10)/10:0}
 const portCache=new Map();
 function tinted(img,col){const c=document.createElement('canvas');c.width=img.width;c.height=img.height;const g=c.getContext('2d');g.drawImage(img,0,0);g.globalCompositeOperation='source-in';g.fillStyle=col;g.fillRect(0,0,c.width,c.height);return c}
 const ART_POSE=[{QB:'hold',RB:'carry',WR:'ready',TE:'ready',OL:'stance',DL:'stance',LB:'ready',CB:'ready',S:'ready',K:'flex',P:'flex'},{QB:'throw0',RB:'carry',WR:'catch',TE:'stiff',OL:'block',DL:'lunge',LB:'lunge',CB:'ready',S:'lunge',K:'flex',P:'flex'},{QB:'throw1',RB:'hurdle',WR:'onehand',TE:'stiff',OL:'block',DL:'lunge',LB:'lunge',CB:'lunge',S:'lunge',K:'point',P:'point'},{QB:'point',RB:'hurdle',WR:'onehand',TE:'stiff',OL:'flex',DL:'flex',LB:'celebrate',CB:'celebrate',S:'celebrate',K:'point',P:'point'}];
@@ -4474,7 +4543,7 @@ function flipHTML(c,o={}){return`<div class="flip${o.big?' fbig':''}${o.sm?' fsm
 function bindFlip(root){(root||document).querySelectorAll('.flip.fbig').forEach(f=>f.onclick=e=>{e.stopPropagation();f.classList.toggle('flipped')})}
 function utTeam(){
   recalcChem();const c=UT.club,t={city:c.city,name:c.name,abbr:c.abbr,c1:c.c1,c2:c.c2,roster:{}};
-  for(const k of SLOTK){const cd=cardById(UT.lineup[k]),e=effOvr(cd),sh=e-cd.ovr,r={};for(const [rk,v] of Object.entries(cd.r||makeRatings(cd.pos,cd.ovr)))r[rk]=clamp(v+sh,20,99);
+  for(const k of SLOTK){const cd=cardById(UT.lineup[k]),e=Math.min(99,effOvr(cd)+chemB(cd)),sh=e-cd.ovr,r={};for(const [rk,v] of Object.entries(cd.r||makeRatings(cd.pos,cd.ovr)))r[rk]=clamp(v+sh,20,99);
     const abl=abLiveList(cd);t.roster[k]={tst:!!cd.tst,pth:!!cd.path,abil:abl[0]||null,abils:abl,xf:xfLive(cd)?cardXf(cd):null,name:cd.n,num:cd.num,pos:SLOTGRP[k],ovr:e,r,spd:r.spd??clamp(cd.spd+sh,40,99),skin:cd.skin,s:cd.s||(cd.s={}),sig:undefined}}
   calcRatings(t);return t;
 }
@@ -4647,7 +4716,7 @@ function nextUp(){const L=[];const go=(t,sub,msg,btn,ic,big,lab)=>L.push({t,sub,
   const pick=UT.cards.find(c=>c.pu&&c.puPick);if(pick)go('pu','pu',`${pick.n} leveled up. Pick his free reward.`,'Pick reward','chip','FREE','CHIP');
   const st=SLOTK.map(k=>cardById(UT.lineup[k])).filter(Boolean),spare=Object.entries(UT.chips||{}).filter(([,n])=>n>0).map(([k])=>k);
   if(spare.some(k=>st.some(c=>!chipWhy(c,k))))go('team','lineup','You have spare chips a starter can use.','Equip chips','chip',spare.length,'EQUIP');
-  const pus=UT.cards.filter(c=>c.pu&&!c.puPick&&(c.up||0)<puMax(c));if(!UT.cards.some(c=>c.pu)||UT.fantasy>0)go('pu','pu',UT.fantasy>0?`You have ${UT.fantasy} free Fantasy Pack${UT.fantasy>1?'s':''}. Pick a Power Up.`:'Get your first Power Up from a Fantasy Pack.','Get a Power Up','pu',UT.fantasy>0?UT.fantasy:'+','FREE PU');else if(pus.some(c=>(UT.tp||0)>=puCost(c)))go('pu','pu',`You have ${fmtN(UT.tp)} training. Upgrade a Power Up.`,'Train','pu',kN(UT.tp),'TRAIN');
+  const pus=UT.cards.filter(c=>c.pu&&!c.puPick&&(c.up||0)<puMax(c));if(!UT.cards.some(c=>c.pu)||UT.fantasy>0)go('pu','pu',UT.fantasy>0?`You have ${UT.fantasy} free Fantasy Pack${UT.fantasy>1?'s':''}. Pick a Power Up.`:'Get your first Power Up from a Fantasy Pack.','Get a Power Up','pu',UT.fantasy>0?UT.fantasy:'+','FREE PU');else if(pus.some(c=>puReady(c)&&(UT.tp||0)>=puCost(c)))go('pu','pu',`A Power Up is ready to level up.`,'Level up','pu',pus.filter(c=>puReady(c)&&(UT.tp||0)>=puCost(c)).length,'LEVEL UP');
   const junk=UT.cards.filter(c=>!starterSlot(c.id)&&!c.pu&&(c.tier==='bronze'||c.tier==='silver'));if(junk.length>=5)go('cards','coll',`${junk.length} bronze and silver bench cards could be training.`,'Quick sell','sell',junk.length,'SELL');
   if(CHIPTR.some(m=>trPool(m).length>=m.cnt))go('store','trade','You have enough bench cards to trade in for a chip.','Trade in','trade','','TRADE');
   const S=UT.season,g=S&&nextGame();if(g)go('play','season',`Season game next: ${g.label}.`,'Play season game','trophy','WK','SEASON');else go('play','play','Win games to earn coins and chips.','Play','ball','GO','PLAY');
@@ -4667,7 +4736,7 @@ function renderUT(){
   const subs=UTSUBS[utTab],sub=UTSUB[utTab]||subs[0][0];
   const subBar=subs.length>1?`<div class="row" style="gap:6px;margin-bottom:10px">${subs.map(([k,l])=>`<button class="btn${k===sub?' primary':''}" data-sub="${k}">${l}</button>`).join('')}</div>`:'';
   const body=$('#utBody');body.innerHTML=(utTab==='play'?nextUpHTML():'')+subBar+({season:uSeason,cat:uCat,play:uPlay,lineup:uLineup,coll:uColl,packs:uPacks,market:uMarket,trade:uTrade,abil:uAbil,club:uClub,pu:uPU})[sub]();
-  ({season:bSeason,cat:bCat,play:bPlay,lineup:bLineup,coll:bColl,packs:bPacks,market:bMarket,trade:bTrade,abil:()=>{},club:bClub,pu:bPU})[sub]();
+  ({season:bSeason,cat:bCat,play:bPlay,lineup:bLineup,coll:bColl,packs:bPacks,market:bMarket,trade:bTrade,abil:()=>{},club:bClub,pu:bPU})[sub]();try{csWire($('#utBody'))}catch(e){console.error(e)}
   body.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{UTSUB[utTab]=b.dataset.sub;renderUT()});
   body.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const [t,sb]=b.dataset.go.split(':');utTab=t;UTSUB[t]=sb;renderUT();window.scrollTo(0,0)});
 }
@@ -4706,7 +4775,10 @@ const ECON={
   // From 70: about 5 games to 80, 18 to 90, 30 to 95, 43 to 99. Lower OVRs climb faster.
   gpl0:.35, gplGrow:1.09,
   posFP:{QB:16,RB:12,WR:10,TE:7,OL:7,DL:9.5,LB:10.5,CB:10.5,S:10,K:5,P:5}, // typical FP per game, so every position levels at the same pace
-  tpPerGame:40,                 // training worth one game of progress
+  tpPerGame:40,                 // (old) training worth one game of progress
+  tpLevel:14,                   // training per level = 14 x games-per-level: playing earns the FP, training pays for the level
+  tpGame:6, tpWin:4,            // training every starter game gives you (plus a win bonus)
+  fpBank:3,                     // a Power Up can bank fantasy points for at most this many levels ahead
   milestones:[80,85,90,95],     // free ability chip at each; X-Factor pick at 99
   // Power Up price: 3,000 at a 70 start, doubles every 6 OVR, scaled by position and X-Factor/signature potential
   puBase:3000, puDouble:6, puMin:500,
@@ -4726,13 +4798,14 @@ function fantasyPts(pos,d,ctx){const F=ECON.fp,g=k=>d[k]||0;let v=0;
   else{for(const k in F)v+=g(k)*F[k];if(['DL','LB','CB','S'].includes(pos)){const b=ECON.dst.find(([pa])=>ctx.pa<=pa);v+=b?b[1]:0}}
   if(ctx.win)v+=ECON.fpWin;return r1(Math.max(0,v))}
 const puMax=c=>Math.max(0,99-c.ovr),puNeed=c=>Math.max(2,Math.round((ECON.posFP[c.pos]||8)*gpl(c.ovr+(c.up||0))));
-const puCost=c=>Math.max(2,Math.ceil(gpl(c.ovr+(c.up||0))*ECON.tpPerGame));
+const puCost=c=>Math.max(2,Math.ceil(gpl(c.ovr+(c.up||0))*ECON.tpLevel));
 const puFPtoMax=c=>{let t=0;for(let u=c.up||0;u<puMax(c);u++)t+=Math.max(2,Math.round((ECON.posFP[c.pos]||8)*gpl(c.ovr+u)));return Math.max(0,t-(c.pxp||0))};
 function puLevelUp(c){c.up=(c.up||0)+1;const o=c.ovr+c.up;if(o>=99)(c.puQ=c.puQ||[]).push('x');else if(ECON.milestones.includes(o))(c.puQ=c.puQ||[]).push('a');c.tier=tierOf(o);puNextPick(c)}
 function puNextPick(c){if(c.puPick||!c.puQ||!c.puQ.length)return;const k=c.puQ.shift();c.puPick=puOffer(c,k==='x')}
-function puTrain(c,n=1){let done=0;while(done<n&&(c.up||0)<puMax(c)&&(UT.tp||0)>=puCost(c)){UT.tp-=puCost(c);puLevelUp(c);done++}if(done){recalcChem();utSave()}return done}
-const puToMax=c=>{let t=0,u=c.up||0;for(;u<puMax(c);u++)t+=Math.max(2,Math.ceil(gpl(c.ovr+u)*ECON.tpPerGame));return t};
-function puGain(c,xp){const out=[];c.pxp=r1((c.pxp||0)+xp);while((c.up||0)<puMax(c)&&c.pxp>=puNeed(c)){c.pxp=r1(c.pxp-puNeed(c));puLevelUp(c);out.push(c.up)}if((c.up||0)>=puMax(c))c.pxp=0;return out}
+function puTrain(c,n=1){let done=0;while(done<n&&!c.puPick&&(c.up||0)<puMax(c)&&(c.pxp||0)>=puNeed(c)&&(UT.tp||0)>=puCost(c)){UT.tp-=puCost(c);c.pxp=r1(c.pxp-puNeed(c));puLevelUp(c);done++}if(done){recalcChem();utSave()}return done}
+const puReady=c=>c.pu&&!c.puPick&&(c.up||0)<puMax(c)&&(c.pxp||0)>=puNeed(c);
+const puToMax=c=>{let t=0,u=c.up||0;for(;u<puMax(c);u++)t+=Math.max(2,Math.ceil(gpl(c.ovr+u)*ECON.tpLevel));return t};
+function puGain(c,xp){let cap=0;for(let u=c.up||0,i=0;i<ECON.fpBank&&u<puMax(c);u++,i++)cap+=Math.max(2,Math.round((ECON.posFP[c.pos]||8)*gpl(c.ovr+u)));c.pxp=r1(Math.min(cap,(c.pxp||0)+xp));if((c.up||0)>=puMax(c))c.pxp=0;return[]}
 function puOffer(c,top){const own=new Set([...cardAbs(c),cardXf(c)].filter(Boolean));let L=(top?XFPOS:ABPOS)[c.pos]||[];L=L.filter(k=>!own.has(k));if(L.length<2)L=[...new Set([...L,...(top?ALLXF:ALLAB).filter(k=>!own.has(k))])];return shuffle(L.slice()).slice(0,2)}
 function puClaim(c,k){if(!c||!c.puPick||!c.puPick.includes(k))return;c.puPick=null;puNextPick(c);chipGive(k);const on=chipEquip(c,k);utSave();toastUT(on?`${(NEWAB[k]||{}).n} equipped on ${c.n}`:`${(NEWAB[k]||{}).n} added to your spare chips`)}
 function uPU(){const L=UT.cards.filter(c=>c.pu).sort((a,b)=>(starterSlot(b.id)?1:0)-(starterSlot(a.id)?1:0)||effOvr(b)-effOvr(a));
@@ -4740,14 +4813,13 @@ function uPU(){const L=UT.cards.filter(c=>c.pu).sort((a,b)=>(starterSlot(b.id)?1
     const cur=c.ovr+lv,ms=ECON.milestones.find(m=>m>cur),need=puNeed(c),have=c.pxp||0,toMax=puFPtoMax(c),gms=Math.ceil(toMax/(ECON.posFP[c.pos]||8));
     const nextR=done?'At 99: X-Factor slot unlocked':`<b>${r1(have)} / ${need} FP</b> to ${cur+1} · free chip at ${ms||99}${ms?'':' (X-Factor)'} · about ${gms} starts to 99`;
     return`<div class="pathrow"><div class="pcard">${cardHTML(c,{sm:true})}</div><div class="pbody"><b>${esc(c.n)}</b> <span class="muted">${effOvr(c)} now · ${done?'maxed at 99':(99-c.ovr-lv)+' to go'}${st?'':' · bench'}</span>
-    <div class="dbar"><i style="width:${done?100:Math.round(have/need*100)}%"></i></div><p class="muted">${nextR}</p>
-    ${c.puPick?`<p><b>Pick his reward:</b></p><div class="chips">${c.puPick.map(k=>`<button class="btn primary" data-pup="${c.id}" data-k="${k}">${chipLabel(k)}</button>`).join('')}</div>`:done?'':`<div class="row"><button class="btn${can?' primary':''}" data-tr="${c.id}" ${can?'':'disabled'}>Train +1 (${cost} training)</button><button class="btn" data-trm="${c.id}" ${can?'':'disabled'}>Train as far as I can</button></div>`}
+    ${puPanel(c)}<p class="muted">${done?'':`about ${gms} starts to 99`}</p>
     ${st?'':`<button class="btn" data-pust="${c.id}">Start him</button>`}</div></div>`};
   const fp=UT.fantasy||0;
-  return`<div class="action"><h2 style="margin-top:0">Get Power Ups</h2><p class="muted">Every player in the game has a Power Up card. Power Ups level up from the <b>fantasy points</b> they score while starting, all the way to 99.</p>
+  return`<div class="action"><h2 style="margin-top:0">Get Power Ups</h2><p class="muted">Every player in the game has a Power Up card. Power Ups earn <b>fantasy points</b> while starting, then you spend <b>training</b> to level them up, all the way to 99.</p>
   <div class="solo"><div><b>Fantasy Pack</b><span class="muted">Pick a position, then choose 1 of 3 Power Ups.${fp?` You have ${fp} free.`:''}</span></div><button class="btn primary" id="fantasy">${fp?'Open free':fmtN(FANTASY_COST)+' coins'}</button></div>
   <div class="solo"><div><b>Pick any player</b><span class="muted">Find him in Cards, Every player, then tap Get his Power Up.</span></div><button class="btn" data-go="cards:cat">Browse players</button></div></div>
-  <p class="muted lhint">You have <b>${fmtN(UT.tp||0)} training</b>. Training is a shortcut: get it by quick selling cards you don't need. Each +1 costs more the higher he gets, so most growth comes from playing him.</p>
+  <p class="muted lhint">You have <b>${fmtN(UT.tp||0)} training</b>. Leveling up takes both: <b>fantasy points</b> he scores as a starter, and <b>training</b> to pay for it. You get training from every game and from quick selling cards you don't need.</p>
   ${uUnl()}
   <h3>Your Power Ups</h3>${L.length?L.map(row).join(''):'<p class="muted">No Power Ups yet. Unlock one above or open a Fantasy Pack.</p>'}`}
 const FANTASY_COST=ECON.fantasy,puPrice=t=>{const v=ECON.puBase*Math.pow(2,(t.ovr-70)/ECON.puDouble)*(ECON.puPos[t.pos]||1)*(1+(XFPOS[t.pos]?ECON.puXF:0)+(t.sig?ECON.puSig:0));return Math.max(ECON.puMin,Math.round(v/250)*250)};
@@ -4758,7 +4830,7 @@ function fantasyOpen(){const fp=UT.fantasy||0;if(!fp&&UT.coins<FANTASY_COST)retu
     const top=by.slice(0,Math.max(3,Math.ceil(by.length*.25)));pick3.push(pick(top));while(pick3.length<3&&pick3.length<pool.length){const t=pick(pool);if(!pick3.includes(t))pick3.push(t)}
     utModal(`<h2>Choose your ${g}</h2><p class="muted">He joins as a Power Up you can train to 99.</p><div class="cgrid pick">${pick3.map(t=>`<div class="pcand">${cardHTML(tplCard(t),{sm:true})}<small>${esc(t.team)} · real ${t.B}</small><button class="btn primary" data-fp="${t.tid}">Take him</button></div>`).join('')}</div>`,[]);
     document.querySelectorAll('[data-fp]').forEach(x=>x.onclick=()=>{const t=pick3.find(q=>q.tid===x.dataset.fp);const c=inst(t);UT.cards.push(c);utSave();closeModal();utTab='pu';renderUT();toastUT(c.n+' Power Up added. Start him to level him up.')})})}
-function bPU(){bindUnl(document);const fb=$('#fantasy');if(fb)fb.onclick=fantasyOpen;document.querySelectorAll('[data-tr]').forEach(b=>b.onclick=()=>{puTrain(cardById(+b.dataset.tr),1);renderUT()});document.querySelectorAll('[data-trm]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.trm),n=puTrain(c,99);toastUT(`${c.n} +${n}, now ${effOvr(c)}`);renderUT()});document.querySelectorAll('[data-pup]').forEach(b=>b.onclick=()=>{puClaim(cardById(+b.dataset.pup),b.dataset.k);renderUT()});
+function bPU(){bindUnl(document);document.querySelectorAll('#utBody [data-lvl]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.lvl);if(puTrain(c,1))toastUT(`${c.n} is now ${effOvr(c)}`);renderUT()});const fb=$('#fantasy');if(fb)fb.onclick=fantasyOpen;document.querySelectorAll('[data-tr]').forEach(b=>b.onclick=()=>{puTrain(cardById(+b.dataset.tr),1);renderUT()});document.querySelectorAll('[data-trm]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.trm),n=puTrain(c,99);toastUT(`${c.n} +${n}, now ${effOvr(c)}`);renderUT()});document.querySelectorAll('[data-pup]').forEach(b=>b.onclick=()=>{puClaim(cardById(+b.dataset.pup),b.dataset.k);renderUT()});
   document.querySelectorAll('[data-pust]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.pust),k=SLOTK.filter(k=>SLOTGRP[k]===c.pos).sort((a,b2)=>effOvr(cardById(UT.lineup[a]))-effOvr(cardById(UT.lineup[b2])))[0];if(k){setSlot(k,c.id);toastUT(c.n+' starting at '+k);renderUT()}});
   document.querySelectorAll('#utBody .ucard[data-id]').forEach(b=>b.onclick=()=>{const id=+b.dataset.id;if(cardById(id))cardDetail(id)})}
 function dreamPanel(){const D=UT.dream,t=D&&buildCatalog().find(x=>x.tid===D.tid);if(!t)return`<div class="dreamp dempty"><b>Dream Card</b><p class="muted">Pick any Power Up in the Catalog and set it as your Dream Card. The higher his potential, the more points he costs. Every game, win, objective and pack adds Dream points until you earn it.</p></div>`;
@@ -4767,7 +4839,7 @@ function dreamPanel(){const D=UT.dream,t=D&&buildCatalog().find(x=>x.tid===D.tid
 function bindDream(){const c=$('#dreamClaim');if(c)c.onclick=()=>{const t=buildCatalog().find(x=>x.tid===UT.dream.tid);if(!t)return;const card=inst(t);UT.cards.push(card);UT.dream=null;utSave();renderUT();toastUT('Dream Card earned: '+card.n);cardDetail(card.id)};
   const x=$('#dreamClear');if(x)x.onclick=()=>{utTab='cat';UT.dream=null;utSave();renderUT();toastUT('Pick a new Dream Card in the Catalog')}}
 function examineTpl(tid){
-  const cat=buildCatalog(),t=cat.find(x=>x.tid===tid);if(!t)return;const c=tplCard(t),own=ownedTids(),n=own.get(tid)||0,sg=sigOf(c),ab=cAbil(c),P=PROGRAMS[t.p];
+  const cat=buildCatalog(),t=cat.find(x=>x.tid===tid);if(!t)return;return cardScreen(tplCard(t),{kind:'tpl',tid});const c=tplCard(t),own=ownedTids(),n=own.get(tid)||0,sg=sigOf(c),ab=cAbil(c),P=PROGRAMS[t.p];
   const vs=cat.filter(x=>x.pid===t.pid).sort((a,b)=>a.ovr-b.ovr);
   utModal(`<div class="detail"><div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px">${flipHTML(c,{big:true,tid})}<span class="muted">Tap the card to flip it</span></div><div>
     <h2 style="margin-top:0">${esc(c.n)}</h2><p class="big" style="margin:4px 0">${c.ovr} OVR, ${GRPNAME[c.pos]}</p>
@@ -4823,10 +4895,10 @@ function utMatch(opp,label,info){
     for(const c of starters){c.s=c.s||{};c.s.gp=(c.s.gp||0)+1;if(win)c.s.w=(c.s.w||0)+1}
     const pathDone=starters.filter(c=>c.path&&pathReady(c)),unlDone=starters.filter(c=>c.unl&&unlReady(c)),unlGo=starters.filter(c=>c.unl&&!unlReady(c));
     refreshMarket();recalcChem();utSave();
-    lines.push(`+${fmtN(coins)} coins`);if(winChip)lines.push(`Win bonus: ${(NEWAB[winChip]||{}).n} chip`);if(fpTop&&fpTop[1]>0)lines.push(`Top fantasy score: ${fpTop[0].n} ${fpTop[1]} FP`);for(const c of starters.filter(c=>c.pu&&fpOf.has(c)&&!puUps.some(u=>u[0]===c)))if((c.up||0)<puMax(c))lines.push(`${c.n}: +${fpOf.get(c)} FP (${r1(c.pxp||0)} / ${puNeed(c)} to next level)`);for(const [c,n,o0] of puUps)lines.push(`${c.n} +${fpOf.get(c)} FP: up ${n} to ${effOvr(c)} OVR${c.puPick?', pick his free chip in Power Ups':''}`);if(r.objN)lines.push(`${r.objN} of 3 objectives done (${fmtN(r.objCoins)} coins of that)`);if(UT.dream)lines.push(`+${dp} Dream Card points`);if(pack)lines.push(`+${PACKS[pack].n}`);if(sx)lines.push(...sx.lines);for(const c of unlDone)lines.push(`${c.n}'s Power Up is ready. Claim it in Power Ups.`);if(unlGo.length)lines.push('Power Up unlocks: '+unlGo.map(c=>c.n+' '+unlPct(c)+'%').join(', '));
+    lines.push(`+${fmtN(coins)} coins`);if(winChip)lines.push(`Win bonus: ${(NEWAB[winChip]||{}).n} chip`);if(fpTop&&fpTop[1]>0)lines.push(`Top fantasy score: ${fpTop[0].n} ${fpTop[1]} FP`);for(const c of starters.filter(c=>c.pu&&fpOf.has(c)))if((c.up||0)<puMax(c))lines.push(`${c.n}: +${fpOf.get(c)} FP${puReady(c)?' · READY TO LEVEL UP':` (${r1(c.pxp||0)} / ${puNeed(c)})`}`);{const tg=ECON.tpGame+(win?ECON.tpWin:0);UT.tp=(UT.tp||0)+tg;lines.push(`+${tg} training`)}for(const [c,n,o0] of puUps)lines.push(`${c.n} +${fpOf.get(c)} FP: up ${n} to ${effOvr(c)} OVR${c.puPick?', pick his free chip in Power Ups':''}`);if(r.objN)lines.push(`${r.objN} of 3 objectives done (${fmtN(r.objCoins)} coins of that)`);if(UT.dream)lines.push(`+${dp} Dream Card points`);if(pack)lines.push(`+${PACKS[pack].n}`);if(sx)lines.push(...sx.lines);for(const c of unlDone)lines.push(`${c.n}'s Power Up is ready. Claim it in Power Ups.`);if(unlGo.length)lines.push('Power Up unlocks: '+unlGo.map(c=>c.n+' '+unlPct(c)+'%').join(', '));
     const upHtml=ups.length?`<h3>Level ups</h3><div class="cgrid pick">${[...new Set(ups)].map(c=>cardHTML(c,{sm:true,noStar:true})).join('')}</div>`:'';
     renderUT();show('ut');
-    utModal(`<p class="kicker">${esc(label)}</p><h2>${win?'Victory':tie?'Tie':'Defeat'}</h2><p class="big">${esc(UT.club.abbr)} ${r.su} - ${r.so} ${esc(opp.abbr)}</p><p>${lines.join('<br>')}</p><p class="muted">Power Ups level up from the fantasy points they score.</p>${upHtml}${pathDone.length?`<h3>Path to Peak complete</h3><p>${pathDone.map(c=>esc(c.n)).join(', ')} finished ${pathDone.length>1?'their':'his'} tasks. Open the Path to Peak tab to upgrade.</p>`:''}${starters.some(c=>c.path&&!pathReady(c))?`<p class="muted">Path to Peak progress: ${starters.filter(c=>c.path&&!pathReady(c)).map(c=>esc(c.n)+' '+pathPct(c)+'%').join(', ')}</p>`:''}`,pack?[['Open pack now',()=>{closeModal();openPackFromInv(UT.packs.length-1)}],['Close',closeModal,'alt']]:[['Close',closeModal]]);
+    utModal(`<p class="kicker">${esc(label)}</p><h2>${win?'Victory':tie?'Tie':'Defeat'}</h2><p class="big">${esc(UT.club.abbr)} ${r.su} - ${r.so} ${esc(opp.abbr)}</p><p>${lines.join('<br>')}</p><p class="muted">Power Ups bank fantasy points. Spend training to level them up.</p>${upHtml}${pathDone.length?`<h3>Path to Peak complete</h3><p>${pathDone.map(c=>esc(c.n)).join(', ')} finished ${pathDone.length>1?'their':'his'} tasks. Open the Path to Peak tab to upgrade.</p>`:''}${starters.some(c=>c.path&&!pathReady(c))?`<p class="muted">Path to Peak progress: ${starters.filter(c=>c.path&&!pathReady(c)).map(c=>esc(c.n)+' '+pathPct(c)+'%').join(', ')}</p>`:''}`,pack?[['Open pack now',()=>{closeModal();openPackFromInv(UT.packs.length-1)}],['Close',closeModal,'alt']]:[['Close',closeModal]]);
   }});
 }
 const OFFROWS=[['WR1','LT','LG','C','RG','RT','TE','WR2'],['WR3','QB','RB']],DEFROWS=[['CB1','DE1','DT1','DT2','DE2','CB2'],['LB1','LB2','LB3'],['S1','S2']],STROWS=[['K','P']];
@@ -4857,19 +4929,39 @@ function chipPicker(k){const st=SLOTK.map(s=>[s,cardById(UT.lineup[s])]).filter(
   const row=([s,c],can)=>`<button class="btn${can?' primary':''}" data-eq="${c.id}" ${can?'':'disabled'} style="display:flex;justify-content:space-between;gap:10px;width:100%;margin:4px 0;text-align:left"><span>${s} ${esc(c.n)} <span class="muted">${effOvr(c)}</span></span><span>${can?'Equip':esc(chipWhy(c,k))}</span></button>`;
   utModal(`<h2>${chipLabel(k)}</h2><p class="muted">${esc((NEWAB[k]||{}).fx||'')}</p>${ABREQ[k]?`<p class="muted">Needs ${RLAB[ABREQ[k][0]]} ${ABREQ[k][1]}+ and a free slot.</p>`:''}${ok.length?ok.map(r=>row(r,true)).join(''):'<p>None of your starters can take this one right now.</p>'}${no.length?`<h3>Can't take it</h3>${no.map(r=>row(r,false)).join('')}`:''}`,[['Close',closeModal,'alt']]);
   document.querySelectorAll('#utm [data-eq]').forEach(b=>b.onclick=()=>{const c=cardById(+b.dataset.eq);if(chipEquip(c,k)){closeModal();toastUT(`${(NEWAB[k]||{}).n} equipped on ${c.n}`);renderUT()}})}
+let LSEL={side:'off',chip:null};
+const abName=k=>esc((NEWAB[k]||ABDEF[k]||{n:k}).n);
+function lnToken(k){const c=cardById(UT.lineup[k]),ch=LSEL.chip;if(!c)return`<button class="ltk empty" data-slot="${k}"><span class="lk">${k}</span><b>+</b></button>`;
+  const n=abSlots(c),eq=cardAbs(c),xf=cardXf(c),T=TIERS[c.tier]||TIERS.gold,why=ch?chipWhy(c,ch):'',ok=ch&&!why,dim=ch&&why;
+  const dots=[0,1,2].map(i=>eq[i]?'<i class="on"></i>':i<n?'<i></i>':'<i class="lk"></i>').join('')+(XFPOS[c.pos]?(xf?'<i class="x on"></i>':xSlot(c)?'<i class="x"></i>':'<i class="x lk"></i>'):'');
+  return`<button class="ltk${ok?' ok':''}${dim?' dim':''}" data-slot="${k}" style="--tc:${T.c}"><span class="lk">${k}</span><b>${effOvr(c)}</b><em>${esc(lastNameOf(c.n))}</em><span class="ld">${dots}</span>${dim&&!why.startsWith('Not for')?`<small>${esc(why)}</small>`:''}</button>`}
 function uLineup(){
-  const o=teamOvr(),cm=recalcChem(),chips=Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([t,n])=>{const tb=tbOf(t);return`<span class="chip" style="--c1:${tb[3]};--c2:${tb[4]}"><b>${t}</b> x${n}${chemBonus(n)?` <em>+${chemBonus(n)}</em>`:''}</span>`}).join('');
-  const rows=(R)=>R.map(r=>`<div class="lrow">${r.map(k=>{const c=cardById(UT.lineup[k]);return`<div class="lslot" data-slot="${k}"><span class="lk">${k}</span>${c?cardHTML(c,{sm:true,noStar:true}):'<span class="empty">+</span>'}</div>`}).join('')}</div>`).join('');
-  return`<div class="row" style="justify-content:space-between"><p class="big lovr" style="margin:0">OVR ${o.all} <span class="muted">OFF ${o.o}, DEF ${o.d}</span></p><button class="btn primary" id="auto">Generate best lineup</button></div>
-  <p class="muted lhint">Click a slot to swap in a different player. Chemistry from shared league teams:</p><div class="chips">${chips}</div>
-  ${abPanel()}<h3>Offense</h3><div class="lfield">${rows(OFFROWS)}</div><h3>Defense</h3><div class="lfield">${rows(DEFROWS)}</div><h3>Special teams</h3><div class="lfield">${rows(STROWS)}</div>`;
+  const o=teamOvr(),base=Math.round(SLOTK.reduce((a,k)=>a+effOvr(cardById(UT.lineup[k])),0)/SLOTK.length),ch=chemAvg(),A=abPick('ab'),X=abPick('xf');
+  const R=LSEL.side==='off'?OFFROWS:LSEL.side==='def'?DEFROWS:STROWS;
+  const inv=Object.entries(UT.chips||{}).filter(([,n])=>n>0).sort((p,q)=>(p[0].startsWith('x_')?0:1)-(q[0].startsWith('x_')?0:1)||p[0].localeCompare(q[0]));
+  const sel=LSEL.chip,rq=sel&&ABREQ[sel];
+  const live=(P,kind)=>P.cands.map(q=>{const on=P.on.includes(q.id),sl=SLOTK.find(k=>UT.lineup[k]===q.c.id)||'';return`<div class="lv${on?' on':''}"><button class="lv-t" data-tg="${kind}" data-id="${q.id}">${on?'ON':'OFF'}</button><span>${abName(q.a)}<small>${sl} ${esc(lastNameOf(q.c.n))}</small></span><button class="lv-x" data-rm="${q.id}" title="Take this chip off">✕</button></div>`}).join('');
+  return`<div class="lu">
+   <div class="lu-f"><div class="lu-top"><div class="lu-ovr"><b>${o.all}</b><small>TEAM OVR</small></div><div class="lu-sub"><span>CARDS ${base}</span>${ch?`<span class="chem">+${ch} CHEM</span>`:''}<span>OFF ${o.o}</span><span>DEF ${o.d}</span></div>
+     <div class="lu-side">${[['off','OFFENSE'],['def','DEFENSE'],['st','KICKERS']].map(([k,l])=>`<button class="${LSEL.side===k?'on':''}" data-side="${k}">${l}</button>`).join('')}</div></div>
+     <div class="lu-field ${LSEL.side}">${R.map(r=>`<div class="lu-row">${r.map(lnToken).join('')}</div>`).join('')}</div>
+     <div class="lu-key"><span><i class="on"></i>CHIP</span><span><i></i>EMPTY SLOT</span><span><i class="lk"></i>LOCKED</span><span><i class="x on"></i>X-FACTOR</span><button class="btn" id="auto">BEST LINEUP</button></div></div>
+   <div class="lu-t"><div class="lu-th">CHIPS ${pxIco('chip',14)}</div>
+     ${sel?`<div class="lu-sel"><b>${chipLabel(sel)}</b><p>${esc((NEWAB[sel]||{}).fx||'')}</p><small>${rq?`Needs ${RLAB[rq[0]]} ${rq[1]}. `:''}Tap a glowing player to equip.</small><button class="btn" id="chipX">CANCEL</button></div>`:''}
+     <div class="lu-inv">${inv.length?inv.map(([k,n])=>`<button class="lu-chip${k===sel?' on':''}${k.startsWith('x_')?' xf':''}" data-chip="${k}">${pxIco(k.startsWith('x_')?'pu':'chip',12)}<span>${abName(k)}</span><b>×${n}</b></button>`).join(''):'<p class="muted">No spare chips. Win games and open packs to earn more.</p>'}</div>
+     <div class="lu-th">LIVE IN GAMES <span>${A.on.length}/${AB_MAX} ABILITIES · ${X.on.length}/${XF_MAX} X</span></div>
+     <div class="lu-live">${live(A,'ab')}${live(X,'xf')||''}${!A.cands.length&&!X.cands.length?'<p class="muted">Equip chips to see them here.</p>':''}</div></div></div>`;
 }
 function bLineup(){
-  $('#auto').onclick=()=>{const before=teamOvr().all;UT.lineup=bestLineup();recalcChem();utSave();renderUT();const after=teamOvr().all;toastUT(after>before?`Best lineup generated: OVR ${before} to ${after}`:`Already your best lineup (OVR ${after})`)};
-  document.querySelectorAll('.lslot').forEach(s=>s.onclick=()=>slotPicker(s.dataset.slot));
-  document.querySelectorAll('.abchip').forEach(b=>b.onclick=()=>{abToggle(b.dataset.k,b.dataset.id);renderUT()});
-  document.querySelectorAll('.abrm').forEach(b=>b.onclick=()=>{const [id,k]=b.dataset.rm.split(':');chipRemove(cardById(+id),k);renderUT()});
-  document.querySelectorAll('.abinv').forEach(b=>b.onclick=()=>chipPicker(b.dataset.chip));
+  $('#auto').onclick=()=>{const before=teamOvr().all;UT.lineup=bestLineup();recalcChem();utSave();renderUT();const after=teamOvr().all;toastUT(after>before?`Best lineup: OVR ${before} to ${after}`:`Already your best lineup (OVR ${after})`)};
+  document.querySelectorAll('[data-side]').forEach(b=>b.onclick=()=>{LSEL.side=b.dataset.side;renderUT()});
+  document.querySelectorAll('.ltk').forEach(t=>t.onclick=e=>{e.stopPropagation();const k=t.dataset.slot,c=cardById(UT.lineup[k]);
+    if(LSEL.chip){if(c&&!chipWhy(c,LSEL.chip)){const ch=LSEL.chip;if(chipEquip(c,ch)){toastUT(`${(NEWAB[ch]||{n:ch}).n} on ${c.n}`);if(!(UT.chips[ch]>0))LSEL.chip=null;renderUT()}}return}
+    if(!c)return slotPicker(k);cardScreen(c,{kind:'own'})});
+  document.querySelectorAll('[data-chip]').forEach(b=>b.onclick=()=>{LSEL.chip=LSEL.chip===b.dataset.chip?null:b.dataset.chip;const st=SLOTK.map(k=>cardById(UT.lineup[k])).filter(Boolean),fit=st.filter(c=>!chipWhy(c,LSEL.chip||'')),pos=fit[0]&&SLOTK.find(k=>UT.lineup[k]===fit[0].id);if(LSEL.chip&&pos)LSEL.side=OFFROWS.flat().includes(pos)?'off':DEFROWS.flat().includes(pos)?'def':'st';renderUT()});
+  const cx=$('#chipX');if(cx)cx.onclick=()=>{LSEL.chip=null;renderUT()};
+  document.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{abToggle(b.dataset.tg,b.dataset.id);renderUT()});
+  document.querySelectorAll('.lv-x').forEach(b=>b.onclick=()=>{const [id,k]=b.dataset.rm.split(':');chipRemove(cardById(+id),k);renderUT()});
 }
 const SLOTW={QB:.32,RB:.15,WR1:.0625,WR2:.0625,WR3:.0625,TE:.0625,LT:.056,LG:.056,C:.056,RG:.056,RT:.056,DE1:.0875,DT1:.0875,DT2:.0875,DE2:.0875,LB1:.0833,LB2:.0833,LB3:.0833,CB1:.1,CB2:.1,S1:.1,S2:.1,K:.03,P:.02};
 function bestLineup(){
@@ -4902,7 +4994,58 @@ function bColl(){const qa=$('#qsAll');if(qa)qa.onclick=()=>{const L=UT.cards.fil
   $('#cfB').onclick=()=>{collF.back=!collF.back;re()};
   document.querySelectorAll('#utBody .flip').forEach(b=>b.onclick=()=>cardDetail(+b.dataset.id));
 }
-function cardDetail(id){
+// ================= CARD SCREEN: one screen for every card, wherever you tap it =================
+let CS=null;
+const csBar=(v,max=99,col)=>`<i class="cs-bar"><u style="width:${Math.round(clamp(v/max,0,1)*100)}%${col?';background:'+col:''}"></u></i>`;
+function csAbChips(c){const eq=cardAbs(c),xf=cardXf(c),n=abSlots(c),sg=sigOf(c),dots=[];
+  for(let i=0;i<3;i++){const k=eq[i];dots.push(k?`<button class="cs-ab on" data-abk="${k}">${pxIco('chip',12)}<b>${esc((NEWAB[k]||ABDEF[k]||{n:k}).n)}</b></button>`:i<n?`<span class="cs-ab empty">${pxIco('chip',12)}<b>EMPTY SLOT</b></span>`:`<span class="cs-ab lock">${pxIco('lock',12)}<b>${[80,90,95][i]} OVR</b></span>`)}
+  dots.push(xf?`<button class="cs-ab on xf" data-abk="${xf}">${pxIco('pu',12)}<b>${esc((NEWAB[xf]||{n:xf}).n)}</b></button>`:XFPOS[c.pos]?`<span class="cs-ab ${xSlot(c)?'empty':'lock'} xf">${pxIco(xSlot(c)?'pu':'lock',12)}<b>${xSlot(c)?'X-FACTOR SLOT':'X AT 95'}</b></span>`:'');
+  return`${sg?`<div class="cs-sig">★ SIGNATURE: ${esc(ABDEF[sg].n)}</div>`:''}<div class="cs-abs">${dots.join('')}</div><p class="cs-abfx" id="csFx"></p>`}
+function puPanel(c){const lv=c.up||0,mx=puMax(c);if(c.puPick)return`<div class="pp"><b class="pp-max">PICK HIS FREE ${c.puPick.some(k=>k.startsWith('x_'))?'X-FACTOR':'CHIP'}</b><div class="pp-act">${c.puPick.map(k=>`<button class="btn primary" data-pup="${c.id}" data-k="${k}">${chipLabel(k)}</button>`).join('')}</div></div>`;if(lv>=mx)return`<div class="pp"><b class="pp-max">MAXED AT 99</b></div>`;
+  const need=puNeed(c),have=r1(c.pxp||0),cost=puCost(c),tp=UT.tp||0,fpOk=have>=need,tpOk=tp>=cost,ms=ECON.milestones.find(m=>m>c.ovr+lv);
+  return`<div class="pp"><div class="pp-row"><span>${pxIco('ball',12)} FANTASY PTS</span>${csBar(have,need,fpOk?'#6cff8a':'#4fd8ff')}<em>${fpOk?'READY':`${have} / ${need}`}</em></div>
+    <div class="pp-row"><span>${pxIco('pu',12)} TRAINING</span>${csBar(tp,cost,tpOk?'#6cff8a':'#ffd23f')}<em>${fmtN(Math.min(tp,cost))} / ${cost}</em></div>
+    <div class="pp-act"><button class="btn${fpOk&&tpOk?' primary':''}" data-lvl="${c.id}" ${fpOk&&tpOk?'':'disabled'}>LEVEL UP to ${c.ovr+lv+1}</button><small>${ms?`Free chip at ${ms}`:'X-Factor at 99'}${!fpOk?' · Start him to earn FP':!tpOk?' · Quick sell cards for training':''}</small></div></div>`}
+function csOverview(c,own){const R=RSET[c.pos]||[],ovr=effOvr(c),T=TIERS[c.tier]||TIERS.gold;
+  return`<div class="cs-ov"><div class="cs-rt">${R.map(k=>`<div class="cs-r"><span>${RLAB[k]}</span>${csBar(cRat(c,k))}<b>${cRat(c,k)}</b></div>`).join('')}</div>
+    ${csAbChips(c)}${own&&c.pu?puPanel(c):''}${own&&c.unl?`<div class="pp"><div class="pp-row"><span>${pxIco('pu',12)} UNLOCK PU</span>${csBar(c.unl.got||0,c.unl.need)}<em>${r1(Math.min(c.unl.got||0,c.unl.need))} / ${c.unl.need} FP</em></div>${unlReady(c)?`<div class="pp-act"><button class="btn primary" data-uclaim="${c.id}">CLAIM HIS POWER UP</button></div>`:''}</div>`:''}</div>`}
+function csRatings(c){const r={};for(const k of RSET[c.pos])r[k]=cRat(c,k);return`<div class="cs-rt big">${RSET[c.pos].map(k=>`<div class="cs-r" title="${esc(RDESC[k]||'')}"><span>${RLAB[k]}</span>${csBar(r[k])}<b>${r[k]}</b><small>${esc((RDESC[k]||'').split(':')[0])}</small></div>`).join('')}</div>
+  <div class="cs-tiles">${[['OVR',effOvr(c)],['BASE',c.B||c.ovr],['TIER',(TIERS[c.tier]||{n:''}).n.toUpperCase()],['VERSION',String(c.pu?'POWER UP':c.prog||'').toUpperCase()]].map(([l,v])=>`<div><b>${esc(String(v))}</b><small>${l}</small></div>`).join('')}</div>`}
+function csStats(c,own){const t=(k)=>gs(c,k),T=[];if(own){T.push(['GAMES',t('gp')],['WINS',t('w')],['FANTASY PTS',kN(Math.round(c.fpT||0))]);
+    const add=(k,l)=>{if(t(k))T.push([l,fmtN(t(k))])};add('py','PASS YDS');add('ptd','PASS TD');add('ry','RUSH YDS');add('rtd','RUSH TD');add('rec','CATCHES');add('cy','REC YDS');add('ctd','REC TD');add('btk','BROKEN TKL');add('tkl','TACKLES');add('sck','SACKS');add('dint','INT');add('fgm','FG MADE')}
+  const real=Object.entries(c.st||{}).map(([k,v])=>[STLAB[String(k).toLowerCase()],v]).filter(x=>x[0]&&x[1]>0).slice(0,6);
+  return`${own?`<h4>FOR YOUR CLUB</h4><div class="cs-tiles">${T.map(([l,v])=>`<div><b>${esc(String(v))}</b><small>${l}</small></div>`).join('')}</div>`:''}${real.length?`<h4>REAL SEASON</h4><div class="cs-tiles">${real.map(([l,v])=>`<div><b>${fmtN(Math.round(v))}</b><small>${l}</small></div>`).join('')}</div>`:''}${!own&&!real.length?'<p class="muted">No stats yet.</p>':''}`}
+function csHigh(c){const L=(typeof reelsFor==='function'?reelsFor(c):[]),q=encodeURIComponent(c.n+' highlights');
+  return`<div class="cs-reels">${L.length?L.map((r,i)=>`<button class="cs-reel" data-reel="${i}">${pxIco('ball',14)}<b>${esc(r.title)}</b><small>${esc(r.sub||'')}</small></button>`).join(''):'<p class="muted">Make a big play with him and it gets saved here.</p>'}</div>
+    <a class="btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">Watch real highlights on YouTube</a>`}
+function csUpgrade(c){return`${c.pu?puPanel(c):''}${c.pu?`<div class="pathbox">${pathSection(c)}</div>`:''}${!c.pu?`<div class="pathbox">${unlSection(c)||'<p class="muted">Regular cards keep their rating. Unlock or buy his Power Up to upgrade him.</p>'}</div>`:''}`}
+function cardScreen(c,ctx={}){if(!c)return;const own=ctx.kind==='own'||(!ctx.kind&&cardById(c.id)===c);ctx.kind=ctx.kind||(own?'own':'view');CS={c,ctx,tab:ctx.tab||'ov'};csRender()}
+function csRender(){if(!CS)return;const {c,ctx}=CS,own=ctx.kind==='own',T=TIERS[c.tier]||TIERS.gold,st=own?starterSlot(c.id):null,tb=tbOf(c.team);
+  const tabs=[['ov','OVERVIEW'],['rt','RATINGS'],['stt','STATS'],['hl','HIGHLIGHTS']];if(own)tabs.push(['up','UPGRADE']);
+  const body={ov:()=>csOverview(c,own),rt:()=>csRatings(c),stt:()=>csStats(c,own),hl:()=>csHigh(c),up:()=>csUpgrade(c)}[CS.tab]();
+  const btns=[];
+  if(ctx.kind==='own'){if(st)btns.push([`SWAP ${st}`,()=>{closeModal();slotPicker(st)}]);else{const sl=SLOTK.filter(k=>SLOTGRP[k]===c.pos);if(sl.length)btns.push([`START AT ${sl[0]}${sl.length>1?'…':''}`,()=>{if(sl.length===1){setSlot(sl[0],c.id);recalcChem();csRender();renderUT();return}utModal(`<h3>Start ${esc(c.n)} at</h3><div class="row">${sl.map(k=>{const cur=cardById(UT.lineup[k]);return`<button class="btn" data-ss="${k}">${k}${cur?` (over ${esc(lastNameOf(cur.n))} ${effOvr(cur)})`:''}</button>`}).join('')}</div>`,[['Back',()=>csRender(),'alt']]);document.querySelectorAll('[data-ss]').forEach(b=>b.onclick=()=>{setSlot(b.dataset.ss,c.id);recalcChem();renderUT();csRender()})}])}
+    if(!st)btns.push([`QUICK SELL +${fmtN(qsTP(c)*(c.pu?3:1))} TRAINING`,()=>sellCard(c,'tp'),'alt'])}
+  if(ctx.kind==='market'){const x=ctx.x;btns.push([UT.coins>=x.price?`BUY ${fmtN(x.price)} COINS`:`NEED ${fmtN(x.price)} COINS`,()=>{if(UT.coins<x.price)return;UT.coins-=x.price;UT.cards.push(x.c);UT.market=UT.market.filter(m=>m!==x);utSave();closeModal();renderUT();toastUT('Added '+x.c.n+' to your collection')}])}
+  if(ctx.kind==='tpl'){const cat=buildCatalog(),t=cat.find(x=>x.tid===ctx.tid),pt=t&&cat.find(x=>x.pid===t.pid&&x.p==='power'),mine=t&&UT.cards.find(x=>x.pid===t.pid);
+    if(pt&&!UT.cards.some(x=>x.pu&&x.pid===t.pid))btns.push([`GET POWER UP ${fmtN(puPrice(pt))}`,()=>{if(UT.coins<puPrice(pt))return toastUT('Not enough coins');UT.coins-=puPrice(pt);const n=inst(pt);UT.cards.push(n);utSave();renderUT();cardScreen(n,{kind:'own',tab:'up'});toastUT(n.n+' Power Up added')}]);
+    if(mine)btns.push(['OPEN MY CARD',()=>cardScreen(mine,{kind:'own'}),'alt']);
+    if(t)btns.push(['SET AS DREAM CARD',()=>{const keep=UT.dream&&UT.dream.pts?Math.round(UT.dream.pts*.5):0;UT.dream={tid:t.tid,pts:keep};utSave();closeModal();renderUT();toastUT('Dream Card set')},'alt'])}
+  btns.push(['CLOSE',()=>{CS=null;closeModal()},'alt']);
+  utModal(`<div class="cs" style="--tc:${T.c};--tm:${tb[3]}"><div class="cs-l">${flipHTML(c,{big:true})}</div><div class="cs-r0">
+    <div class="cs-hd"><div class="cs-ovr">${effOvr(c)}<small>${esc(c.pos)}</small></div><div><b>${esc(c.n)}</b><small>${esc(c.team)} · #${esc(String(c.num??''))} · ${esc(c.pu?'Power Up':String(c.prog||''))}${st?` · STARTING ${st}`:own?' · BENCH':''}${st&&chemB(c)?` · +${chemB(c)} CHEM`:''}</small></div></div>
+    <div class="cs-tabs">${tabs.map(([k,l])=>`<button class="${CS.tab===k?'on':''}" data-cst="${k}">${l}</button>`).join('')}</div><div class="cs-body">${body}</div></div></div>`,btns);
+  const m=$('#utm');m.querySelector('.panel').classList.add('cscr');bindFlip(m);bindPath(m);bindUnl(m);
+  m.querySelectorAll('[data-cst]').forEach(b=>b.onclick=()=>{CS.tab=b.dataset.cst;csRender()});
+  m.querySelectorAll('[data-abk]').forEach(b=>b.onclick=()=>{const k=b.dataset.abk,fx=$('#csFx');if(fx)fx.textContent=(NEWAB[k]&&NEWAB[k].fx)||(ABINFO[k]&&ABINFO[k].fx)||''});
+  m.querySelectorAll('[data-lvl]').forEach(b=>b.onclick=()=>{const n=puTrain(c,1);if(n){SND.coin&&SND.coin();toastUT(`${c.n} is now ${effOvr(c)}`)}renderUT();csRender()});
+  m.querySelectorAll('[data-reel]').forEach(b=>b.onclick=()=>{const r=reelsFor(c)[+b.dataset.reel];if(r)playReel(r)});
+  m.querySelectorAll('[data-pup]').forEach(b=>b.onclick=()=>{puClaim(c,b.dataset.k);renderUT();csRender()})}
+// every card you tap, anywhere in Ultimate Team, opens the card screen (unless the page wired it to something else)
+function csWire(root){(root||document).querySelectorAll('.ucard[data-id],.ucard[data-tid],.flip[data-id]').forEach(b=>{if(b.onclick||b.closest('.flip')&&b.closest('.flip')!==b&&b.closest('.flip').onclick)return;b.onclick=e=>{e.stopPropagation();const id=+b.dataset.id,c=cardById(id);if(c)return cardScreen(c,{kind:'own'});if(b.dataset.tid)return examineTpl(b.dataset.tid)}})}
+
+function cardDetail(id){const c0=cardById(id);if(c0)return cardScreen(c0,{kind:'own'});return cardDetailOld(id)}
+function cardDetailOld(id){
   const c=cardById(id);if(!c)return;const st=starterSlot(id),T=TIERS[c.tier],cost=trainCost(c),canUp=c.up<capUp(c),ab=cAbil(c);
   const btns=[];
   if(false)for(const f of UT.cards.filter(x=>x.pid===c.pid&&x.id!==id&&!starterSlot(x.id)))btns.push([`Merge ${f.prog} ${f.ovr} (+${Math.min(capUp(c)-c.up,mergeGain(c,f))})`,()=>{c.up=Math.min(capUp(c),c.up+mergeGain(c,f));chipReturn(f);UT.cards=UT.cards.filter(x=>x!==f);utSave();toastUT(`Merged: ${c.n} is now ${effOvr(c)}`);cardDetail(id);renderUT()}]);
@@ -4914,7 +5057,7 @@ function cardDetail(id){
   const line=[gs(c,'py')&&`${gs(c,'py')} pass yds`,gs(c,'ry')&&`${gs(c,'ry')} rush yds`,gs(c,'cy')&&`${gs(c,'cy')} rec yds`,(gs(c,'ptd')+gs(c,'rtd')+gs(c,'ctd'))&&`${gs(c,'ptd')+gs(c,'rtd')+gs(c,'ctd')} TD`,gs(c,'tkl')&&`${gs(c,'tkl')} tackles`].filter(Boolean).join(', ');
   const PS=unlSection(c);
   utModal(`<div class="detail"><div>${flipHTML(c,{big:true})}<p class="muted" style="text-align:center">Click the card to flip it</p></div><div>${PS?`<div class="pathbox">${PS}</div>`:''}<h3>${esc(c.n)}</h3><p>${GRPNAME[c.pos]}, #${c.num}, ${c.pu?'Power Up':T.n+' '+esc(c.prog)}</p>
-  <p>Overall ${effOvr(c)}: card ${c.ovr}, upgraded +${c.up}${st?`, chemistry +${effOvr(c)-c.ovr-c.up}`:''}. Player baseline ${c.B||c.ovr}. ${c.pu?'Power Up: he levels up from the fantasy points he scores while starting, all the way to 99.':'Regular cards stay at this rating. Only Power Ups upgrade.'}</p>${versionsHTML(c)}
+  <p>Overall ${effOvr(c)}: card ${c.ovr}, upgraded +${c.up}${st&&chemB(c)?`, team chemistry adds +${chemB(c)} on the field`:''}. Player baseline ${c.B||c.ovr}. ${c.pu?'Power Up: he levels up from the fantasy points he scores while starting, all the way to 99.':'Regular cards stay at this rating. Only Power Ups upgrade.'}</p>${versionsHTML(c)}
   <table>${RSET[c.pos].map(k=>`<tr><td><b>${RLAB[k]}</b></td><td class="n">${cRat(c,k)}</td><td class="muted">${RDESC[k]}</td></tr>`).join('')}</table>
   <p><b>Abilities</b></p>${abInfoHTML(ab,sigOf(c))}
   ${next.length?`<p class="muted">Next unlocks: ${next.map(([k,a])=>`${ABDEF[k].n} at about +${a}`).join(', ')}</p>`:''}
@@ -4928,7 +5071,7 @@ const TOUR=[
   {t:'Welcome to Ultimate Team',b:()=>`<p>The loop: <b>win games</b> for coins, open packs, <b>quick sell</b> extras for training, and <b>train Power Ups</b> to 99. The <b>Next up</b> box on the Play tab always tells you the one thing to do next.</p>`},
   {tab:'play',sel:'#utBody .nxu',t:'Next up',b:()=>`<p>Your to-do tiles. The glowing one is the best thing to do now. Tap it and it takes you right there.</p>`},
   {tab:'team',sel:'#auto',t:'Team',b:()=>`<p>Your lineup. Tap a slot to swap a player, or let it pick your best lineup. Same-team starters give chemistry boosts.</p>`},
-  {tab:'team',sel:'#utBody h3',t:'Ability chips',b:()=>`<p>Abilities and X-Factors are <b>chips</b>. Tap a spare chip to put it on a starter. Better players have more slots, and some chips need a skill rating.</p><p>Only <b>5 abilities and 3 X-Factors</b> work in a game, so you choose which.</p>`},
+  {tab:'team',sel:'#utBody .lu-t',t:'Ability chips',b:()=>`<p>Abilities and X-Factors are <b>chips</b>. Tap a chip in the tray and every player who can use it glows. Tap him to equip it. The dots under each player are his slots.</p><p>Only <b>5 abilities and 3 X-Factors</b> work in a game, so you choose which.</p>`},
   {tab:'cards',sel:'#utBody .row',t:'Cards',b:()=>`<p>Your collection and every player in the game, including <b>Throwback legends</b>. Tap a card to start, sell or look at it. Selling keeps its chips.</p>`},
   {tab:'store',sel:'#utBody .row',t:'Store',b:()=>`<p>Packs (with exact odds and bonus chips), the Market for one specific player, and <b>Trade-ins</b> that turn bench cards into chips and packs. The Featured pack changes every week.</p>`},
   {tab:'pu',sel:'#fantasy',up:'.action',t:'Power Ups',b:()=>`<p>Every player has a <b>Power Up</b> card that grows to <b>99</b>. Get one from a Fantasy Pack (your first is free), buy any player's in Cards, or unlock it free by playing a card of him you pulled.</p><p>Power Ups level up from the <b>fantasy points</b> they score while starting. You pick a free chip at 80, 85, 90 and 95, and an X-Factor at 99. Training from quick sells is a shortcut.</p>`},
@@ -5041,7 +5184,7 @@ function uMarket(){
 }
 function bMarket(){
   $('#mG').onchange=e=>{mktG=e.target.value;renderUT()};$('#mRef').onclick=()=>{if(UT.coins<250)return;UT.coins-=250;refreshMarket();utSave();renderUT()};
-  document.querySelectorAll('#utBody .ucard').forEach(b=>b.onclick=()=>{const x=UT.market.find(m=>m.c.id===+b.dataset.id);if(!x)return;
+  document.querySelectorAll('#utBody .ucard').forEach(b=>b.onclick=()=>{const x=UT.market.find(m=>m.c.id===+b.dataset.id);if(!x)return;return cardScreen(x.c,{kind:'market',x});
     utModal(`<div class="detail">${cardHTML(x.c,{big:true})}<div><h3>${esc(x.c.n)}</h3><p>${GRPNAME[x.c.pos]}, ${TIERS[x.c.tier].n}</p><p class="big">${fmtN(x.price)} coins</p><p class="muted">You have ${fmtN(UT.coins)}.</p></div></div>`,[[UT.coins>=x.price?'Buy now':'Not enough coins',()=>{if(UT.coins<x.price)return;UT.coins-=x.price;UT.cards.push(x.c);UT.market=UT.market.filter(m=>m!==x);utSave();closeModal();renderUT();toastUT('Added '+x.c.n+' to your collection')}],['Cancel',closeModal,'alt']])})
 }
 function uUpgrade(){
@@ -5203,6 +5346,7 @@ function revealCard(c,done,opt={}){
   el.onclick=()=>{if(!RV)return;if(el.classList.contains('s9'))RV.finish();else RV.skip()};
 }
 const effOvrSafe=c=>(c.ovr||0)+(c.up||0);
+{const lk=()=>{try{if(document.body.classList.contains('phone')&&screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(()=>{})}catch(_){}};addEventListener('pointerdown',lk,{once:true});document.addEventListener('fullscreenchange',lk)}
 addEventListener('keydown',e=>{if(!RV)return;if(e.key===' '||e.key==='Enter'||e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();$('#rv').click()}},true);
 
 
