@@ -4617,9 +4617,16 @@ const PACKS={
  gold:{n:'Gold Pack',price:4500,cards:5,odds:{silver:.6,gold:.38,elite:.02},art:'gold'},
  elite:{n:'Elite Pack',price:10000,cards:5,odds:{gold:.85,elite:.14,legend:.01},guar:'gold',art:'elite'},
  legend:{n:'Legends Pack',price:25000,cards:3,odds:{elite:.7,legend:.3},guar:'elite',art:'legend'},
+ lightning:{n:'Lightning Pack',price:2500,cards:1,odds:{gold:.7,elite:.24,legend:.06},art:'gold'},
+ jackpot:{n:'Jackpot Pack',price:12000,cards:3,odds:{gold:.45,elite:.4,legend:.15},guar:'elite',art:'legend'},
+ mega:{n:'Mega Pack',price:20000,cards:12,odds:{silver:.35,gold:.45,elite:.16,legend:.04},guar:'elite',art:'elite'},
+ tbl:{n:'Throwback Legends',price:18000,cards:3,prog:['throwback'],art:'legend'},
+ primepk:{n:'Prime & Feared',price:14000,cards:2,prog:['prime','feared'],art:'elite'},
+ iconpk:{n:'Icon Pack',price:35000,cards:1,prog:['icon'],art:'legend'},
+ peakpk:{n:'Peak Pack',price:60000,cards:1,prog:['icon','peak'],pw:{icon:.8,peak:.2},art:'legend'},
  featured:{n:'Featured Pack',price:15000,cards:3,odds:{gold:.6,elite:.35,legend:.05},art:'elite'}};
 const FEATL=['throwback','ignition','prime','breakout','feared','icon'],featProg=()=>FEATL[Math.floor(Date.now()/(7*864e5))%FEATL.length];
-const CHIPODDS={bronze:[.1,0],silver:[.2,0],offense:[.3,0],defense:[.3,0],trench:[.3,0],gold:[.4,.03],elite:[.7,.12],legend:[1,.4],featured:[.6,.15]};
+const CHIPODDS={lightning:[.3,.02],jackpot:[.8,.2],mega:[1,.3],tbl:[.7,.15],primepk:[.6,.12],iconpk:[1,.3],peakpk:[1,.6],bronze:[.1,0],silver:[.2,0],offense:[.3,0],defense:[.3,0],trench:[.3,0],gold:[.4,.03],elite:[.7,.12],legend:[1,.4],featured:[.6,.15]};
 const EXCH=[{n:'Bronze exchange',need:'bronze',cnt:10,pack:'silver'},{n:'Silver exchange',need:'silver',cnt:8,pack:'gold'},{n:'Gold exchange',need:'gold',cnt:5,pack:'elite'},{n:'Elite exchange',need:'elite',cnt:3,pack:'legend'}];
 let SOLOS=[];function buildSolos(){SOLOS=Array.from({length:24},(_,i)=>{const tier=['Rookie','Pro','All-Pro','Legend'][Math.floor(i/6)];const pk=i===23?'legend':i%3===2?['bronze','silver','gold','elite'][Math.floor(i/6)]:null;return{i,tier,ovr:Math.round(60+i*1.6),tb:TEAM_BASE[(i*7+3)%TEAM_BASE.length],coins:200+i*60,pack:pk}})}buildSolos();
 const tierOf=o=>o>=91?'legend':o>=84?'elite':o>=75?'gold':o>=65?'silver':'bronze';
@@ -4995,7 +5002,7 @@ function nextUp(){const L=[];const go=(t,sub,msg,btn,ic,big,lab)=>L.push({t,sub,
   const S=UT.season,g=S&&nextGame();if(g)go('play','season',`Season game next: ${g.label}.`,'Play season game','trophy','WK','SEASON');else go('play','play','Win games to earn coins and chips.','Play','ball','GO','PLAY');
   return L}
 function nextUpHTML(){const L=nextUp().slice(0,4);return`<div class="nxu">${L.map((x,i)=>`<button class="nxt${i===0?' hot':''}" data-go="${x.t}:${x.sub}" title="${esc(x.msg)}" aria-label="${esc(x.msg)}">${pxIco(x.ic||'ball',26)}<b>${esc(String(x.big??''))}</b><span>${esc(x.lab||x.btn)}</span></button>`).join('')}</div>`}
-function renderUT(){if(UT&&!UT.testPk1){UT.testPk1=1;const K=Object.keys(PACKS);UT.packs.push(...K);utSave();setTimeout(()=>toastUT(`Test gift: ${K.length} packs, one of every kind, in Store > My packs`),500)}try{localStorage.setItem('gr_resume',JSON.stringify({s:'ut',t:Date.now()}))}catch(_){}
+function renderUT(){if(UT&&!UT.testPk2){UT.testPk2=1;UT.testPk1=1;const K=Object.keys(PACKS);UT.packs.push(...K);utSave();setTimeout(()=>toastUT(`Test gift: ${K.length} packs, one of every kind, in Store > My packs`),500)}try{localStorage.setItem('gr_resume',JSON.stringify({s:'ut',t:Date.now()}))}catch(_){}
   if(UT&&!UT.noToe){UT.chips=UT.chips||{};let n=UT.chips.toetap||0;delete UT.chips.toetap;for(const c of UT.cards){if(c.eq&&c.eq.includes('toetap')){c.eq=c.eq.filter(a=>a!=='toetap');n++}if(c.abO==='toetap')c.abO=null}for(let i=0;i<n;i++)chipGive(pick(ABPOS.WR));UT.noToe=1;utSave();if(n)setTimeout(()=>toastUT(`Toe Tap was retired. You got ${n} other chip${n>1?'s':''} instead.`),300)}
   if(UT&&UT.fantasy===undefined){UT.fantasy=1;for(const c of UT.cards)if(c.pu)c.pot=99;utSave()}
   const c=UT.club,o=teamOvr();
@@ -5552,7 +5559,7 @@ function bPacks(){
   const fp=$('#sFP');if(fp)fp.onclick=()=>{const F=UT.fplay,t=buildCatalog().find(x=>x.tid===F.tid);if(!t||F.bought||UT.coins<F.price)return;UT.coins-=F.price;F.bought=1;const c=cardFlair(inst(t));UT.cards.push(c);logPull(c);utSave();renderUT();revealCard(c,()=>cardScreen(c,{kind:'own'}))};
   document.querySelectorAll('[data-bund]').forEach(b=>b.onclick=()=>{const B=BUNDLES.find(x=>x.id===b.dataset.bund);if(!B||UT.coins<B.price)return;UT.coins-=B.price;UT.packs.push(...B.packs);utSave();renderUT();toastUT(`${B.n}: ${B.packs.length} packs added to My packs`)});
   document.querySelectorAll('[data-ms]').forEach(b=>b.onclick=()=>{const M=MILESTONES.find(x=>x.id===b.dataset.ms);UT.ms=UT.ms||{};if(!M||UT.ms[M.id])return;UT.ms[M.id]=1;UT.packs.push(M.pack);utSave();renderUT();toastUT(`${M.n}: ${PACKS[M.pack].n} added to My packs`)});
-  document.querySelectorAll('[data-odds]').forEach(b=>b.onclick=()=>{const P=PACKS[b.dataset.odds];utModal(`<div class="sodds"><div>${packArt(b.dataset.odds)}</div><div><h3>${esc(P.n)}</h3><p>${P.cards} cards${P.groups?' · '+P.groups.join(', ')+' only':''}${P.guar?` · ${TIERS[P.guar].n}+ guaranteed`:''}</p>${Object.entries(P.odds).map(([t,v])=>`<div class="so"><span>${TIERS[t].n}</span><i><u style="width:${Math.max(2,Math.round(v*100))}%;background:${TIERS[t].c}"></u></i><b>${(v*100).toFixed(v<.1?1:0)}%</b></div>`).join('')}<p class="muted">Each card rolls on its own. Bonus chips can drop too.</p></div></div>`,[['Close',closeModal,'alt']])});
+  document.querySelectorAll('[data-odds]').forEach(b=>b.onclick=()=>{const P=PACKS[b.dataset.odds];utModal(`<div class="sodds"><div>${packArt(b.dataset.odds)}</div><div><h3>${esc(P.n)}</h3><p>${P.cards} cards${P.groups?' · '+P.groups.join(', ')+' only':''}${P.guar?` · ${TIERS[P.guar].n}+ guaranteed`:''}</p>${P.prog?`<p><b>Every card is from: ${P.prog.map(k=>PROGRAMS[k].n).join(', ')}</b>${P.pw?' ('+Object.entries(P.pw).map(([k,v])=>PROGRAMS[k].n+' '+Math.round(v*100)+'%').join(', ')+')':''}</p>`:''}${Object.entries(P.odds||{}).map(([t,v])=>`<div class="so"><span>${TIERS[t].n}</span><i><u style="width:${Math.max(2,Math.round(v*100))}%;background:${TIERS[t].c}"></u></i><b>${(v*100).toFixed(v<.1?1:0)}%</b></div>`).join('')}<p class="muted">Each card rolls on its own. Bonus chips can drop too.</p></div></div>`,[['Close',closeModal,'alt']])});
 }
 // ---- pack art v2: foil wrapper with crimped edges ----
 function packArt(type,sm){const P=PACKS[type],T=TIERS[P.art],pk=type==='featured'?featProg():'';return`<div class="pack v2${sm?' sm':''} pa-${P.art}${pk?' pf-'+pk:''}" style="--tc:${T.c};--tc2:${T.c2}"><i class="pcrimp t"></i><span class="plogo">GRIDIRON<br>RETRO</span><span class="pgem"></span><b>${P.n.replace(' Pack','').toUpperCase()}</b><small>${P.cards} CARDS</small><i class="pcrimp b"></i></div>`}
@@ -5567,7 +5574,7 @@ function pkRip(ov,best){const stg=ov.querySelector('.pk-stage');if(!stg)return;l
 function openPackFromInv(i){const k=UT.packs.splice(i,1)[0];if(k)openPack(k)}
 function featCard(){const cat=buildCatalog().filter(t=>t.p===featProg()&&!t.pu);return cat.length?inst(pick(cat)):genCard(null,'elite')}
 function rollPack(type){
-  const P=PACKS[type],out=[];if(type==='featured'){out.push(featCard());for(let i=1;i<P.cards;i++)out.push(genCard(wpick(POSW),wpick(Object.entries(P.odds))));return out.sort((a,b)=>a.ovr-b.ovr)}
+  const P=PACKS[type],out=[];if(P.prog){const cat=buildCatalog().filter(t=>!t.pu&&P.prog.includes(t.p));for(let i=0;i<P.cards;i++){let pool=cat;if(P.pw){const pg=wpick(Object.entries(P.pw));pool=cat.filter(t=>t.p===pg);if(!pool.length)pool=cat}out.push(pool.length?inst(pick(pool)):genCard(null,'elite'))}return out.sort((a,b)=>a.ovr-b.ovr)}if(type==='featured'){out.push(featCard());for(let i=1;i<P.cards;i++)out.push(genCard(wpick(POSW),wpick(Object.entries(P.odds))));return out.sort((a,b)=>a.ovr-b.ovr)}
   for(let i=0;i<P.cards;i++){const tier=wpick(Object.entries(P.odds)),pos=P.groups?pick(P.groups):wpick(POSW);out.push(type!=='bronze'&&Math.random()<.02&&['QB','RB','WR','TE'].includes(pos)?genPower(pos):genCard(pos,tier))}
   if(P.guar){const gi=TORD.indexOf(P.guar);if(!out.some(c=>TORD.indexOf(c.tier)>=gi)){const c=out.pop();out.push(genCard(c.pos,P.guar))}}
   return out.sort((a,b)=>a.ovr-b.ovr);
@@ -6261,7 +6268,7 @@ try{const R=JSON.parse(localStorage.getItem('gr_resume')||'null');if(R&&Date.now
 <script>
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 // update check: when the app comes back to the front, fetch the newest page and reload if it changed (never mid-game)
-const BUILD='20261101134227';
+const BUILD='20261101134455';
 (()=>{let busy=0;const chk=()=>{if(busy||location.protocol!=='https:')return;busy=1;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const BUILD='(\d+)'/);if(m&&m[1]>BUILD){const ok=()=>!(typeof G!=='undefined'&&G&&!G.demo)&&!(typeof PK!=='undefined'&&PK)&&!(typeof RV!=='undefined'&&RV);let tried='';try{tried=sessionStorage.getItem('gr_upd')||''}catch(_){}if(tried===m[1])return;if(ok()){try{sessionStorage.setItem('gr_upd',m[1])}catch(_){}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(g=>g&&g.update())}catch(_){}location.reload()}}}).catch(()=>{}).finally(()=>{busy=0})};document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});addEventListener('pageshow',chk);setTimeout(chk,4000)})();
 </script>
 </body>
