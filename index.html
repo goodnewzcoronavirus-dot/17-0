@@ -429,6 +429,13 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 #rv{position:fixed;inset:0;z-index:96;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#03040a;cursor:pointer;--tc:#f5cd4c;--tm:#e84a3a;--tm2:#ffd23f;font-family:'Press Start 2P',monospace;color:#fff}
 #rv.hidden{display:none}
 
+#clkp{position:absolute;left:50%;top:44px;white-space:nowrap;transform:translateX(-50%);z-index:6;display:none;gap:6px;align-items:center;font-family:'Press Start 2P',monospace;font-size:7px;pointer-events:none}
+#clkp.on{display:flex}#clkp span,#clkp b{background:rgba(5,8,20,.82);color:#fff;border:2px solid #000;padding:5px 7px 4px;font-weight:400}
+#clkp .run{color:#ffd23f}#clkp .stop{color:#6cff8a}#clkp .tp{color:#4fd8ff}
+#clkp.cr b{background:#c0261d;font-size:9px;animation:tblink 1s steps(2) infinite}
+#cc.run{color:#ffd23f}
+#dfx .df-to{background:#c0261d}
+
 
 /* ===== walkout clue board ===== */
 #rv .rboard{display:flex;flex-direction:column;align-items:center;gap:1.6vh}
@@ -1432,7 +1439,8 @@ function simDrive(O,D,c,log){
       L(pl.text,X);
       if(pl.yds>=dist){down=1;dist=Math.min(10,100-c.yard)}else{down++;dist-=pl.yds;if(down>4){const ev=tick(c,pl.time);L('Turnover on downs.',{k:'tod',dp:X.dp,op:X.op,pre:X.pre,prevBig:X.k==='sack'});return res({result:'Turnover on downs',next:100-c.yard,ev:evEnd(ev)})}}
     }
-    const ev=tick(c,pl.time+(pl.stop?0:runoff(c,lead)));
+    let ro=pl.stop?0:runoff(c,lead);if(ro&&c.dto>0&&(c.q===2||c.q>=4)&&c.clock<=150){c.dto--;ro=0;L('Timeout called by your defense to stop the clock.',{k:'to'})}
+    const ev=tick(c,pl.time+ro);
     if(ev.includes('tmw'))L('Two-minute warning.');if(ev.includes('q'))L('End of quarter.');
     const ee=evEnd(ev);if(ee){L(ee==='half'?'End of the half.':'Time expires.');return res({result:ee==='half'?'End of half':'Time expires',ev:ee})}
   }
@@ -1826,7 +1834,7 @@ function startMatch(o){try{dfxClose()}catch(e){}
   overlay(`<p class="kicker">${esc(o.label)}${G.playoff?', playoffs':''}</p><h2>${esc(away.city+' '+away.name)} at ${esc(home.city+' '+home.name)}</h2><p>${o.oppT.off?`Their overall: offense ${o.oppT.off}, defense ${o.oppT.def}. Yours: ${o.userT.off} and ${o.userT.def}.`:''}</p><p>${win?'You won the toss and will receive.':'They won the toss and will receive.'}</p><p class="muted">Gameplay is keyboard only. The key guide under the field changes with each situation.</p>`,[['Kick off',nextDrive]]);
   });
 }
-function updateBoard(){
+function updateBoard(){try{setTimeout(clockPill,0)}catch(_){}
   if(!G)return;const homeT=G.userHome?G.userT:G.oppT,awayT=G.userHome?G.oppT:G.userT;
   const set=(p,t,s,isUser)=>{const b=$('#n'+p);b.textContent=t.abbr;b.style.background=t.c1;b.style.color=t.c2;$('#s'+p).textContent=s;
     $('#p'+p).textContent=(G.poss==='U')===isUser&&G.poss?'\u25B8':'';$('#to'+p).innerHTML=isUser?[0,1,2].map(i=>`<i class="${i<G.timeouts?'':'off'}"></i>`).join(''):''};
@@ -1853,19 +1861,20 @@ function endPossession(who,r){
 function oppDrive(){
   if(!G.bKick&&!G.demo){G.bKick=1;booth('kickoff',{},3)}
   G.tipOpp=1;G.ents=[];G.engs=[];G.carrier=null;G.ball=null;G.phase='idle';G.meter=null;hint('');updateBoard();
-  const c={yard:G.yard,q:G.c.q,clock:G.c.clock,qLen:G.c.qLen,sO:G.so,sD:G.su},log=[];
+  const late=(G.c.q===2||G.c.q>=4)&&G.c.clock<=240&&!G.demo,dto0=late&&(G.su<=G.so||G.c.q===2)?G.timeouts:0;
+  const c={yard:G.yard,q:G.c.q,clock:G.c.clock,qLen:G.c.qLen,sO:G.so,sD:G.su,dto:dto0},log=[];
   const r=simDrive(Object.assign({},G.oppT,{off:G.oppT.off+(G.simB||0)}),G.userT,c,log),O=G.oppT;
   const spot=y=>y===50?'50':y<50?O.abbr+' '+y:G.userT.abbr+' '+(100-y);
   const line=e=>`<div><span class="t">${e.q>=5?'OT':'Q'+e.q} ${fmtClock(e.clock)}, ${ORD[e.down-1]||''}&amp;${e.dist} ${spot(e.yard)}.</span> ${esc(e.text)}</div>`;
   let i=0;
-  const finish=()=>{clearInterval(G.logT);G.logT=null;G.c.q=c.q;G.c.clock=c.clock;G.so+=r.ptsO;G.su+=r.ptsD;if(G.box){const B=G.box.o;B.yds+=r.yards||0;B.plays+=r.plays||0;B.drives++;if(r.ptsO>=6)B.td++;if(r.ptsD||/intercept|fumble|picked/i.test(r.result||''))B.to++}updateBoard();
+  const finish=()=>{clearInterval(G.logT);G.logT=null;G.c.q=c.q;G.c.clock=c.clock;if(dto0)G.timeouts=c.dto;G.so+=r.ptsO;G.su+=r.ptsD;if(G.box){const B=G.box.o;B.yds+=r.yards||0;B.plays+=r.plays||0;B.drives++;if(r.ptsO>=6)B.td++;if(r.ptsD||/intercept|fumble|picked/i.test(r.result||''))B.to++}updateBoard();
     try{boothOpp(r)}catch(e){}
     const head=r.ptsO>=6?'Touchdown, '+O.name:r.ptsO===3?'Field goal, '+O.name:r.ptsD===7?'Pick six for your defense!':r.ptsD===2?'Safety for your defense!':r.result;
     overlay(`<p class="kicker">${esc(O.city)} ${esc(O.name)} drive: ${r.plays} plays, ${r.yards} yards</p><h3>${esc(head)}</h3><div class="log">${log.map(line).join('')}</div><p class="big">${G.userT.abbr} ${G.su} - ${G.so} ${O.abbr}</p>`,[[r.ev?'Continue':'Take the field',()=>endPossession('O',r)]]);
     const lg=$('#ov .log');if(lg)lg.scrollTop=lg.scrollHeight;
   };
   if(!G.demo){const head=r.ptsO>=6?'Touchdown, '+O.name:r.ptsO===3?'Field goal, '+O.name:r.ptsD===7?'Pick six for your defense!':r.ptsD===2?'Safety for your defense!':r.result;
-    dfxStart({log,r,c0:{yard:G.yard},head,apply:()=>{G.c.q=c.q;G.c.clock=c.clock;G.so+=r.ptsO;G.su+=r.ptsD;if(G.box){const B=G.box.o;B.yds+=r.yards||0;B.plays+=r.plays||0;B.drives++;if(r.ptsO>=6)B.td++;if(r.ptsD||/intercept|fumble|picked/i.test(r.result||''))B.to++}updateBoard();try{boothOpp(r)}catch(e){}},done:()=>endPossession('O',r)});return}
+    dfxStart({log,r,c0:{yard:G.yard},cEnd:c,clk0:G.c.clock,q0:G.c.q,head,apply:()=>{G.c.q=c.q;G.c.clock=c.clock;if(dto0)G.timeouts=c.dto;G.so+=r.ptsO;G.su+=r.ptsD;if(G.box){const B=G.box.o;B.yds+=r.yards||0;B.plays+=r.plays||0;B.drives++;if(r.ptsO>=6)B.td++;if(r.ptsD||/intercept|fumble|picked/i.test(r.result||''))B.to++}updateBoard();try{boothOpp(r)}catch(e){}},done:()=>endPossession('O',r)});return}
   G.logFinish=finish;
   overlay(`<p class="kicker">${esc(O.city)} ${esc(O.name)} ball at the ${spot(G.yard)}</p><div class="log" id="dlog"></div>`,[['Skip',finish,'alt']]);
   G.logT=setInterval(()=>{if(!G)return;if(i>=log.length)return finish();const lg=$('#dlog');if(!lg)return;lg.insertAdjacentHTML('beforeend',line(log[i]));lg.scrollTop=lg.scrollHeight;$('#cc').textContent=fmtClock(log[i].clock);i++},420);
@@ -1894,7 +1903,7 @@ function spotHide(){const el=$('#spot');if(el){el.className='';clearTimeout(el._
 
 // ================= DEFENSE: tap through the other team's drive, replays for the big plays =================
 const DFX_BIG={sack:'SACK!',int:'PICKED OFF!',pick6:'PICK SIX!',fum:'FUMBLE!',safety:'SAFETY!',tod:'STOPPED!'};
-const DFX_TAG={run:['RUN','#4fd8ff'],pass:['PASS','#6cff8a'],inc:['INCOMPLETE','#9aa3c0'],sack:['SACK','#ffd23f'],int:['INTERCEPTION','#ffd23f'],fum:['FUMBLE','#ffd23f'],pen:['FLAG','#ffd23f'],fg:['FIELD GOAL','#c07bff'],punt:['PUNT','#9aa3c0'],xp:['EXTRA POINT','#c07bff'],td:['TOUCHDOWN','#ff5a47'],pick6:['PICK SIX','#ffd23f'],safety:['SAFETY','#ffd23f'],tod:['4TH DOWN STOP','#ffd23f'],info:['','#9aa3c0']};
+const DFX_TAG={run:['RUN','#4fd8ff'],pass:['PASS','#6cff8a'],inc:['INCOMPLETE','#9aa3c0'],sack:['SACK','#ffd23f'],int:['INTERCEPTION','#ffd23f'],fum:['FUMBLE','#ffd23f'],pen:['FLAG','#ffd23f'],fg:['FIELD GOAL','#c07bff'],punt:['PUNT','#9aa3c0'],xp:['EXTRA POINT','#c07bff'],td:['TOUCHDOWN','#ff5a47'],pick6:['PICK SIX','#ffd23f'],safety:['SAFETY','#ffd23f'],tod:['4TH DOWN STOP','#ffd23f'],info:['','#9aa3c0'],to:['TIMEOUT','#ff5a47']};
 const DFXKEY='gridiron_dfx_auto';let DFX=null;
 const dfxAuto=()=>{try{return localStorage.getItem(DFXKEY)==='1'}catch(e){return false}};
 function dfxStart(o){
@@ -1905,7 +1914,7 @@ function dfxStart(o){
     <div class="df-top"><span class="df-who"><b>${esc(O.abbr)}</b> BALL</span><span class="df-clk" id="dfClk"></span><span class="df-sc"><b>${esc(U.abbr)}</b> <i id="dfSu">${G.su}</i> - <i id="dfSo">${G.so}</i> <b>${esc(O.abbr)}</b></span></div>
     <canvas id="dfField" width="640" height="96"></canvas>
     <div class="df-card" id="dfCard"></div>
-    <div class="df-btns"><button class="df-b" id="dfAuto">${DFX.auto?'AUTO: ON':'AUTO: OFF'}</button><button class="df-b" id="dfSim">SIM DRIVE</button><button class="df-b df-go" id="dfNext">NEXT PLAY</button></div>
+    <div class="df-btns"><button class="df-b df-to" id="dfTO" style="display:none"></button><button class="df-b" id="dfAuto">${DFX.auto?'AUTO: ON':'AUTO: OFF'}</button><button class="df-b" id="dfSim">SIM DRIVE</button><button class="df-b df-go" id="dfNext">NEXT PLAY</button></div>
     <canvas id="dfRp" width="640" height="360" class="hidden"></canvas></div>`;
   vfit(el.firstElementChild);el.className='on';
   el.onclick=e=>{if(e.target.closest('#dfAuto')){DFX.auto=!DFX.auto;try{localStorage.setItem(DFXKEY,DFX.auto?'1':'0')}catch(_){}e.target.textContent=DFX.auto?'AUTO: ON':'AUTO: OFF';if(DFX.auto&&!DFX.busy)dfxNext();return}
@@ -1914,6 +1923,9 @@ function dfxStart(o){
   if(DFX.auto)DFX.at=setTimeout(dfxNext,900);
 }
 const dfxSpot=y=>y===50?'50':y<50?G.oppT.abbr+' '+y:G.userT.abbr+' '+(100-y);
+function dfxTO(){const b=$('#dfTO'),D=DFX;if(!b||!D)return;const late=(D.q0===2||D.q0>=4)&&D.clk0<=240&&D.cEnd&&D.cEnd.q===D.q0&&!D.r.ev,used=D.clk0-(D.cEnd?D.cEnd.clock:D.clk0),left=used-(D.refund||0)-6;
+  if(!late||G.timeouts<=0||left<10||D.ended){b.style.display='none';return}b.style.display='';b.textContent=`TIMEOUT · SAVE ~${Math.min(35,left)}s (${G.timeouts})`;
+  b.onclick=e=>{e.stopPropagation();const sv=Math.min(35,left);G.timeouts--;D.refund=(D.refund||0)+sv;updateBoard();toast(`TIMEOUT: saved ${sv}s`);try{SND.whistle()}catch(_){}dfxTO()}}
 function dfxField(){const cv=$('#dfField');if(!cv||!DFX)return;const g=cv.getContext('2d'),X=y=>592-clamp(y,0,100)*5.44,e=DFX.cur,pre=e&&e.pre;
   g.fillStyle='#000';g.fillRect(0,0,640,96);for(let i=0;i<20;i++){g.fillStyle=i%2?'#2f8a3a':'#34973f';g.fillRect(48+i*27.2,8,27.2,80)}
   g.fillStyle=G.userT.c1;g.fillRect(0,8,48,80);g.fillStyle=G.oppT.c1;g.fillRect(592,8,48,80);
@@ -1941,7 +1953,7 @@ function dfxNext(){if(!DFX||DFX.busy)return;clearTimeout(DFX.at);DFX.i++;const L
   if(e.k==='td'){try{SND.groan(.8)}catch(_){}}
   if(DFX.auto)DFX.at=setTimeout(dfxNext,e.k==='info'?600:1150)}
 function dfxSkip(){if(!DFX)return;clearTimeout(DFX.at);if(DFX.rp)DFX.rp.skip=1;DFX.i=DFX.log.length-1;DFX.busy=false;spotHide();const e=DFX.log[DFX.i];if(e)dfxCard(e);dfxEnd()}
-function dfxEnd(){const D=DFX;if(!D||D.ended)return;D.ended=1;clearTimeout(D.at);D.apply();const r=D.r,O=G.oppT;const s1=$('#dfSu'),s2=$('#dfSo');if(s1)s1.textContent=G.su;if(s2)s2.textContent=G.so;
+function dfxEnd(){const D=DFX;if(!D||D.ended)return;D.ended=1;clearTimeout(D.at);D.apply();if(D.refund){G.c.clock=Math.min(G.c.qLen,G.c.clock+D.refund);updateBoard()}const tb=$('#dfTO');if(tb)tb.style.display='none';const r=D.r,O=G.oppT;const s1=$('#dfSu'),s2=$('#dfSo');if(s1)s1.textContent=G.su;if(s2)s2.textContent=G.so;
   const bad=r.ptsO>0,good=r.ptsD>0||/Interception|Fumble|downs|Pick|Safety/.test(r.result||''),el=$('#dfCard');
   if(el){el.className='df-card end '+(bad?'bad':good?'good':'');el.innerHTML=`<div class="df-endk">${bad?esc(O.abbr)+' SCORE':good?'TAKEAWAY':'DRIVE OVER'}</div><div class="df-endh">${esc(D.head)}</div><div class="df-ends">${r.plays} PLAYS · ${r.yards} YDS</div>`}
   const nx=$('#dfNext');if(nx){nx.textContent=r.ev?'CONTINUE':'TAKE THE FIELD';nx.onclick=ev=>{ev.stopPropagation();dfxClose();D.done()}}const sm=$('#dfSim');if(sm)sm.style.visibility='hidden';
@@ -1990,7 +2002,7 @@ function dfxReplay(e,cb){const cv=$('#dfRp');if(!cv)return cb();cv.classList.rem
     requestAnimationFrame(step)};
   requestAnimationFrame(step)}
 
-function userDrive(){if(!G.bKick&&!G.demo){G.bKick=1;setTimeout(()=>booth('kickoff',{},3),300)}G.down=1;G.fd=Math.min(G.yard+10,100);G.twoPt=false;G.pending=0;preSnap();toast('Ball on the '+spotTxt(G.yard))}
+function userDrive(){G.tempo='normal';if(!G.bKick&&!G.demo){G.bKick=1;setTimeout(()=>booth('kickoff',{},3),300)}G.down=1;G.fd=Math.min(G.yard+10,100);G.twoPt=false;G.pending=0;preSnap();toast('Ball on the '+spotTxt(G.yard))}
 
 // ================= playbook =================
 function playSVG(r,col){
@@ -2030,6 +2042,7 @@ function pbItems(){
     if(fgD<=62&&(G.down===4||late))it.push({n:`Field goal ${fgD} yds, ${Math.round(fgProb(fgD,G.userT.roster.K)*100)}%`,kind:'sp',cat:'special',act:()=>doFG(fgD),tags:'special kick fg field goal',hot:true});
     if(lead>0&&G.c.q>=4&&G.c.clock<=130)it.push({n:'Kneel',kind:'sp',cat:'special',act:doKneel,tags:'special kneel',hot:true});
     if(G.pending>0&&G.timeouts>0)it.push({n:`Timeout, ${G.timeouts} left`,kind:'sp',cat:'special',act:callTimeout,tags:'special timeout'});
+    if(G.pending>0&&(crunch()||G.c.q>=4&&G.su<G.so))it.push({n:'Spike the ball (stops clock, costs a down)',kind:'sp',cat:'special',act:()=>{hideOv();setupFormation();G.phase='set';doSpike()},tags:'special spike clock',hot:true});
     it.push({n:'Sim rest of game',kind:'sp',cat:'special',act:simRest,tags:'special sim'});
   }
   const SC=sitCoach();for(const x of it){if(SC.picks.includes(x.n)){x.coach=true;x.tags+=' coach'}if(x.kind!=='sp')x.cd=(G.cool||{})[x.n]||0}
@@ -2140,13 +2153,27 @@ function assignDefense(){
   if(G.play.rpo&&!R.LB2.rush)G.play.read=R.LB2;
   for(const k of DEFK){const e=R[k];e.react=(.1+(99-Rt(e.p,'cov'))*.004)*G.covM;e.laneTried=false;e.readT=DL.includes(k)?0:e.asg.t==='man'?.55:k.startsWith('LB')?.22:.38;if(e.rush)e.readT=0}
 }
+
+// ================= CLOCK MANAGEMENT: tempo, spike, crunch time, defensive timeouts =================
+const TEMPO={normal:'NORMAL',hurry:'HURRY UP',milk:'MILK IT'};
+const crunch=()=>G&&G.c&&(G.c.q===2||G.c.q>=4)&&G.c.clock<=120;
+function tempoRun(){if(!G||!G.pending)return 0;const t=G.tempo||'normal';return t==='hurry'?Math.min(G.pending,8):t==='milk'?Math.max(G.pending,39):G.pending}
+function tempoCycle(){if(!G)return;const L=['normal','hurry','milk'];G.tempo=L[(L.indexOf(G.tempo||'normal')+1)%3];clockPill();tcKey='';toast('TEMPO: '+TEMPO[G.tempo])}
+function clockAnim(from,to){const el=$('#cc');if(!el||from<=to)return;const t0=performance.now(),D=Math.min(900,250+(from-to)*12);const f=n=>{const k=Math.min(1,(n-t0)/D),v=Math.round(from-(from-to)*k);el.textContent=fmtClock(v);el.classList.add('run');if(k<1)requestAnimationFrame(f);else{el.classList.remove('run');updateBoard()}};requestAnimationFrame(f)}
+function clockPill(){const st=$('#stage');if(!st||!G)return;let el=$('#clkp');if(!el){el=document.createElement('div');el.id='clkp';st.appendChild(el)}
+  const show=!G.demo&&G.poss==='U'&&(G.phase==='set'||G.phase==='pre')&&!G.twoPt;if(!show){el.className='';return}
+  const run=tempoRun(),cr=crunch(),q=G.c.q>=5?'OT':['1ST','2ND','3RD','4TH'][G.c.q-1],lead=G.su-G.so;
+  el.className='on'+(cr?' cr':'');el.innerHTML=`${cr?`<b>${q} ${fmtClock(G.c.clock)}</b><span>${lead>0?'UP '+lead:lead<0?'DOWN '+(-lead):'TIED'}</span><span>${G.timeouts} TO</span>`:''}${run?`<span class="run">⏱ ${run}s WILL RUN</span><span class="tp">${TEMPO[G.tempo||'normal']}</span>`:`<span class="stop">CLOCK STOPPED</span>`}`}
+function doSpike(){if(!G||G.phase!=='set'||!G.pending)return;const secs=Math.min(G.pending,7)+1,from=G.c.clock;const ev=tick(G.c,secs);G.pending=0;G.down++;clockAnim(from,G.c.clock);toast('SPIKE: CLOCK STOPPED');try{SND.whistle()}catch(_){}
+  const ee=evEnd(ev);if(ee){G.phase='idle';updateBoard();return overlay(`<h3>${ee==='half'?'End of the half':'Time expires'}</h3>`,[['Continue',()=>endPossession('U',{ev:ee,next:kickStart()})]])}
+  if(G.down>4){updateBoard();return overlay('<h3>Turnover on downs</h3>',[['Continue',()=>endPossession('U',{ev:null,next:100-G.yard})]])}updateBoard();clockPill();tcKey=''}
 function snap(){
   try{scorerHide();spotHide()}catch(e){}
   if(!G||G.phase!=='set'||G.draw)return;
-  if(G.pending>0){const ev=tick(G.c,G.pending);G.pending=0;updateBoard();
+  if(G.pending>0){const run=tempoRun(),from=G.c.clock;const ev=tick(G.c,run);G.pending=0;updateBoard();clockAnim(from,G.c.clock);
     if(ev.includes('tmw'))toast('TWO-MINUTE WARNING');if(ev.includes('q'))toast('END OF QUARTER');
     const ee=evEnd(ev);if(ee){G.phase='idle';return overlay(`<h3>${ee==='half'?'End of the half':'Time expires'}</h3><p class="big">${G.userT.abbr} ${G.su} - ${G.so} ${G.oppT.abbr}</p>`,[['Continue',()=>endPossession('U',{ev:ee,next:kickStart()})]])}}
-  if(G.play&&G.play.name&&G.cool)G.cool[G.play.name]=(G.play.kind==='run'?2:3)+1;G.phase='live';G.t=0;G.snapN=(G.snapN||0)+1;G.tokD=null;G.tokCD=0;G.whiffT=0;G.qb.hasBall=true;SPR=false;G.gaps=null;G.mv=null;G.mvCD=0;G.tackler=null;G.trail=[];G.rec=[];G.recT=0;G.recLast=-1;G.replayPending=false;
+  if(G.play&&G.play.name&&G.cool)G.cool[G.play.name]=(G.play.kind==='run'?2:3)+1;G.phase='live';G.t=0;G.snapN=(G.snapN||0)+1;try{clockPill()}catch(_){}G.tokD=null;G.tokCD=0;G.whiffT=0;G.qb.hasBall=true;SPR=false;G.gaps=null;G.mv=null;G.mvCD=0;G.tackler=null;G.trail=[];G.rec=[];G.recT=0;G.recLast=-1;G.replayPending=false;
   assignDefense();
   const R=G.R,pass=G.play.kind==='pass';
   const pair=(o,d)=>{const e={o,d,cx:(o.x+d.x)/2,cy:(o.y+d.y)/2,pass,chk:.3,dbl:null};o.eng=e;d.eng=e;G.engs.push(e);return e};
@@ -4436,7 +4463,7 @@ addEventListener('keydown',e=>{
     case'set':
       if(G.draw){if(k==='Escape'){G.draw=null;hint(G.play.name)}else if(G.draw.stage==='pick'){const r=roleFor(e.code);if(r){G.draw={stage:'draw',role:r};hint('Drag on the field with your mouse to draw the route. Release to set it.')}}return}
       if(k===' ')snap();else if(lk==='p'){setupFormation();openPlaybook()}else if(lk==='r'){G.draw={stage:'pick'};hint('Press 1 to 5 to choose which receiver gets a new route.')}
-      else if(lk==='s'&&G.drawn)saveCustom();else if(lk==='t')callTimeout();else if(lk==='a')audible();
+      else if(lk==='s'&&G.drawn)saveCustom();else if(lk==='t')callTimeout();else if(lk==='y')tempoCycle();else if(lk==='x')doSpike();else if(lk==='a')audible();
       break;
     case'live':
       if(G.play.kind==='pass'&&G.qb.hasBall){if(k===' ')scramble();if(k==='Shift')P.shift=true;const rr=roleFor(e.code);if(rr&&!e.repeat)RK[e.code]={t:performance.now(),role:rr,lob:e.shiftKey};if(lk==='x')throwAway();if(lk==='g')rpoGive()}
@@ -4454,7 +4481,7 @@ function keyGuide(){
   switch(G.phase){
     case'pre':return kb('Type','search')+kb('Tab','category')+kb('Arrows','choose')+kb('Enter','call play');
     case'set':if(G.draw)return G.draw.stage==='pick'?kb('1-5','pick receiver')+kb('Esc','cancel'):'<span>Drag on the field with the mouse</span>'+kb('Esc','cancel');
-      return kb('Space','snap')+kb('A','audible')+kb('R','draw a route')+(G.drawn?kb('S','save play'):'')+kb('P','playbook')+(G.pending>0&&G.timeouts>0?kb('T','timeout'):'');
+      return kb('Space','snap')+kb('A','audible')+kb('R','draw a route')+(G.drawn?kb('S','save play'):'')+kb('P','playbook')+(G.pending>0&&G.timeouts>0?kb('T','timeout'):'')+(G.pending>0?kb('Y','tempo')+kb('X','spike'):'');
     case'live':return G.play&&G.play.kind==='pass'&&G.qb.hasBall?kb('1-5','tap bullet, hold touch')+kb('Shift+1-5','lob')+kb('WASD','step up or slide')+kb('Space','scramble')+kb('X','throw away')+(G.play.rpo?kb('G','hand off'):''):'<span>Handoff</span>';
     case'air':return kb('Space','catch, press as he is about to catch it');
     case'run':return kb('W S','steer')+kb('A','slow down')+kb('Space','smart move')+kb('J K L H','juke, spin, hurdle, stiff arm')+'<span>Hit it when the ring turns green</span>';
@@ -4492,7 +4519,7 @@ function touchAct(a){
   if(mv[a])return tryMove(a);
   if(a.startsWith('mv:')){const [,t,d]=a.split(':');return tryMove(t,d?+d:undefined)}
   switch(a){case'snap':return snap();case'route':G.draw={stage:'pick'};return hint('Tap the receiver whose route you want to change.');case'cancel':G.draw=null;return hint('');
-    case'pb':setupFormation();alignShell();return openPlaybook();case'aud':return audible();case'to':return callTimeout();case'save':return saveCustom();case'scr':return scramble();case'away':return throwAway();case'give':return rpoGive();case'catch':return lockMeter();
+    case'pb':setupFormation();alignShell();return openPlaybook();case'aud':return audible();case'to':return callTimeout();case'tempo':return tempoCycle();case'spike':return doSpike();case'save':return saveCustom();case'scr':return scramble();case'away':return throwAway();case'give':return rpoGive();case'catch':return lockMeter();
     case'skip':if(G.cu)return endCU();if(G.phase==='intro')return finishIntro();if(G.phase==='cine')return finishCine();if(G.logT)return G.logFinish();return;case'back':return endDemo();case'booth':return boothCycle();case'fs':{const el=document.documentElement;if(document.fullscreenElement)document.exitFullscreen&&document.exitFullscreen();else el.requestFullscreen&&el.requestFullscreen().then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(_){}}).catch(()=>{});return}}
 }
 // slot layout: angle in degrees (180 = left of the main button, 90 = above it) and radius in px
@@ -4504,7 +4531,7 @@ function syncTouch(){
   const ph=G.phase,c=G.carrier,passing=ph==='live'&&G.play&&G.play.kind==='pass'&&G.qb.hasBall,stick=ph==='run';
   let btns=[],mini=[];const arc=[186,154,122,90],arc5=[196,166,136,106,76];
   if(ph==='set'){if(G.draw)btns=[{a:'cancel',l:'Cancel',i:'\u2715',pri:1}];else{const sec=[{a:'pb',l:'Plays',i:'\u2630'},{a:'aud',l:'Audible',i:'\u21C4'},{a:'route',l:'Route',i:'\u270E'}];if(G.drawn)sec.push({a:'save',l:'Save',i:'\u2193'});
-      btns=[{a:'snap',l:'SNAP',i:'\u25B6',pri:1},...sec.map((b,j)=>({...b,...SLOT(arc[j],118,60)}))];if(G.pending>0&&G.timeouts>0)mini.push(['to','Timeout '+G.timeouts])}}
+      btns=[{a:'snap',l:'SNAP',i:'\u25B6',pri:1},...sec.map((b,j)=>({...b,...SLOT(arc[j],118,60)}))];if(G.pending>0&&G.timeouts>0)mini.push(['to','Timeout '+G.timeouts]);if(G.pending>0&&!G.demo){mini.push(['tempo',TEMPO[G.tempo||'normal']]);if(crunch()||G.c.q>=4&&G.su<G.so)mini.push(['spike','Spike'])}}}
   else if(passing){btns=[{a:G.play.rpo&&G.t<G.play.rpoT?'give':'scr',l:G.play.rpo&&G.t<G.play.rpoT?'GIVE':'RUN',i:G.play.rpo&&G.t<G.play.rpoT?'\u21E2':'\u27A4',pri:1,pc:'#2a3a66',s:72}];
   }
   else if(ph==='air')btns=[{a:'catch',l:'CATCH',i:'\u270B',pri:1,pc:'#2fae4e',s:100}];
@@ -6268,7 +6295,7 @@ try{const R=JSON.parse(localStorage.getItem('gr_resume')||'null');if(R&&Date.now
 <script>
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 // update check: when the app comes back to the front, fetch the newest page and reload if it changed (never mid-game)
-const BUILD='20261101134455';
+const BUILD='20261101134957';
 (()=>{let busy=0;const chk=()=>{if(busy||location.protocol!=='https:')return;busy=1;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const BUILD='(\d+)'/);if(m&&m[1]>BUILD){const ok=()=>!(typeof G!=='undefined'&&G&&!G.demo)&&!(typeof PK!=='undefined'&&PK)&&!(typeof RV!=='undefined'&&RV);let tried='';try{tried=sessionStorage.getItem('gr_upd')||''}catch(_){}if(tried===m[1])return;if(ok()){try{sessionStorage.setItem('gr_upd',m[1])}catch(_){}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(g=>g&&g.update())}catch(_){}location.reload()}}}).catch(()=>{}).finally(()=>{busy=0})};document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});addEventListener('pageshow',chk);setTimeout(chk,4000)})();
 </script>
 </body>
