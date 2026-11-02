@@ -433,6 +433,13 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 #clkp.on{display:flex}#clkp span,#clkp b{background:rgba(5,8,20,.82);color:#fff;border:2px solid #000;padding:5px 7px 4px;font-weight:400}
 #clkp .run{color:#ffd23f}#clkp .stop{color:#6cff8a}#clkp .tp{color:#4fd8ff}
 #clkp.cr b{background:#c0261d;font-size:9px;animation:tblink 1s steps(2) infinite}
+#cc.crun{color:#6cff8a}#cc.cstop{color:#ff5a47}#cc.ccr{font-size:1.35em;animation:tblink 1s steps(2) infinite}
+#clkb{position:absolute;left:50%;top:46px;transform:translateX(-50%);z-index:6;white-space:nowrap;font-family:'Press Start 2P',monospace;font-size:10px;padding:7px 10px 6px;border:2px solid #000;background:rgba(5,8,20,.88);color:#fff;opacity:0;transition:opacity .2s;pointer-events:none}
+#clkb.on{opacity:1}#clkb.run{color:#6cff8a}#clkb.stop{color:#ff5a47}
+.tm2.tmto{font-size:10px;height:44px;padding:0 14px;border-color:#ffd23f;color:#ffd23f}.tm2.tmto.glow{background:#c0261d;color:#fff;border-color:#fff;animation:tblink 1s steps(2) infinite}
+.dcard h3{margin:0 0 4px}.dcard .dsit{font-size:17px;color:var(--muted);margin:0 0 2px}.dcard .drun{font-size:16px;color:#c98a00;margin:0 0 2px}
+.dcard-b{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin-top:8px}.dcard-b .btn{min-height:56px!important;font-size:10px!important;padding:8px 6px}.ov.center .panel:has(.dcard){max-width:640px;padding:10px 12px}
+.dcard-b .btn small{display:block;font-family:'VT323',monospace;font-size:16px;margin-top:6px;opacity:.9}.dcard-b .btn.dto{background:#c0261d;color:#fff}
 #cc.run{color:#ffd23f}
 #dfx .df-to{background:#c0261d}
 
@@ -1839,7 +1846,7 @@ function updateBoard(){try{setTimeout(clockPill,0)}catch(_){}
   const set=(p,t,s,isUser)=>{const b=$('#n'+p);b.textContent=t.abbr;b.style.background=t.c1;b.style.color=t.c2;$('#s'+p).textContent=s;
     $('#p'+p).textContent=(G.poss==='U')===isUser&&G.poss?'\u25B8':'';$('#to'+p).innerHTML=isUser?[0,1,2].map(i=>`<i class="${i<G.timeouts?'':'off'}"></i>`).join(''):''};
   set('A',awayT,G.userHome?G.so:G.su,!G.userHome);set('H',homeT,G.userHome?G.su:G.so,G.userHome);
-  const q=G.c.q;$('#qq').textContent=q>=5?'OT':['1ST','2ND','3RD','4TH'][q-1];$('#cc').textContent=fmtClock(G.c.clock)+(G.pending?' \u25B6':'');
+  const q=G.c.q;$('#qq').textContent=q>=5?'OT':['1ST','2ND','3RD','4TH'][q-1];{const cc=$('#cc');cc.textContent=fmtClock(G.c.clock)+(G.pending?' \u25B6':' \u25A0');cc.classList.toggle('crun',!!G.pending);cc.classList.toggle('cstop',!G.pending);cc.classList.toggle('ccr',crunch())}
   $('#dd').textContent=G.poss==='U'&&G.down?(G.twoPt?'2-point try':downTxt()+' \u00B7 '+spotTxt(G.yard)):'';
 }
 function nextDrive(){if(!G)return;if(G.poss==='O')oppDrive();else userDrive()}
@@ -1923,7 +1930,7 @@ function dfxStart(o){
   if(DFX.auto)DFX.at=setTimeout(dfxNext,900);
 }
 const dfxSpot=y=>y===50?'50':y<50?G.oppT.abbr+' '+y:G.userT.abbr+' '+(100-y);
-function dfxTO(){const b=$('#dfTO'),D=DFX;if(!b||!D)return;const late=(D.q0===2||D.q0>=4)&&D.clk0<=240&&D.cEnd&&D.cEnd.q===D.q0&&!D.r.ev,used=D.clk0-(D.cEnd?D.cEnd.clock:D.clk0),left=used-(D.refund||0)-6;
+function dfxTO(){{const b0=$('#dfTO');if(b0)b0.style.display='none';return}const b=$('#dfTO'),D=DFX;if(!b||!D)return;const late=(D.q0===2||D.q0>=4)&&D.clk0<=240&&D.cEnd&&D.cEnd.q===D.q0&&!D.r.ev,used=D.clk0-(D.cEnd?D.cEnd.clock:D.clk0),left=used-(D.refund||0)-6;
   if(!late||G.timeouts<=0||left<10||D.ended){b.style.display='none';return}b.style.display='';b.textContent=`TIMEOUT · SAVE ~${Math.min(35,left)}s (${G.timeouts})`;
   b.onclick=e=>{e.stopPropagation();const sv=Math.min(35,left);G.timeouts--;D.refund=(D.refund||0)+sv;updateBoard();toast(`TIMEOUT: saved ${sv}s`);try{SND.whistle()}catch(_){}dfxTO()}}
 function dfxField(){const cv=$('#dfField');if(!cv||!DFX)return;const g=cv.getContext('2d'),X=y=>592-clamp(y,0,100)*5.44,e=DFX.cur,pre=e&&e.pre;
@@ -2053,7 +2060,7 @@ function openPlaybook(){
   G.phase='pre';G.draw=null;
   if(!G.pb)G.pb={cat:'coach',q:'',sel:0};G.pb.cat='coach';
   const pb=G.pb;pb.sel=0;
-  overlay(`<div class="pbtop"><input id="pbq" placeholder="Type to search plays" autocomplete="off" spellcheck="false" aria-label="Search plays" value="${esc(pb.q)}"><div class="pbtabs" id="pbtabs" role="tablist"></div></div><p class="kicker" style="margin:4px 0">${G.twoPt?'Two-point try from the 2':downTxt()+' \u00B7 '+spotTxt(G.yard)}${G.pending?', clock running':''}.</p><p class="coach"><b>Coach:</b> ${esc(sitCoach().tip)} <button class="btn" id="pbPeek">Hold to see the defense</button></p>${objHTML()}<div class="pbgrid" id="pbgrid"></div>`,[],'pbook');
+  overlay(`<div class="pbtop"><input id="pbq" placeholder="Type to search plays" autocomplete="off" spellcheck="false" aria-label="Search plays" value="${esc(pb.q)}"><div class="pbtabs" id="pbtabs" role="tablist"></div></div><p class="kicker" style="margin:4px 0">${G.twoPt?'Two-point try from the 2':downTxt()+' \u00B7 '+spotTxt(G.yard)}${G.pending?`, <b style="color:#2fae4e">clock running \u25B6 ~${G.pending}s</b>`:', <b style="color:#c0261d">clock stopped \u25A0</b>'}.${G.pending&&G.timeouts>0&&!G.demo?` <button class="btn" style="background:#c0261d;color:#fff" onclick="callTimeout()">\u23F1 Timeout (${G.timeouts})</button>`:''}</p><p class="coach"><b>Coach:</b> ${esc(sitCoach().tip)} <button class="btn" id="pbPeek">Hold to see the defense</button></p>${objHTML()}<div class="pbgrid" id="pbgrid"></div>`,[],'pbook');
   const inp=$('#pbq');
   inp.oninput=()=>{pb.q=inp.value;pb.sel=0;renderPB()};
   inp.onkeydown=pbKey;
@@ -2083,7 +2090,7 @@ function renderPB(){
   const s=$('#pbgrid .sel');if(s)s.scrollIntoView({block:'nearest'});
 }
 function pickPB(i){const x=G.pb.items[i];if(!x)return;if(x.cd>0){toast('ON COOLDOWN');return}if(x.kind==='sp'){hideOv();x.act()}else choosePlay(x.kind,x.kind==='pass'?x.play:x.run)}
-function callTimeout(){if(G.timeouts<=0||G.pending<=0)return;G.timeouts--;G.pending=0;updateBoard();toast('TIMEOUT');if(G.phase==='pre'||!G.play){setupFormation();openPlaybook()}}
+function callTimeout(){if(G.timeouts<=0||G.pending<=0)return;G.timeouts--;G.pending=0;updateBoard();toast('TIMEOUT: CLOCK STOPPED');clockBanner('CLOCK STOPPED \u00B7 TIMEOUT',false);tcKey='';if(G.phase==='pre'||!G.play){setupFormation();ctxOpen()}}
 function preSnap(){
   if(G.hlCD>0)G.hlCD--;
   if(G.cool)for(const k in G.cool)if(G.cool[k]>0)G.cool[k]--;
@@ -2091,7 +2098,28 @@ function preSnap(){
   G.phase='pre';G.ball=null;G.carrier=null;G.result=null;G.meter=null;G.engs=[];G.mv=null;G.tk=null;G.celeb=null;G.cineDone=false;G.forceInc=false;G.drawn=false;G.play=null;
   setupFormation();alignShell();updateBoard();hint('');
   if(G.pendZone){const pz=G.pendZone;G.pendZone=null;toast((String(pz.name||'').split(' ').slice(-1)[0]+' IS ON FIRE').toUpperCase(),true);try{SND.horn()}catch(e){}}
-  openPlaybook();
+  ctxOpen();
+}
+
+// ================= CONTEXT DECISIONS (Retro Bowl style) =================
+function clockBanner(t,run){const st=$('#stage');if(!st)return;let el=$('#clkb');if(!el){el=document.createElement('div');el.id='clkb';st.appendChild(el)}el.textContent=t;el.className='on '+(run?'run':'stop');clearTimeout(clockBanner.h);clockBanner.h=setTimeout(()=>{el.className=''},2400)}
+const STOPWHY={inc:'INCOMPLETE',oob:'OUT OF BOUNDS',td:'TOUCHDOWN',int:'TURNOVER',fumlost:'TURNOVER',safety:'SAFETY',dpi:'PENALTY'};
+function ctxOpen(){
+  if(!G)return;if(G.demo||G.twoPt)return openPlaybook();
+  G.phase='pre';
+  const fgD=117-G.yard,lead=G.su-G.so,q=G.c.q,eff=Math.max(0,G.c.clock-G.pending),endHalf=(q===2||q>=4),
+    fgOk=fgD<=58,fgP=Math.round(fgProb(fgD,G.userT.roster.K)*100),fgB=[`Field goal<small>${fgD} yds · ${fgP}%</small>`,()=>{hideOv();doFG(fgD)}],
+    sit=`${downTxt()} · ${spotTxt(G.yard)} · ${q>=5?'OT':'Q'+q} ${fmtClock(G.c.clock)} · ${lead>0?'up '+lead:lead<0?'down '+(-lead):'tied'}`,
+    toB=G.pending>0&&G.timeouts>0&&!(q>=4&&lead>0)?[[`Timeout (${G.timeouts})<small>stop the clock</small>`,()=>callTimeout(),'dto']]:[];
+  let title='',btns=null;
+  if(q>=4&&lead>0&&eff<=120&&G.down<4){title='Run out the clock?';toB.length=0;btns=[[`Kneel<small>~${Math.min(eff,42)}s off the clock</small>`,()=>{hideOv();doKneel()}],['Keep playing<small>call a play</small>',()=>openPlaybook(),'alt']]}
+  else if(endHalf&&fgOk&&eff<=30&&(q===2||lead>=-3)){title=q===2?'End of the half':'Game on the line';btns=[fgB,['Keep playing<small>call a play</small>',()=>openPlaybook(),'alt']]}
+  else if(G.down===4){title='4th down';btns=[[`Punt<small>flip the field</small>`,()=>{hideOv();doPunt()}]];if(fgOk)btns.push(fgB);btns.push([`Go for it<small>${G.fd-G.yard} to go</small>`,()=>openPlaybook(),'alt'])}
+  if(!btns)return openPlaybook();
+  const run=G.pending?`<p class="drun">⏱ Clock running: about ${G.pending}s will run before the snap.</p>`:'';
+  overlay(`<div class="dcard"><h3>${title}</h3><p class="dsit">${sit}</p>${run}<div class="dcard-b" id="dcb"></div></div>`,[],'center');
+  const box=$('#dcb');for(const [l,fn,cls] of [...btns,...toB]){const b=document.createElement('button');b.className='btn '+(cls==='alt'?'':cls==='dto'?'dto':'primary');b.innerHTML=l;b.onclick=fn;box.appendChild(b)}
+  try{syncTouch()}catch(_){}
 }
 const ROLEGRP=Object.fromEntries(POS.map(p=>[p[0],p[1]]));
 function mkE(role,side,p,L){const f=FORM[role];const x=side==='D'?Math.min(119.5,L+f[0]):L+f[0];const g=ROLEGRP[role],ab=new Set(abilities(g,fullR(g,p)));if(p.abil===undefined)p.abil=abFor(p.name,g,p.ovr,'',false);if(p.xf===undefined)p.xf=xfFor(p.name,g,p.ovr,'');for(const a0 of abList(p)){ab.add(a0);if(a0==='spidey')ab.add('onehand')}return{role,side,p,ab,x,y:f[1],vx:0,vy:0,homeX:x,homeY:f[1],spd:(3.8+Rt(p,'spd')*.055)*(ab.has('burner')?1.04:1),skin:p.skin,dist:0,down:0,stun:0,face:side==='O'?1:-1,hist:[],eng:null,catchT:0,throwT:0,moveT:0,tryCD:0,z:0,rot:0,dive:0}}
@@ -2157,13 +2185,10 @@ function assignDefense(){
 // ================= CLOCK MANAGEMENT: tempo, spike, crunch time, defensive timeouts =================
 const TEMPO={normal:'NORMAL',hurry:'HURRY UP',milk:'MILK IT'};
 const crunch=()=>G&&G.c&&(G.c.q===2||G.c.q>=4)&&G.c.clock<=120;
-function tempoRun(){if(!G||!G.pending)return 0;const t=G.tempo||'normal';return t==='hurry'?Math.min(G.pending,8):t==='milk'?Math.max(G.pending,39):G.pending}
+function tempoRun(){return G&&G.pending?G.pending:0}
 function tempoCycle(){if(!G)return;const L=['normal','hurry','milk'];G.tempo=L[(L.indexOf(G.tempo||'normal')+1)%3];clockPill();tcKey='';toast('TEMPO: '+TEMPO[G.tempo])}
 function clockAnim(from,to){const el=$('#cc');if(!el||from<=to)return;const t0=performance.now(),D=Math.min(900,250+(from-to)*12);const f=n=>{const k=Math.min(1,(n-t0)/D),v=Math.round(from-(from-to)*k);el.textContent=fmtClock(v);el.classList.add('run');if(k<1)requestAnimationFrame(f);else{el.classList.remove('run');updateBoard()}};requestAnimationFrame(f)}
-function clockPill(){const st=$('#stage');if(!st||!G)return;let el=$('#clkp');if(!el){el=document.createElement('div');el.id='clkp';st.appendChild(el)}
-  const show=!G.demo&&G.poss==='U'&&(G.phase==='set'||G.phase==='pre')&&!G.twoPt;if(!show){el.className='';return}
-  const run=tempoRun(),cr=crunch(),q=G.c.q>=5?'OT':['1ST','2ND','3RD','4TH'][G.c.q-1],lead=G.su-G.so;
-  el.className='on'+(cr?' cr':'');el.innerHTML=`${cr?`<b>${q} ${fmtClock(G.c.clock)}</b><span>${lead>0?'UP '+lead:lead<0?'DOWN '+(-lead):'TIED'}</span><span>${G.timeouts} TO</span>`:''}${run?`<span class="run">⏱ ${run}s WILL RUN</span><span class="tp">${TEMPO[G.tempo||'normal']}</span>`:`<span class="stop">CLOCK STOPPED</span>`}`}
+function clockPill(){const el=$('#clkp');if(el)el.className=''}
 function doSpike(){if(!G||G.phase!=='set'||!G.pending)return;const secs=Math.min(G.pending,7)+1,from=G.c.clock;const ev=tick(G.c,secs);G.pending=0;G.down++;clockAnim(from,G.c.clock);toast('SPIKE: CLOCK STOPPED');try{SND.whistle()}catch(_){}
   const ee=evEnd(ev);if(ee){G.phase='idle';updateBoard();return overlay(`<h3>${ee==='half'?'End of the half':'Time expires'}</h3>`,[['Continue',()=>endPossession('U',{ev:ee,next:kickStart()})]])}
   if(G.down>4){updateBoard();return overlay('<h3>Turnover on downs</h3>',[['Continue',()=>endPossession('U',{ev:null,next:100-G.yard})]])}updateBoard();clockPill();tcKey=''}
@@ -2855,6 +2880,7 @@ function afterPlay(){
   if(ev.includes('tmw')){setTimeout(()=>toast('TWO-MINUTE WARNING'),300);setTimeout(()=>booth('tmw',{},2),3400)}if(ev.includes('q'))setTimeout(()=>toast('END OF QUARTER'),300);
   const ee=evEnd(ev);G.evAfter=ee;
   G.pending=stopped||ee?0:runoff(G.c,G.su-G.so);
+  if(!ee)setTimeout(()=>{if(!G)return;if(G.pending)clockBanner(`CLOCK RUNNING \u00B7 ${G.pending}s BEFORE NEXT SNAP`,true);else clockBanner('CLOCK STOPPED \u00B7 '+(ev.includes('tmw')?'TWO-MINUTE WARNING':STOPWHY[r.kind]||'STOPPED'),false)},700);
   if(r.kind==='td'){const was=G.su<=G.so;credit(100,true);G.su+=6;updateBoard();return patChoice()}
   if(r.kind==='int'){updateBoard();const nx=r.x>=110?20:clamp(Math.round(110-r.x)+Math.max(0,Math.round(gauss(8,8))),2,98);return overlay(`<h3>Intercepted</h3><p>${esc(G.oppT.name)} take over at their ${nx}.</p>`,[['Continue',()=>endPossession('U',{ev:ee,next:nx})]])}
   if(r.kind==='fumlost'){updateBoard();const nx=clamp(Math.round(110-r.x),1,99);return overlay(`<h3>Fumble lost</h3><p>${esc(G.oppT.name)} take over at their ${nx}.</p>`,[['Continue',()=>endPossession('U',{ev:ee,next:nx})]])}
@@ -4463,7 +4489,7 @@ addEventListener('keydown',e=>{
     case'set':
       if(G.draw){if(k==='Escape'){G.draw=null;hint(G.play.name)}else if(G.draw.stage==='pick'){const r=roleFor(e.code);if(r){G.draw={stage:'draw',role:r};hint('Drag on the field with your mouse to draw the route. Release to set it.')}}return}
       if(k===' ')snap();else if(lk==='p'){setupFormation();openPlaybook()}else if(lk==='r'){G.draw={stage:'pick'};hint('Press 1 to 5 to choose which receiver gets a new route.')}
-      else if(lk==='s'&&G.drawn)saveCustom();else if(lk==='t')callTimeout();else if(lk==='y')tempoCycle();else if(lk==='x')doSpike();else if(lk==='a')audible();
+      else if(lk==='s'&&G.drawn)saveCustom();else if(lk==='t')callTimeout();else if(lk==='a')audible();
       break;
     case'live':
       if(G.play.kind==='pass'&&G.qb.hasBall){if(k===' ')scramble();if(k==='Shift')P.shift=true;const rr=roleFor(e.code);if(rr&&!e.repeat)RK[e.code]={t:performance.now(),role:rr,lob:e.shiftKey};if(lk==='x')throwAway();if(lk==='g')rpoGive()}
@@ -4481,7 +4507,7 @@ function keyGuide(){
   switch(G.phase){
     case'pre':return kb('Type','search')+kb('Tab','category')+kb('Arrows','choose')+kb('Enter','call play');
     case'set':if(G.draw)return G.draw.stage==='pick'?kb('1-5','pick receiver')+kb('Esc','cancel'):'<span>Drag on the field with the mouse</span>'+kb('Esc','cancel');
-      return kb('Space','snap')+kb('A','audible')+kb('R','draw a route')+(G.drawn?kb('S','save play'):'')+kb('P','playbook')+(G.pending>0&&G.timeouts>0?kb('T','timeout'):'')+(G.pending>0?kb('Y','tempo')+kb('X','spike'):'');
+      return kb('Space','snap')+kb('A','audible')+kb('R','draw a route')+(G.drawn?kb('S','save play'):'')+kb('P','playbook')+(G.pending>0&&G.timeouts>0?kb('T','timeout'):'');
     case'live':return G.play&&G.play.kind==='pass'&&G.qb.hasBall?kb('1-5','tap bullet, hold touch')+kb('Shift+1-5','lob')+kb('WASD','step up or slide')+kb('Space','scramble')+kb('X','throw away')+(G.play.rpo?kb('G','hand off'):''):'<span>Handoff</span>';
     case'air':return kb('Space','catch, press as he is about to catch it');
     case'run':return kb('W S','steer')+kb('A','slow down')+kb('Space','smart move')+kb('J K L H','juke, spin, hurdle, stiff arm')+'<span>Hit it when the ring turns green</span>';
@@ -4531,7 +4557,7 @@ function syncTouch(){
   const ph=G.phase,c=G.carrier,passing=ph==='live'&&G.play&&G.play.kind==='pass'&&G.qb.hasBall,stick=ph==='run';
   let btns=[],mini=[];const arc=[186,154,122,90],arc5=[196,166,136,106,76];
   if(ph==='set'){if(G.draw)btns=[{a:'cancel',l:'Cancel',i:'\u2715',pri:1}];else{const sec=[{a:'pb',l:'Plays',i:'\u2630'},{a:'aud',l:'Audible',i:'\u21C4'},{a:'route',l:'Route',i:'\u270E'}];if(G.drawn)sec.push({a:'save',l:'Save',i:'\u2193'});
-      btns=[{a:'snap',l:'SNAP',i:'\u25B6',pri:1},...sec.map((b,j)=>({...b,...SLOT(arc[j],118,60)}))];if(G.pending>0&&G.timeouts>0)mini.push(['to','Timeout '+G.timeouts]);if(G.pending>0&&!G.demo){mini.push(['tempo',TEMPO[G.tempo||'normal']]);if(crunch()||G.c.q>=4&&G.su<G.so)mini.push(['spike','Spike'])}}}
+      btns=[{a:'snap',l:'SNAP',i:'\u25B6',pri:1},...sec.map((b,j)=>({...b,...SLOT(arc[j],118,60)}))];if(G.pending>0&&G.timeouts>0&&!G.demo)mini.push(['to','\u23F1 TIMEOUT ('+G.timeouts+')','tmto'+(crunch()?' glow':'')]);}}
   else if(passing){btns=[{a:G.play.rpo&&G.t<G.play.rpoT?'give':'scr',l:G.play.rpo&&G.t<G.play.rpoT?'GIVE':'RUN',i:G.play.rpo&&G.t<G.play.rpoT?'\u21E2':'\u27A4',pri:1,pc:'#2a3a66',s:72}];
   }
   else if(ph==='air')btns=[{a:'catch',l:'CATCH',i:'\u270B',pri:1,pc:'#2fae4e',s:100}];
@@ -4551,7 +4577,7 @@ function syncTouch(){
   if(key!==tcKey){tcKey=key;tc.style.setProperty('--tc',G.userT.c1);
     $('#tbtns').innerHTML=btns.map(b=>{const P=b.pri?{x:b.px??PRI.x,y:b.py??PRI.y,s:b.s||PRI.s}:b;const st=`--x:${P.x}px;--y:${P.y}px;--s:${P.s}px;${b.pc?'--pc:'+b.pc+';':''}${b.rcv!=null?'--rc:'+KEYCOL[b.rcv]+';':''}`;
       return `<button class="tb${b.pri?' pri':''}${b.pet?' pet':''}${b.mvb?' mvb':''}${b.one?' one':''}${b.rcv!=null?' rcv':''}${b.lock?' locked':''}${b.dis?' done':''}" data-act="${b.a}" style="${st}" aria-label="${b.l}">${b.rcv!=null?'<span class="tt"></span>':''}<i>${b.i}</i><b>${b.l}</b></button>`}).join('');
-    $('#tmini').innerHTML=mini.map(([a,l])=>`<button class="tm2" data-act="${a}">${l}</button>`).join('')}
+    $('#tmini').innerHTML=mini.map(([a,l,c])=>`<button class="tm2 ${c||''}" data-act="${a}">${l}</button>`).join('')}
   tc.style.visibility=G.cuPend||(G.hl&&!G.cu)?'hidden':'';{const jy=$('#joy');if(jy)jy.style.visibility=G.cu||G.cuPend?'hidden':''}  tc.classList.toggle('stick',stick);tc.classList.toggle('pocket',!!passing&&!G.demo);if(!passing&&tc._pk){tc._pk=0;J.x=J.y=0}if(passing)tc._pk=1;if(tc.classList.contains('hidden'))tc.classList.remove('hidden');
   if(ph==='run'&&!G.demo&&c){const W=G.tokD,tell=!!(W&&(W.wind>0||W.dive>0)),perf=tell&&perfWin(G.threat),m=smartPick(c),h3=(G.heat||0)>=3;
     document.querySelectorAll('#tbtns .tb.mvb').forEach(b=>{const bm=b.dataset.act.slice(3),isRec=tell&&bm===m;
