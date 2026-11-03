@@ -171,6 +171,7 @@ kbd{display:inline-block;font-family:'Press Start 2P',monospace;font-size:9px;pa
 @keyframes fl{0%{opacity:.85}100%{opacity:0}}
 .toast{z-index:4}.ov{z-index:5}
 .ov.pbook{bottom:0;max-height:100%}.ov.pbook .panel{max-width:none;padding:8px;background:color-mix(in srgb,var(--panel) 93%,transparent);max-height:70%;display:flex;flex-direction:column}
+.pbto{background:#c0261d!important;color:#fff!important;border-color:#fff!important;min-height:36px;padding:6px 12px;margin-left:8px;vertical-align:middle}
 .pbtop{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 #pbq{flex:1 1 180px;font-size:20px}
 .pbtabs{display:flex;gap:4px;flex-wrap:wrap}.pbtabs .tab{padding:7px 8px;font-size:8px}
@@ -482,6 +483,7 @@ body.touch .ov .btn{min-height:44px;font-size:10px}
 .pp-gate{border:2px dashed var(--muted);padding:6px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}.pp-gate b{font-family:'Press Start 2P',monospace;font-size:8px;color:#ffd23f}.pp-gate span{flex:1;min-width:160px;font-size:12px}.pp-gate.has{border-color:#ffd23f;border-style:solid}.pp-gate .btn{font-size:8px}
 
 /* ===== auction house ===== */
+.ahn-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px}.ahn{display:flex;align-items:center;gap:8px;background:var(--panel);border:2px solid var(--edge);padding:6px}.ahn .ahl-c{width:80px;flex:0 0 80px}.ahn-t{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}.ahn-t b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ahn-t small{font-size:10px;color:var(--muted)}.ahn-t em{font-size:9px;color:#ffd23f;font-style:normal}.ahn .btn{min-height:36px;font-size:8px;padding:6px 10px}#ahQ{font:inherit;font-size:12px;padding:7px 8px;border:2px solid var(--edge);background:#0a0f22;color:#fff;width:150px}
 .ah-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}.ah-tabs{display:flex;gap:4px}.ah-tabs button{font-family:'Press Start 2P',monospace;font-size:7px;padding:8px 9px 6px;border:2px solid var(--edge);background:var(--panel);color:var(--muted);cursor:pointer}.ah-tabs button.on{background:var(--ink);color:var(--bg)}.ah-top select{margin-left:auto}
 .ah-log{display:flex;flex-direction:column;gap:3px;margin-bottom:8px}.ah-log span{font-size:12px;border-left:4px solid #ffd23f;padding:3px 8px;background:var(--panel)}
 .ah-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
@@ -2060,10 +2062,11 @@ function openPlaybook(){
   G.phase='pre';G.draw=null;
   if(!G.pb)G.pb={cat:'coach',q:'',sel:0};G.pb.cat='coach';
   const pb=G.pb;pb.sel=0;
-  overlay(`<div class="pbtop"><input id="pbq" placeholder="Type to search plays" autocomplete="off" spellcheck="false" aria-label="Search plays" value="${esc(pb.q)}"><div class="pbtabs" id="pbtabs" role="tablist"></div></div><p class="kicker" style="margin:4px 0">${G.twoPt?'Two-point try from the 2':downTxt()+' \u00B7 '+spotTxt(G.yard)}${G.pending?', clock running':''}.</p><p class="coach"><b>Coach:</b> ${esc(sitCoach().tip)} <button class="btn" id="pbPeek">Hold to see the defense</button></p>${objHTML()}<div class="pbgrid" id="pbgrid"></div>`,[],'pbook');
+  overlay(`<div class="pbtop"><input id="pbq" placeholder="Type to search plays" autocomplete="off" spellcheck="false" aria-label="Search plays" value="${esc(pb.q)}"><div class="pbtabs" id="pbtabs" role="tablist"></div></div><p class="kicker" style="margin:4px 0">${G.twoPt?'Two-point try from the 2':downTxt()+' \u00B7 '+spotTxt(G.yard)}${G.pending?', clock running':''}.${G.pending>0&&G.timeouts>0&&!G.demo&&!G.twoPt?` <button class="btn pbto" id="pbTO">TIMEOUT (${G.timeouts})</button>`:''}</p><p class="coach"><b>Coach:</b> ${esc(sitCoach().tip)} <button class="btn" id="pbPeek">Hold to see the defense</button></p>${objHTML()}<div class="pbgrid" id="pbgrid"></div>`,[],'pbook');
   const inp=$('#pbq');
   inp.oninput=()=>{pb.q=inp.value;pb.sel=0;renderPB()};
   inp.onkeydown=pbKey;
+  {const tb=$('#pbTO');if(tb)tb.onclick=e=>{e.stopPropagation();callTimeout()}}
   const pk=$('#pbPeek');if(pk){const ov=$('#ov'),on=e=>{e.preventDefault();ov.style.opacity='0'},off=()=>{ov.style.opacity=''};pk.addEventListener('pointerdown',on);pk.addEventListener('pointerup',off);pk.addEventListener('pointerleave',off);pk.addEventListener('pointercancel',off)}
   renderPB();if(!(TOUCH||matchMedia('(pointer:coarse)').matches))setTimeout(()=>inp.focus({preventScroll:true}),0);
 }
@@ -5313,17 +5316,31 @@ function ahSell(c){const v=cardVal(c),st0=Math.round(v*.7/10)*10,bn0=Math.round(
     <label class="ahs">DURATION <select id="ahDu"><option value="10">10 minutes</option><option value="60" selected>1 hour</option><option value="240">4 hours</option></select></label><p class="muted">5% tax comes off the sale price. Unsold cards come back to you.</p></div></div>`,
     [['LIST HIM',()=>{const st=Math.max(50,+$('#ahSt').value||st0),bn=Math.max(st+50,+$('#ahBn').value||bn0),du=+$('#ahDu').value||60;if(starterSlot(c.id))return toastUT('Starters cannot be sold');
       UT.cards=UT.cards.filter(x=>x!==c);UT.ah.mine.push({id:UT.ah.nid++,c,seller:'you',start:st,buyNow:bn,bid:0,bidder:null,nb:0,end:Date.now()+du*6e4,val:cardVal(c),mineSell:1});utSave();closeModal();AHF.view='mine';renderUT();toastUT(`${c.n} listed for ${du>=60?du/60+' h':du+' min'}`)}],['Cancel',closeModal,'alt']]);$('#utm .panel').classList.add('cscr')}
+// find a specific card: the market always has a seller for any catalog card, at a premium
+const ahSame=(L,t)=>L.c.pid===t.pid&&L.c.ovr===t.ovr&&(L.c.pk||'core')===t.p;
+function ahFind(t){const A=ahInit();let L=A.list.find(x=>!x.done&&x.end>Date.now()&&ahSame(x,t));
+  if(!L){const c=cardFlair(inst(t)),v=cardVal(c)*(AH_DEM[c.pos]||1)*1.15,now=Date.now();L={id:A.nid++,c,seller:pick(AH_MGR),start:Math.max(50,Math.round(v*rnd(.55,.75)/10)*10),buyNow:Math.round(v*rnd(1.2,1.45)/50)*50,bid:0,bidder:null,nb:0,end:now+Math.round(rnd(15,45))*6e4,val:v,srch:1};A.list.push(L);utSave()}
+  ahDetail(L);renderUT()}
+function ahNeeds(){const out=[];for(const c of UT.cards.filter(x=>x.pu&&x.pid)){const have=new Set(UT.cards.filter(x=>!x.pu&&x.pid===c.pid).map(x=>x.ovr));
+    for(const g of puGates(c)){if((c.gates||{})[g.ovr]||have.has(g.ovr))continue;out.push({c,g});}}return out}
+function ahTplRow(t,why){const tc=tplCard(t),L=(UT.ah.list||[]).find(x=>!x.done&&x.end>Date.now()&&ahSame(x,t));
+  return`<div class="ahn"><div class="ahl-c">${cardHTML(tc,{sm:true})}</div><div class="ahn-t"><b>${esc(t.n)}</b><small>${esc(PROGRAMS[t.p].n)} ${t.ovr} · ${esc(t.pos)}</small>${why?`<em>${why}</em>`:''}</div><button class="btn primary" data-ahfind="${t.tid}">${L?'VIEW · '+kN(L.bid||L.start):'FIND'}</button></div>`}
 function uAuction(){ahTick(true);const A=UT.ah,now=Date.now();let L=[];
-  if(AHF.view==='browse')L=A.list.filter(x=>AHF.g==='all'||x.c.pos===AHF.g).sort((a,b)=>a.end-b.end);
+  const q=(AHF.q||'').trim().toLowerCase();
+  if(AHF.view==='browse')L=A.list.filter(x=>(AHF.g==='all'||x.c.pos===AHF.g)&&(!q||x.c.n.toLowerCase().includes(q))).sort((a,b)=>a.end-b.end);
   if(AHF.view==='bids')L=A.list.filter(x=>x.bidder==='me');
   if(AHF.view==='mine')L=A.mine.slice().sort((a,b)=>b.end-a.end);
   const item=x=>`<div role="button" tabindex="0" class="ahl${x.bidder==='me'?' top':''}${x.done||x.end<=now?' end':''}" data-ah="${x.id}"><div class="ahl-c">${cardHTML(x.c,{sm:true})}</div><b>${fmtN(x.bid||x.start)}</b><small>${x.bid?(x.bidder==='me'?'YOU LEAD':x.nb+' BIDS'):'NO BIDS'}</small><em class="ah-t" data-end="${x.end}">${ahLeft(x)}</em><i>BUY ${kN(x.buyNow)}</i></div>`;
   const sellable=UT.cards.filter(c=>!starterSlot(c.id)).sort((a,b)=>cardVal(b)-cardVal(a));
-  return`<div class="ah-top"><div class="ah-tabs">${[['browse','BROWSE'],['bids','MY BIDS'],['mine','MY LISTINGS'],['sell','SELL']].map(([k,l])=>`<button class="${AHF.view===k?'on':''}" data-ahv="${k}">${l}${k==='bids'&&A.list.some(x=>x.bidder==='me')?' ●':''}</button>`).join('')}</div>${AHF.view==='browse'?`<select id="ahG"><option value="all">ALL</option>${GROUPS.map(g=>`<option${AHF.g===g?' selected':''}>${g}</option>`).join('')}</select>`:''}</div>
+  return`<div class="ah-top"><div class="ah-tabs">${[['browse','BROWSE'],['need','POWER UP NEEDS'],['bids','MY BIDS'],['mine','MY LISTINGS'],['sell','SELL']].map(([k,l])=>`<button class="${AHF.view===k?'on':''}" data-ahv="${k}">${l}${k==='bids'&&A.list.some(x=>x.bidder==='me')?' ●':''}</button>`).join('')}</div>${AHF.view==='browse'?`<input id="ahQ" placeholder="Search a player" autocomplete="off" spellcheck="false" value="${esc(AHF.q||'')}"><select id="ahG"><option value="all">ALL</option>${GROUPS.map(g=>`<option${AHF.g===g?' selected':''}>${g}</option>`).join('')}</select>`:''}</div>
    ${A.log&&A.log.length&&AHF.view!=='sell'?`<div class="ah-log">${A.log.slice(0,3).map(x=>`<span>${esc(x.m)}</span>`).join('')}</div>`:''}
-   ${AHF.view==='sell'?`<p class="muted">Pick a bench card to list. Starters can't be sold.</p><div class="ah-g">${sellable.map(c=>`<div role="button" tabindex="0" class="ahl sell" data-sell="${c.id}"><div class="ahl-c">${cardHTML(c,{sm:true})}</div><small>WORTH ~${kN(cardVal(c))}</small></div>`).join('')||'<p class="muted">No bench cards.</p>'}</div>`
+   ${AHF.view==='need'?(()=>{const N=ahNeeds();return N.length?`<p class="muted">Cards your Power Ups need to pass their next checkpoints. Every one can be found on the market.</p><div class="ahn-g">${N.map(({c,g})=>g.ts.map(t=>ahTplRow(t,`for his Power Up at ${g.ovr}`)).join('')).join('')}</div>`:'<p class="muted">None of your Power Ups need a card right now.</p>'})()
+   :AHF.view==='browse'&&q.length>=2?(()=>{const T=buildCatalog().filter(t=>t.p!=='power'&&t.n.toLowerCase().includes(q)).sort((a,b)=>b.ovr-a.ovr).slice(0,12);return`<div class="ah-g">${L.map(item).join('')}</div>${T.length?`<h4 style="margin:10px 0 6px">FIND ON THE MARKET</h4><div class="ahn-g">${T.map(t=>ahTplRow(t,'')).join('')}</div>`:'<p class="muted">No player by that name.</p>'}`})()
+   :AHF.view==='sell'?`<p class="muted">Pick a bench card to list. Starters can't be sold.</p><div class="ah-g">${sellable.map(c=>`<div role="button" tabindex="0" class="ahl sell" data-sell="${c.id}"><div class="ahl-c">${cardHTML(c,{sm:true})}</div><small>WORTH ~${kN(cardVal(c))}</small></div>`).join('')||'<p class="muted">No bench cards.</p>'}</div>`
    :`<div class="ah-g">${L.map(item).join('')||`<p class="muted">${AHF.view==='bids'?'You are not leading any auctions.':AHF.view==='mine'?'You have nothing listed. Use SELL.':'Nothing listed at this position right now.'}</p>`}</div>`}`}
 function bAuction(){document.querySelectorAll('[data-ahv]').forEach(b=>b.onclick=()=>{AHF.view=b.dataset.ahv;renderUT()});const g=$('#ahG');if(g)g.onchange=e=>{AHF.g=e.target.value;renderUT()};
+  const qi=$('#ahQ');if(qi){qi.oninput=e=>{AHF.q=e.target.value;clearTimeout(bAuction.qt);bAuction.qt=setTimeout(()=>{const y=scrollY;renderUT();scrollTo(0,y);const n=$('#ahQ');if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length)}},350)}}
+  document.querySelectorAll('[data-ahfind]').forEach(b=>b.onclick=e=>{e.stopPropagation();const t=buildCatalog().find(x=>String(x.tid)===b.dataset.ahfind);if(t)ahFind(t)});
   document.querySelectorAll('[data-ah]').forEach(b=>{const f=e=>{e.stopPropagation();const id=+b.dataset.ah,L=UT.ah.list.concat(UT.ah.mine).find(x=>x.id===id);if(L)ahDetail(L)};b.onclick=f;b.querySelectorAll('.ucard').forEach(u=>u.onclick=f)});
   document.querySelectorAll('[data-sell]').forEach(b=>{const f=e=>{e.stopPropagation();const c=cardById(+b.dataset.sell);if(c)ahSell(c)};b.onclick=f;b.querySelectorAll('.ucard').forEach(u=>u.onclick=f)});
   clearInterval(AHI);AHI=setInterval(()=>{if(utTab!=='store'||UTSUB.store!=='auction'||$('#ut').classList.contains('hidden')){clearInterval(AHI);return}document.querySelectorAll('.ah-t').forEach(e=>{const end=+e.dataset.end,ms=end-Date.now();e.textContent=ahLeft({end});e.classList.toggle('hot',ms>0&&ms<6e4)});
@@ -5757,14 +5774,14 @@ const unlFix=c=>{if(c.unl&&typeof c.unl.need==='object')c.unl={got:0,need:unlNee
 const unlReady=c=>{unlFix(c);return!!(c.unl&&(c.unl.got||0)>=c.unl.need)};
 const unlPct=c=>{unlFix(c);return Math.min(100,Math.round((c.unl.got||0)/c.unl.need*100))};
 function unlTasksHTML(c){unlFix(c);const v=c.unl.need,pv=Math.min(v,r1(c.unl.got||0));return`<div class="ptasks"><div class="ptask${pv>=v?' done':''}"><span>${pv>=v?'\u2713 ':''}fantasy points as a starter</span><i><u style="width:${Math.round(pv/v*100)}%"></u></i><em>${pv} / ${v}</em></div></div>`}
-function unlClaim(c){if(!unlReady(c))return;const t=puTplFor(c);if(!t)return;const p=inst(t);const sl=starterSlot(c.id);chipReturn(c);UT.cards=UT.cards.filter(x=>x!==c);UT.cards.push(p);if(sl)UT.lineup[sl]=p.id;(UT.puUnl=UT.puUnl||{})[c.pid]=1;recalcChem();utSave();renderUT();
-  utModal(`<div class="detail"><div style="flex:0 0 auto">${flipHTML(p,{big:true})}</div><div><p class="kicker">Power Up unlocked</p><h2>${esc(p.n)}</h2><p>You traded in his ${esc(c.prog)} card for his Power Up. It starts at ${p.ovr}${sl?' and took his spot at '+sl:''}.</p><p class="muted">Level him with fantasy points and training. At each of his other versions' ratings you'll need that card to pass the checkpoint.</p></div></div>`,[['Nice',closeModal]]);bindFlip($('#utm'))}
+function unlClaim(c){if(!unlReady(c))return;const t=puTplFor(c);if(!t)return;const p=inst(t);const sl=p.ovr>=effOvr(c)?starterSlot(c.id):null;if(sl)chipReturn(c);delete c.unl;UT.cards.push(p);if(sl)UT.lineup[sl]=p.id;(UT.puUnl=UT.puUnl||{})[c.pid]=1;recalcChem();utSave();renderUT();
+  utModal(`<div class="detail"><div style="flex:0 0 auto">${flipHTML(p,{big:true})}</div><div><p class="kicker">Power Up unlocked</p><h2>${esc(p.n)}</h2><p>You keep his ${esc(c.prog)} card and get his Power Up too. It starts at ${p.ovr}${sl?' and took his spot at '+sl:''}.</p><p class="muted">Level him with fantasy points and training. At each of his other versions' ratings you'll need that card to pass the checkpoint.</p></div></div>`,[['Nice',closeModal]]);bindFlip($('#utm'))}
 function unlSection(c){if(c.pu)return'';const t=puTplFor(c);if(!t)return'';
   if(ownsPU(c.pid))return`<h3>His Power Up</h3><p class="muted">You already own his Power Up.</p>`;
-  if(c.unl)return`<h3>Unlocking his Power Up</h3>${unlTasksHTML(c)}${unlReady(c)?`<button class="btn primary" data-uclaim="${c.id}">Trade him in for his Power Up</button>`:`<p class="muted">${starterSlot(c.id)?'He is starting, so every game counts.':'He is on the bench. Start him so his goals count.'}</p>`}<button class="btn" data-ustop="${c.id}">Stop</button>`;
+  if(c.unl)return`<h3>Unlocking his Power Up</h3>${unlTasksHTML(c)}${unlReady(c)?`<button class="btn primary" data-uclaim="${c.id}">Claim his Power Up</button>`:`<p class="muted">${starterSlot(c.id)?'He is starting, so every game counts.':'He is on the bench. Start him so his goals count.'}</p>`}<button class="btn" data-ustop="${c.id}">Stop</button>`;
   const other=UT.cards.find(x=>x.unl&&x.pid===c.pid);if(other)return`<h3>His Power Up</h3><p class="muted">Another copy of him is already unlocking it.</p>`;
   const full=unlActive().length>=UNL_MAX;
-  return`<h3>Unlock his Power Up</h3><p>You pulled him, so you can earn his Power Up. When it's ready you trade this card in for it. Start him and score ${unlNeed(c)} fantasy points with him, usually a game or two.</p><button class="btn primary" data-ustart="${c.id}" ${full?'disabled':''}>${full?'3 unlocks already running':'Start unlocking'}</button>`}
+  return`<h3>Unlock his Power Up</h3><p>You pulled him, so you can earn his Power Up. When it's ready you claim it and keep this card too. Start him and score ${unlNeed(c)} fantasy points with him, usually a game or two.</p><button class="btn primary" data-ustart="${c.id}" ${full?'disabled':''}>${full?'3 unlocks already running':'Start unlocking'}</button>`}
 function bindUnl(root){root=root||document;const re=c=>{if(root.id==='utm')cardDetail(c.id);renderUT()};
   root.querySelectorAll('[data-ustart]').forEach(b=>b.onclick=e=>{e.stopPropagation();const c=cardById(+b.dataset.ustart);if(unlStart(c))re(c)});
   root.querySelectorAll('[data-uclaim]').forEach(b=>b.onclick=e=>{e.stopPropagation();unlClaim(cardById(+b.dataset.uclaim))});
@@ -6324,7 +6341,7 @@ try{const R=JSON.parse(localStorage.getItem('gr_resume')||'null');if(R&&Date.now
 <script>
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 // update check: when the app comes back to the front, fetch the newest page and reload if it changed (never mid-game)
-const BUILD='20261103122210';
+const BUILD='20261103154556';
 (()=>{let busy=0;const chk=()=>{if(busy||location.protocol!=='https:')return;busy=1;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const BUILD='(\d+)'/);if(m&&m[1]>BUILD){const ok=()=>!(typeof G!=='undefined'&&G&&!G.demo)&&!(typeof PK!=='undefined'&&PK)&&!(typeof RV!=='undefined'&&RV);let tried='';try{tried=sessionStorage.getItem('gr_upd')||''}catch(_){}if(tried===m[1])return;if(ok()){try{sessionStorage.setItem('gr_upd',m[1])}catch(_){}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(g=>g&&g.update())}catch(_){}location.reload()}}}).catch(()=>{}).finally(()=>{busy=0})};document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});addEventListener('pageshow',chk);setTimeout(chk,4000)})();
 </script>
 </body>
