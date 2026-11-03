@@ -1868,7 +1868,7 @@ function endPossession(who,r){
 function oppDrive(){
   if(!G.bKick&&!G.demo){G.bKick=1;booth('kickoff',{},3)}
   G.tipOpp=1;G.ents=[];G.engs=[];G.carrier=null;G.ball=null;G.phase='idle';G.meter=null;hint('');updateBoard();
-  const late=(G.c.q===2||G.c.q>=4)&&G.c.clock<=240&&!G.demo,dto0=late&&(G.su<=G.so||G.c.q===2)?G.timeouts:0;
+  const late=(G.c.q===2||G.c.q>=4)&&G.c.clock<=240&&!G.demo,dto0=late&&dfxAuto()&&(G.su<=G.so||G.c.q===2)?G.timeouts:0;
   const c={yard:G.yard,q:G.c.q,clock:G.c.clock,qLen:G.c.qLen,sO:G.so,sD:G.su,dto:dto0},log=[];
   const r=simDrive(Object.assign({},G.oppT,{off:G.oppT.off+(G.simB||0)}),G.userT,c,log),O=G.oppT;
   const spot=y=>y===50?'50':y<50?O.abbr+' '+y:G.userT.abbr+' '+(100-y);
@@ -1926,12 +1926,12 @@ function dfxStart(o){
   vfit(el.firstElementChild);el.className='on';
   el.onclick=e=>{if(e.target.closest('#dfAuto')){DFX.auto=!DFX.auto;try{localStorage.setItem(DFXKEY,DFX.auto?'1':'0')}catch(_){}e.target.textContent=DFX.auto?'AUTO: ON':'AUTO: OFF';if(DFX.auto&&!DFX.busy)dfxNext();return}
     if(e.target.closest('#dfSim'))return dfxSkip();if(DFX&&DFX.rp){DFX.rp.skip=1;return}dfxNext()};
-  dfxField();dfxCard({k:'info',text:`${O.city} ${O.name} take over at the ${dfxSpot(o.c0.yard)}.`,pre:{down:1,dist:Math.min(10,100-o.c0.yard),yard:o.c0.yard}},true);
+  dfxTO();dfxField();dfxCard({k:'info',text:`${O.city} ${O.name} take over at the ${dfxSpot(o.c0.yard)}.`,pre:{down:1,dist:Math.min(10,100-o.c0.yard),yard:o.c0.yard}},true);
   if(DFX.auto)DFX.at=setTimeout(dfxNext,900);
 }
 const dfxSpot=y=>y===50?'50':y<50?G.oppT.abbr+' '+y:G.userT.abbr+' '+(100-y);
-function dfxTO(){{const b0=$('#dfTO');if(b0)b0.style.display='none';return}const b=$('#dfTO'),D=DFX;if(!b||!D)return;const late=(D.q0===2||D.q0>=4)&&D.clk0<=240&&D.cEnd&&D.cEnd.q===D.q0&&!D.r.ev,used=D.clk0-(D.cEnd?D.cEnd.clock:D.clk0),left=used-(D.refund||0)-6;
-  if(!late||G.timeouts<=0||left<10||D.ended){b.style.display='none';return}b.style.display='';b.textContent=`TIMEOUT · SAVE ~${Math.min(35,left)}s (${G.timeouts})`;
+function dfxTO(){const b=$('#dfTO'),D=DFX;if(!b||!D)return;const exp=!!D.r.ev||D.cEnd.q!==D.q0,late=(D.q0===2||D.q0>=4)&&D.clk0<=240&&!G.demo,used=exp?D.clk0:D.clk0-D.cEnd.clock,left=used-(D.refund||0)-6;
+  if(!late||G.timeouts<=0||left<6||D.ended){b.style.display='none';return}b.style.display='';b.textContent=`TIMEOUT (${G.timeouts})`;
   b.onclick=e=>{e.stopPropagation();const sv=Math.min(35,left);G.timeouts--;D.refund=(D.refund||0)+sv;updateBoard();toast(`TIMEOUT: saved ${sv}s`);try{SND.whistle()}catch(_){}dfxTO()}}
 function dfxField(){const cv=$('#dfField');if(!cv||!DFX)return;const g=cv.getContext('2d'),X=y=>592-clamp(y,0,100)*5.44,e=DFX.cur,pre=e&&e.pre;
   g.fillStyle='#000';g.fillRect(0,0,640,96);for(let i=0;i<20;i++){g.fillStyle=i%2?'#2f8a3a':'#34973f';g.fillRect(48+i*27.2,8,27.2,80)}
@@ -1960,7 +1960,7 @@ function dfxNext(){if(!DFX||DFX.busy)return;clearTimeout(DFX.at);DFX.i++;const L
   if(e.k==='td'){try{SND.groan(.8)}catch(_){}}
   if(DFX.auto)DFX.at=setTimeout(dfxNext,e.k==='info'?600:1150)}
 function dfxSkip(){if(!DFX)return;clearTimeout(DFX.at);if(DFX.rp)DFX.rp.skip=1;DFX.i=DFX.log.length-1;DFX.busy=false;spotHide();const e=DFX.log[DFX.i];if(e)dfxCard(e);dfxEnd()}
-function dfxEnd(){const D=DFX;if(!D||D.ended)return;D.ended=1;clearTimeout(D.at);D.apply();if(D.refund){G.c.clock=Math.min(G.c.qLen,G.c.clock+D.refund);updateBoard()}const tb=$('#dfTO');if(tb)tb.style.display='none';const r=D.r,O=G.oppT;const s1=$('#dfSu'),s2=$('#dfSo');if(s1)s1.textContent=G.su;if(s2)s2.textContent=G.so;
+function dfxEnd(){const D=DFX;if(!D||D.ended)return;D.ended=1;clearTimeout(D.at);D.apply();if(D.refund){const r0=D.r;if(r0.ev){G.c.q=D.q0;G.c.clock=Math.max(1,D.refund);if(/^(End of half|Time expires)$/.test(r0.result||'')){r0.result='Clock saved';G.yard=D.cEnd.yard;D.done=()=>{G.poss='O';oppDrive()}}r0.ev=null}else G.c.clock=Math.min(D.clk0,G.c.clock+D.refund);updateBoard()}const tb=$('#dfTO');if(tb)tb.style.display='none';const r=D.r,O=G.oppT;const s1=$('#dfSu'),s2=$('#dfSo');if(s1)s1.textContent=G.su;if(s2)s2.textContent=G.so;
   const bad=r.ptsO>0,good=r.ptsD>0||/Interception|Fumble|downs|Pick|Safety/.test(r.result||''),el=$('#dfCard');
   if(el){el.className='df-card end '+(bad?'bad':good?'good':'');el.innerHTML=`<div class="df-endk">${bad?esc(O.abbr)+' SCORE':good?'TAKEAWAY':'DRIVE OVER'}</div><div class="df-endh">${esc(D.head)}</div><div class="df-ends">${r.plays} PLAYS · ${r.yards} YDS</div>`}
   const nx=$('#dfNext');if(nx){nx.textContent=r.ev?'CONTINUE':'TAKE THE FIELD';nx.onclick=ev=>{ev.stopPropagation();dfxClose();D.done()}}const sm=$('#dfSim');if(sm)sm.style.visibility='hidden';
@@ -6324,7 +6324,7 @@ try{const R=JSON.parse(localStorage.getItem('gr_resume')||'null');if(R&&Date.now
 <script>
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 // update check: when the app comes back to the front, fetch the newest page and reload if it changed (never mid-game)
-const BUILD='20261101134957';
+const BUILD='20261103122210';
 (()=>{let busy=0;const chk=()=>{if(busy||location.protocol!=='https:')return;busy=1;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const BUILD='(\d+)'/);if(m&&m[1]>BUILD){const ok=()=>!(typeof G!=='undefined'&&G&&!G.demo)&&!(typeof PK!=='undefined'&&PK)&&!(typeof RV!=='undefined'&&RV);let tried='';try{tried=sessionStorage.getItem('gr_upd')||''}catch(_){}if(tried===m[1])return;if(ok()){try{sessionStorage.setItem('gr_upd',m[1])}catch(_){}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(g=>g&&g.update())}catch(_){}location.reload()}}}).catch(()=>{}).finally(()=>{busy=0})};document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});addEventListener('pageshow',chk);setTimeout(chk,4000)})();
 </script>
 </body>
