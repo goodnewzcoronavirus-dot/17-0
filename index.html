@@ -62,6 +62,7 @@ td.n,th.n{text-align:right}.w{color:var(--turf)}.l{color:var(--accent)}
 #bug .pos{width:8px;color:#ffc93c}
 #bug .pips{display:flex;gap:2px;flex-direction:column}#bug .pips i{display:block;width:6px;height:3px;background:#ffc93c}#bug .pips i.off{background:#3a4060}
 #bug .clk{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:4px 8px;border-right:2px solid #000;color:#ffc93c}
+#bug .bto{pointer-events:auto;font-family:inherit;font-size:9px;display:none;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 9px;margin:0;border:0;border-right:2px solid #000;background:#c0261d;color:#fff;cursor:pointer;min-width:40px}#bug .bto b{font-weight:400;font-size:11px}#bug .bto.on{display:flex}#bug .bto.off{background:#2a2f45;color:#6b7190;cursor:default}
 #bug .dd{flex:1;display:flex;align-items:center;justify-content:center;padding:4px 8px;font-size:9px;color:#eef0e2;text-align:center;line-height:1.5;white-space:nowrap}
 #stage{position:relative;margin:0 auto;width:min(100%,calc((100vh - 130px) * 16 / 9));width:min(100%,calc((100dvh - 130px) * 16 / 9));min-width:300px;aspect-ratio:16/9;border:3px solid #000;background:#1d4d22;overflow:hidden}
 #cv{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none;cursor:crosshair}
@@ -1085,7 +1086,7 @@ body.touch #booth{top:calc(env(safe-area-inset-top,0px) + 50px)}
     <div id="bug">
       <div class="tm" id="tA"><span class="pos" id="pA"></span><b id="nA"></b><span class="s" id="sA">0</span><span class="pips" id="toA"></span></div>
       <div class="tm" id="tH"><span class="pos" id="pH"></span><b id="nH"></b><span class="s" id="sH">0</span><span class="pips" id="toH"></span></div>
-      <div class="clk"><span id="qq">1ST</span><span id="cc">5:00</span></div>
+      <div class="clk"><span id="qq">1ST</span><span id="cc">5:00</span></div><button id="bugTO" class="bto off" aria-label="Timeout">TO<b id="bugTOn">3</b></button>
       <div class="dd" id="dd"></div>
     </div>
     <div id="stage"><canvas id="cv" width="640" height="360"></canvas><canvas id="cine" class="hidden" width="320" height="180"></canvas><div id="crt"></div><div id="flash"></div><div id="toast" class="toast"></div><div id="ov" class="ov hidden"></div></div>
@@ -1844,6 +1845,7 @@ function startMatch(o){try{dfxClose()}catch(e){}
   });
 }
 function updateBoard(){try{setTimeout(clockPill,0)}catch(_){}
+  {const b=$('#bugTO');if(b&&G){b.className='bto'+(G.poss==='U'&&!G.demo?' on':'')+(G.pending>0&&G.timeouts>0&&(G.phase==='pre'||G.phase==='set')?'':' off');$('#bugTOn').textContent=G.timeouts;b.onclick=e=>{e.stopPropagation();e.preventDefault();if(b.classList.contains('off'))return;callTimeout();try{SND.whistle()}catch(_){}}}}
   if(!G)return;const homeT=G.userHome?G.userT:G.oppT,awayT=G.userHome?G.oppT:G.userT;
   const set=(p,t,s,isUser)=>{const b=$('#n'+p);b.textContent=t.abbr;b.style.background=t.c1;b.style.color=t.c2;$('#s'+p).textContent=s;
     $('#p'+p).textContent=(G.poss==='U')===isUser&&G.poss?'\u25B8':'';$('#to'+p).innerHTML=isUser?[0,1,2].map(i=>`<i class="${i<G.timeouts?'':'off'}"></i>`).join(''):''};
@@ -2062,11 +2064,10 @@ function openPlaybook(){
   G.phase='pre';G.draw=null;
   if(!G.pb)G.pb={cat:'coach',q:'',sel:0};G.pb.cat='coach';
   const pb=G.pb;pb.sel=0;
-  overlay(`<div class="pbtop"><input id="pbq" placeholder="Type to search plays" autocomplete="off" spellcheck="false" aria-label="Search plays" value="${esc(pb.q)}"><div class="pbtabs" id="pbtabs" role="tablist"></div></div><p class="kicker" style="margin:4px 0">${G.twoPt?'Two-point try from the 2':downTxt()+' \u00B7 '+spotTxt(G.yard)}${G.pending?', clock running':''}.${G.pending>0&&G.timeouts>0&&!G.demo&&!G.twoPt?` <button class="btn pbto" id="pbTO">TIMEOUT (${G.timeouts})</button>`:''}</p><p class="coach"><b>Coach:</b> ${esc(sitCoach().tip)} <button class="btn" id="pbPeek">Hold to see the defense</button></p>${objHTML()}<div class="pbgrid" id="pbgrid"></div>`,[],'pbook');
+  overlay(`<div class="pbtop"><input id="pbq" placeholder="Type to search plays" autocomplete="off" spellcheck="false" aria-label="Search plays" value="${esc(pb.q)}"><div class="pbtabs" id="pbtabs" role="tablist"></div></div><p class="kicker" style="margin:4px 0">${G.twoPt?'Two-point try from the 2':downTxt()+' \u00B7 '+spotTxt(G.yard)}${G.pending?', clock running':''}.</p><p class="coach"><b>Coach:</b> ${esc(sitCoach().tip)} <button class="btn" id="pbPeek">Hold to see the defense</button></p>${objHTML()}<div class="pbgrid" id="pbgrid"></div>`,[],'pbook');
   const inp=$('#pbq');
   inp.oninput=()=>{pb.q=inp.value;pb.sel=0;renderPB()};
   inp.onkeydown=pbKey;
-  {const tb=$('#pbTO');if(tb)tb.onclick=e=>{e.stopPropagation();callTimeout()}}
   const pk=$('#pbPeek');if(pk){const ov=$('#ov'),on=e=>{e.preventDefault();ov.style.opacity='0'},off=()=>{ov.style.opacity=''};pk.addEventListener('pointerdown',on);pk.addEventListener('pointerup',off);pk.addEventListener('pointerleave',off);pk.addEventListener('pointercancel',off)}
   renderPB();if(!(TOUCH||matchMedia('(pointer:coarse)').matches))setTimeout(()=>inp.focus({preventScroll:true}),0);
 }
@@ -2116,7 +2117,7 @@ function ctxOpen(){
   const fgD=117-G.yard,lead=G.su-G.so,q=G.c.q,eff=Math.max(0,G.c.clock-G.pending),endHalf=(q===2||q>=4),
     fgOk=fgD<=58,fgP=Math.round(fgProb(fgD,G.userT.roster.K)*100),fgB=[`Field goal (${fgD})<small></small>`,()=>{hideOv();doFG(fgD)}],
     sit=`${downTxt()} · ${spotTxt(G.yard)}`,
-    toB=G.pending>0&&G.timeouts>0&&!(q>=4&&lead>0)?[[`Timeout (${G.timeouts})<small></small>`,()=>callTimeout(),'dto']]:[];
+    toB=[];
   let title='',btns=null;
   if(q>=4&&lead>0&&eff<=120&&G.down<4){title='Run out the clock?';toB.length=0;btns=[[`Kneel<small>~${Math.min(eff,42)}s off the clock</small>`,()=>{hideOv();doKneel()}],['Keep playing<small>call a play</small>',()=>openPlaybook(),'alt']]}
   else if(endHalf&&fgOk&&eff<=30&&(q===2||lead>=-3)){title=q===2?'End of the half':'Game on the line';btns=[fgB,['Keep playing<small>call a play</small>',()=>openPlaybook(),'alt']]}
@@ -4563,7 +4564,7 @@ function syncTouch(){
   const ph=G.phase,c=G.carrier,passing=ph==='live'&&G.play&&G.play.kind==='pass'&&G.qb.hasBall,stick=ph==='run';
   let btns=[],mini=[];const arc=[186,154,122,90],arc5=[196,166,136,106,76];
   if(ph==='set'){if(G.draw)btns=[{a:'cancel',l:'Cancel',i:'\u2715',pri:1}];else{const sec=[{a:'pb',l:'Plays',i:'\u2630'},{a:'aud',l:'Audible',i:'\u21C4'},{a:'route',l:'Route',i:'\u270E'}];if(G.drawn)sec.push({a:'save',l:'Save',i:'\u2193'});
-      btns=[{a:'snap',l:'SNAP',i:'\u25B6',pri:1},...sec.map((b,j)=>({...b,...SLOT(arc[j],118,60)}))];if(G.pending>0&&G.timeouts>0&&!G.demo)mini.push(['to','Timeout '+G.timeouts]);}}
+      btns=[{a:'snap',l:'SNAP',i:'\u25B6',pri:1},...sec.map((b,j)=>({...b,...SLOT(arc[j],118,60)}))];}}
   else if(passing){btns=[{a:G.play.rpo&&G.t<G.play.rpoT?'give':'scr',l:G.play.rpo&&G.t<G.play.rpoT?'GIVE':'RUN',i:G.play.rpo&&G.t<G.play.rpoT?'\u21E2':'\u27A4',pri:1,pc:'#2a3a66',s:72}];
   }
   else if(ph==='air')btns=[{a:'catch',l:'CATCH',i:'\u270B',pri:1,pc:'#2fae4e',s:100}];
@@ -6341,7 +6342,7 @@ try{const R=JSON.parse(localStorage.getItem('gr_resume')||'null');if(R&&Date.now
 <script>
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 // update check: when the app comes back to the front, fetch the newest page and reload if it changed (never mid-game)
-const BUILD='20261103154556';
+const BUILD='20261103155001';
 (()=>{let busy=0;const chk=()=>{if(busy||location.protocol!=='https:')return;busy=1;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const BUILD='(\d+)'/);if(m&&m[1]>BUILD){const ok=()=>!(typeof G!=='undefined'&&G&&!G.demo)&&!(typeof PK!=='undefined'&&PK)&&!(typeof RV!=='undefined'&&RV);let tried='';try{tried=sessionStorage.getItem('gr_upd')||''}catch(_){}if(tried===m[1])return;if(ok()){try{sessionStorage.setItem('gr_upd',m[1])}catch(_){}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(g=>g&&g.update())}catch(_){}location.reload()}}}).catch(()=>{}).finally(()=>{busy=0})};document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});addEventListener('pageshow',chk);setTimeout(chk,4000)})();
 </script>
 </body>
