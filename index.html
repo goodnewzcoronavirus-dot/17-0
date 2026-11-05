@@ -1662,6 +1662,8 @@ function poseData(pose,fr){
     case'dive':P.kf=[11,21];P.ff=[10,25];P.kb=[9,21];P.fb=[8,25];P.ef=[15,7];P.hf=[17,2];P.eb=[12,7];P.hb=[14,2];break;
     case'bow':wide();P.ef=[16,8];P.hf=[19,5];P.eb=[11,10];P.hb=[13,9];break;
     case'bowr':wide();P.ef=[16,8];P.hf=[19,5];P.eb=[5,10];P.hb=[2,9];break;
+    case'bicep1':wide();P.ef=[19,11];P.hf=[17,4];P.eb=[5,14];P.hb=[8,16];break;
+    case'bicep2':wide();P.ef=[19,10];P.hf=[19,5];P.eb=[5,14];P.hb=[8,16];break;
     case'wave1':wide();P.ef=[15,7];P.hf=[17,2];P.eb=[6,14];P.hb=[6,16];break;
     case'wave2':wide();P.ef=[14,7];P.hf=[13,2];P.eb=[6,14];P.hb=[6,16];break;
     case'onehand':runLegs();P.ef=[15,6];P.hf=[16,1];P.eb=[7,14];P.hb=[6,16];P.ball=[15,0];break;
@@ -2924,7 +2926,7 @@ function startCeleb(c){
   const C={type:G.forceCeleb||ex||(own&&Math.random()<.5?own:pick(['spike','dance','backflip','leap','team','point','griddy','superman','bow','teamlift'])),t:0,c,spiked:false,ball:null,fw:0};
   if(C.type==='teamlift')C.mates=G.ents.filter(e=>e.side==='O'&&e!==c).sort((a,b)=>dist(a,c)-dist(b,c)).slice(0,4);
   if(C.type==='team')C.mates=G.ents.filter(e=>e.side==='O'&&e!==c).sort((a,b)=>dist(a,c)-dist(b,c)).slice(0,4);
-  G.celeb=C;G.zoomT=C.type==='titan'?1.9:2.3;c.vx*=.4;c.vy*=.4;if(C.type==='titan'){G.deadT=Math.max(G.deadT||0,5.6);C.rings=[]}
+  G.celeb=C;G.zoomT=C.type==='titan'?1.9:2.3;c.vx*=.4;c.vy*=.4;if(C.type==='titan'){G.deadT=Math.max(G.deadT||0,6.6);C.rings=[]}
 }
 function titanClear(){for(const e of (G&&G.ents)||[])if(e.titan||e.titanS){e.titan=0;e.titanS=0;e.scl=1}}
 function updateCeleb(dt){
@@ -2961,7 +2963,8 @@ function updateCeleb(dt){
       else if(t<3.6){c.titanS=2;const st=(t-2.6)%.5,up=st<.28;c.scl=2.35;c.z=up?Math.sin(st/.28*Math.PI)*16:0;c.tkPose=[up?'celebrate':'flex',0];
         const n=Math.floor((t-2.6)/.5);if(!up&&!C['s'+n]){C['s'+n]=1;shake(7);fxDust(c.x,c.y,22);C.rings.push({t:0,col:'#fff'});try{SND.crunch(true)}catch(_){}
           for(const d of G.ents)if(d.side==='D'&&dist(d,c)<7&&!d.launch){const dir=d.x>=c.x?1:-1;d.launch={x0:d.x,y0:d.y,x1:d.x+dir*rnd(4,8),y1:clamp(d.y+rnd(-3,3),1,52),T:.9,peak:rnd(18,34),spin:rnd(4,9)*dir,t:0};d.down=3}}}
-      else{c.titanS=2;c.scl=2.35;c.z=0;c.tkPose=[Math.floor(t*4)%2?'flex':'celebrate',Math.floor(t*6)%2];G.cheer=Math.max(G.cheer,3)}
+      else{c.titanS=2;c.scl=2.35;c.z=0;const k=Math.floor((t-3.6)*3.2);c.tkPose=[k%2?'bicep2':'bicep1',0];G.cheer=Math.max(G.cheer,3);
+        if(k!==C.pk){C.pk=k;if(k%2===0){shake(1.5);for(let i=0;i<6;i++)G.parts.push({x:c.x+.9,y:c.y,z:44,vx:rnd(-4,4),vy:rnd(-2,2),vz:rnd(20,60),life:.45,col:pick(['#fff','#ffd23f',tc]),s:2})}}}
       for(const r of C.rings)r.t+=dt;C.rings=C.rings.filter(r=>r.t<.7);break}
   }
   if(C.ball){const b=C.ball;b.vz-=520*dt;b.z+=b.vz*dt;b.x+=b.vx*dt;if(b.z<0){b.z=0;b.vz=Math.abs(b.vz)*.55;b.vx*=.7}}
@@ -4389,7 +4392,7 @@ function poseOf(e){
 function drawEnt(g,e,img,x,y,alpha){
   if(alpha)g.globalAlpha=alpha;
   const z=e.z||0,rot=e.rot||0;
-  const sc=e.scl||1;if(!z&&!rot&&sc===1)g.drawImage(img,x-AX,y-AY);else{g.save();g.translate(x,y-Math.round(z));if(sc!==1)g.scale(sc,sc);g.translate(0,-12);g.rotate(rot*(e.face>0?1:-1));g.drawImage(img,-AX,-AY+12);g.restore()}
+  const sc=e.scl||1,bx=e.titanS>=1?1.2:1;if(!z&&!rot&&sc===1)g.drawImage(img,x-AX,y-AY);else{g.save();g.translate(x,y-Math.round(z));if(sc!==1)g.scale(sc*bx,sc);g.translate(0,-12);g.rotate(rot*(e.face>0?1:-1));g.drawImage(img,-AX,-AY+12);g.restore()}
   if(alpha)g.globalAlpha=1;
 }
 const SHAPES=['circle','tri','square','diamond','star'],SHAPECH=['\u25CF','\u25B2','\u25A0','\u25C6','\u2605'];
