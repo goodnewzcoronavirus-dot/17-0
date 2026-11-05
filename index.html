@@ -1726,7 +1726,7 @@ function dunkUpd(C,c,t,dt){const tc=G.userT.c1;c.faceLock=true;if(!C.ref)C.ref={
   const k2=k1-WM;C.lines=0;
   // ---- slam
   if(!C.slam){C.slam=1;C.spiked=true;G.ts=1;G.slowT=0;G.hstop=.1;flash();shake(13);C.vig=0;G.zoomT=2.6;G.cheer=5;C.bend=1;C.bendV=0;C.netW=1;C.shattered=1;C.envFlash=1;shatter(C);
-    C.drings.push({t:0},{t:-.1},{t:-.2});if(C.ref){const R=C.ref;R.ko=1;R.kt=0;R.kx=R.x;R.wh={x:R.x,y:R.y,z:20,vz:90,vx:3};C.txt={s:'POSTERIZED!',t:t,below:1}}C.ball={x:119.98,z:DK.rimH-6,vz:-40,vx:-.4};dunkSfx('shatter');try{SND.crunch(true);SND.cheer(2.8);SND.horn()}catch(_){}
+    C.drings.push({t:0},{t:-.1},{t:-.2});if(C.ref){const R=C.ref;R.ko=1;R.kt=0;R.kx=R.x;R.wh={x:R.x,y:R.y,z:20,vz:90,vx:3}}C.ball={x:119.98,z:DK.rimH-6,vz:-40,vx:-.4};dunkSfx('shatter');try{SND.crunch(true);SND.cheer(2.8);SND.horn()}catch(_){}
     for(let i=0;i<60;i++){const a=rnd(0,6.283),v=rnd(4,16);G.parts.push({x:119.98,y:MID+.3,z:DK.rimH-2,vx:Math.cos(a)*v,vy:Math.sin(a)*v*.4,vz:rnd(-40,70),life:rnd(.35,.9),col:pick(['#fff3b0','#ffb020','#ff6a1a','#ff3b1a','#fff',tc]),s:pick([2,2,3])})}}
   if(k2<.07){const k=k2/.07;c.z=52-22*k;c.scl=1.35-.25*k;c.tkPose=['wm',22];C.camT={x:c.x,y:c.y,z:34};return}
   // ---- hang on the rim
