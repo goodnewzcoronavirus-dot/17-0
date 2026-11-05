@@ -2880,7 +2880,7 @@ function endPlay(kind,x,label){
       if(G.box)G.box.hl=(G.box.hl||0)+1;setTimeout(()=>{if(G)toast('HIGHLIGHT: '+bits.join(' · ').toUpperCase(),true)},td?2200:350)}}G.runHL=null}
   if(G.play&&!G.demo&&G.play.name){(G.recent=G.recent||[]).push({n:G.play.name,k:G.play.kind==='run'||G.play.kind==='scramble'?'run':'pass',g:gain,res:kind});if(G.recent.length>8)G.recent.shift()}
   if(kind==='td'){
-    G.cheer=3;if(!G.twoPt&&G.carrier&&G.carrier.side==='O'&&G.poss==='U'){const sc=G.carrier;setTimeout(()=>{if(G)spotlight({tag:'TOUCHDOWN',p:sc.p,team:G.userT,home:G.userHome,pos:ROLEGRP[sc.role]||sc.p.pos,chips:pxChips(sc)})},900)}if(!G.twoPt&&!G.noReplay&&!G.demo&&G.carrier&&G.carrier.p){G.deadT=.7;G.replayPending=true}else{G.deadT=G.twoPt?1.8:3.3;startCeleb(G.carrier)}
+    G.cheer=3;if(!G.twoPt&&G.carrier&&G.carrier.side==='O'&&G.poss==='U'){const sc=G.carrier;setTimeout(()=>{if(G)spotlight({tag:'TOUCHDOWN',p:sc.p,team:G.userT,home:G.userHome,pos:ROLEGRP[sc.role]||sc.p.pos,chips:pxChips(sc)})},900)}G.deadT=G.twoPt?1.8:3.6;startCeleb(G.carrier)
     flash();confetti(150,[G.userT.c1,G.userT.c2,'#fff','#ffd23f']);
   }
   toast(label||(gain>=0?'+'+gain+' YDS':gain+' YDS'),['td','int','safety','fumlost'].includes(kind));hint('');
