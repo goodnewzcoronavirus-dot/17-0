@@ -1821,10 +1821,10 @@ function ballFire(g,x,y){const t=G.anim||0;for(let i=0;i<9;i++){const a=i/9*6.28
   for(let i=0;i<3;i++){g.fillStyle='rgba(255,90,20,.7)';g.fillRect(Math.round(x-1+Math.sin(t*31+i)*2),Math.round(y-6-i*3-((t*40+i*5)%6)),1,2)}}
 // ================= FAMILY PHOTO: the offense poses, a teammate snaps it, the photo pops up =================
 function photoSlots(C){const gx=115.6,gy=C.ly,M=C.mates;return[
-  {e:C.c,x:gx-.9,y:gy,pose:'pballup',ball:1,front:1},
-  {e:M[1],x:gx-.9,y:gy-4.6,pose:'pkpoint',front:1},{e:M[2],x:gx-.9,y:gy+4.6,pose:'pkpoint',front:1},
-  {e:M[3],x:gx+1,y:gy-6.9,pose:'pdbl'},{e:M[4],x:gx+1,y:gy-2.3,pose:'pcross'},{e:M[5],x:gx+1,y:gy+2.3,pose:'pcross'},{e:M[6],x:gx+1,y:gy+6.9,pose:'pdbl'}].filter(s=>s.e)}
-function photoUpd(C,c,t,dt){const M=C.mates||[];if(C.ly==null){C.ly=clamp(c.y,12,41)}const S=photoSlots(C),ph=M[0];
+  {e:C.c,x:gx-1.2,y:gy,pose:'pballup',ball:1,front:1},
+  {e:M[1],x:gx-.5,y:gy-2,pose:'pkpoint',front:1},{e:M[2],x:gx-.5,y:gy+2,pose:'pkpoint',front:1},
+  {e:M[3],x:gx+.6,y:gy-3.3,pose:'ppin'},{e:M[4],x:gx+.6,y:gy-1.1,pose:'ppin'},{e:M[5],x:gx+.6,y:gy+1.1,pose:'ppin'},{e:M[6],x:gx+.6,y:gy+3.3,pose:'ppin'}].filter(s=>s.e)}
+function photoUpd(C,c,t,dt){const M=C.mates||[];if(C.ly==null){C.ly=clamp(c.y,9,44)}const S=photoSlots(C),ph=M[0];
   if(!C.posed){if(!C.spd){C.spd=new Map();const T=1.7;for(const s of S)C.spd.set(s.e,clamp(dist(s.e,s)/T,3.5,24));if(ph)C.spd.set(ph,clamp(dist(ph,{x:110.2,y:C.ly})/T,3.5,24))}
     let all=true;const go=(e,tx,ty,pose,face,run)=>{const d=dist(e,{x:tx,y:ty});e.faceLock=true;
       if(d>.12){const sp=C.spd.get(e)*Math.min(1,.35+d/1.2);moveTo(e,tx,ty,sp,dt);e.dist=(e.dist||0)+sp*dt;e.tkPose=[run,Math.floor(e.dist*1.5)%6];e.face=tx>=e.x?1:-1;all=false}
@@ -1848,11 +1848,12 @@ function photoMake(C,S){const PW=232,PH=150,cv=document.createElement('canvas');
   g.fillStyle='rgba(255,255,255,.85)';g.fillRect(0,79,PW,2);
   const back=S.filter(s=>!s.front),front=S.filter(s=>s.front);const sc=2;
   const put=(s,cx,base,face)=>{const img=sprite(Object.assign({},s.e,{face}),s.pose,0,!!s.ball);g.fillStyle='rgba(0,0,0,.35)';g.fillRect(cx-14,base-2,28,4);g.drawImage(img,Math.round(cx-AX*sc),Math.round(base-AY*sc),SPW*sc,SPH*sc)};
-  back.forEach((s,i)=>put(s,PW/2+(i-(back.length-1)/2)*44,108,i<back.length/2?1:-1));
-  const fo=[front.find(s=>s.e===C.c),...front.filter(s=>s.e!==C.c)].filter(Boolean),fx=[0,-52,52];
-  fo.forEach((s,i)=>put(s,PW/2+fx[i],i?146:142,fx[i]<0?1:fx[i]>0?-1:1));
-  {const L=g.createRadialGradient(PW/2,100,10,PW/2,100,150);L.addColorStop(0,'rgba(255,250,235,.28)');L.addColorStop(1,'rgba(0,0,0,.25)');g.fillStyle=L;g.fillRect(0,0,PW,PH)}
-  g.fillStyle='#ffd23f';const cx=PW/2;for(const [dx,dy,w,h] of [[-7,86,14,3],[-7,83,3,3],[-1,81,3,5],[5,83,3,3]])g.fillRect(cx+dx,dy,w,h);
+  const bx=[-66,-30,30,66];back.forEach((s,i)=>put(s,PW/2+bx[i],112,bx[i]<0?1:-1));
+  const hero=front.find(s=>s.e===C.c),fl=front.filter(s=>s.e!==C.c),fx=[-40,40];fl.forEach((s,i)=>put(s,PW/2+fx[i],144,fx[i]<0?1:-1));
+  {const L=g.createRadialGradient(PW/2,100,10,PW/2,100,150);L.addColorStop(0,'rgba(255,250,235,.18)');L.addColorStop(1,'rgba(0,0,0,.4)');g.fillStyle=L;g.fillRect(0,0,PW,PH)}
+  {const H=g.createRadialGradient(PW/2,108,4,PW/2,108,52);H.addColorStop(0,'rgba(255,215,90,.55)');H.addColorStop(1,'rgba(255,215,90,0)');g.fillStyle=H;g.fillRect(0,40,PW,PH-40)}
+  if(hero){const hs=2.5,img=sprite(Object.assign({},hero.e,{face:1}),hero.pose,0,true);g.fillStyle='rgba(0,0,0,.4)';g.fillRect(PW/2-18,146,36,4);g.drawImage(img,Math.round(PW/2-AX*hs),Math.round(148-AY*hs),SPW*hs,SPH*hs)}
+  g.fillStyle='#ffd23f';const cx=PW/2;for(const [dx,dy,w,h] of [[-8,85,16,3],[-8,81,3,4],[-1,79,3,6],[6,81,3,4]])g.fillRect(cx+dx-3,dy,w,h);g.fillStyle='#ff5a47';g.fillRect(cx-4,82,3,2);
   return cv}
 function photoDraw(ctx,C){if(!C.photo||!C.snapT)return;const k=C.t-C.snapT;
   if(k<.18){ctx.fillStyle=`rgba(255,255,255,${1-k/.18})`;ctx.fillRect(0,0,W,H)}
@@ -1952,6 +1953,7 @@ function poseData(pose,fr){
     case'putt':wide();P.dy=1;P.ef=[13,15];P.hf=[13,19];P.eb=[11,15];P.hb=[12,19];break;
     case'kneel':P.dy=3;P.kf=[14,20];P.ff=[16,25];P.kb=[9,24];P.fb=[5,25];P.ef=[13,15];P.hf=[14,18];P.eb=[8,15];P.hb=[9,18];break;
     case'kneelt':P.dy=3;P.kf=[14,20];P.ff=[16,25];P.kb=[9,24];P.fb=[5,25];P.ef=[16,15];P.hf=[19,17];P.eb=[8,15];P.hb=[9,18];break;
+    case'ppin':wide();P.ef=[15,12];P.hf=[19,15];P.eb=[6,13];P.hb=[9,9];break;
     case'pcross':P.ff=[15,25];P.fb=[5,25];P.kf=[13,21];P.kb=[7,21];P.ef=[14,14];P.hf=[7,13];P.eb=[6,14];P.hb=[13,12];break;
     case'pballup':wide();P.ef=[15,8];P.hf=[16,3];P.ball=[16,1];P.eb=[4,12];P.hb=[2,9];break;
     case'pkpoint':P.dy=3;P.kf=[14,20];P.ff=[16,25];P.kb=[9,24];P.fb=[5,25];P.ef=[15,11];P.hf=[18,7];P.eb=[8,15];P.hb=[9,18];break;
@@ -6813,7 +6815,7 @@ try{const R=JSON.parse(localStorage.getItem('gr_resume')||'null');if(R&&Date.now
 <script>
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 // update check: when the app comes back to the front, fetch the newest page and reload if it changed (never mid-game)
-const BUILD='20261106104848';
+const BUILD='20261106124801';
 (()=>{let busy=0;const chk=()=>{if(busy||location.protocol!=='https:')return;busy=1;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const BUILD='(\d+)'/);if(m&&m[1]>BUILD){const ok=()=>!(typeof G!=='undefined'&&G&&!G.demo)&&!(typeof PK!=='undefined'&&PK)&&!(typeof RV!=='undefined'&&RV);let tried='';try{tried=sessionStorage.getItem('gr_upd')||''}catch(_){}if(tried===m[1])return;if(ok()){try{sessionStorage.setItem('gr_upd',m[1])}catch(_){}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(g=>g&&g.update())}catch(_){}location.reload()}}}).catch(()=>{}).finally(()=>{busy=0})};document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});addEventListener('pageshow',chk);setTimeout(chk,4000)})();
 </script>
 </body>
