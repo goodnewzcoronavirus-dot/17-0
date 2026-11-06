@@ -1821,20 +1821,24 @@ function ballFire(g,x,y){const t=G.anim||0;for(let i=0;i<9;i++){const a=i/9*6.28
   for(let i=0;i<3;i++){g.fillStyle='rgba(255,90,20,.7)';g.fillRect(Math.round(x-1+Math.sin(t*31+i)*2),Math.round(y-6-i*3-((t*40+i*5)%6)),1,2)}}
 // ================= FAMILY PHOTO: the offense poses, a teammate snaps it, the photo pops up =================
 function photoSlots(C){const gx=115.6,gy=C.ly,M=C.mates;return[
-  {e:C.c,x:gx-.8,y:gy,pose:'kneel',ball:1},
-  {e:M[1],x:gx-.8,y:gy-4.6,pose:'kneel'},{e:M[2],x:gx-.8,y:gy+4.6,pose:'kneel'},
-  {e:M[3],x:gx+1,y:gy-6.9,pose:'flex'},{e:M[4],x:gx+1,y:gy-2.3,pose:'point'},{e:M[5],x:gx+1,y:gy+2.3,pose:'salute'},{e:M[6],x:gx+1,y:gy+6.9,pose:'flex'}].filter(s=>s.e)}
+  {e:C.c,x:gx-.9,y:gy,pose:'pballup',ball:1,front:1},
+  {e:M[1],x:gx-.9,y:gy-4.6,pose:'pkpoint',front:1},{e:M[2],x:gx-.9,y:gy+4.6,pose:'pkpoint',front:1},
+  {e:M[3],x:gx+1,y:gy-6.9,pose:'pdbl'},{e:M[4],x:gx+1,y:gy-2.3,pose:'pcross'},{e:M[5],x:gx+1,y:gy+2.3,pose:'pcross'},{e:M[6],x:gx+1,y:gy+6.9,pose:'pdbl'}].filter(s=>s.e)}
 function photoUpd(C,c,t,dt){const M=C.mates||[];if(C.ly==null){C.ly=clamp(c.y,12,41)}const S=photoSlots(C),ph=M[0];
-  if(!C.posed){let all=true;for(const s of S){if(!walk(s.e,s.x,s.y,s.e===c?7:(s.e.spd||7),dt,s.e===c?'carry':'run'))all=false;s.e.faceLock=true}
-    if(ph){if(!walk(ph,C.ly!=null?110.2:ph.x,C.ly,ph.spd||7,dt,'run'))all=false;ph.faceLock=true}
-    if(all||t>2.6){C.posed=t;for(const s of S){s.e.x=s.x;s.e.y=s.y}if(ph){ph.x=110.2;ph.y=C.ly}}c.face=1;return}
+  if(!C.posed){if(!C.spd){C.spd=new Map();const T=1.7;for(const s of S)C.spd.set(s.e,clamp(dist(s.e,s)/T,3.5,24));if(ph)C.spd.set(ph,clamp(dist(ph,{x:110.2,y:C.ly})/T,3.5,24))}
+    let all=true;const go=(e,tx,ty,pose,face,run)=>{const d=dist(e,{x:tx,y:ty});e.faceLock=true;
+      if(d>.12){const sp=C.spd.get(e)*Math.min(1,.35+d/1.2);moveTo(e,tx,ty,sp,dt);e.dist=(e.dist||0)+sp*dt;e.tkPose=[run,Math.floor(e.dist*1.5)%6];e.face=tx>=e.x?1:-1;all=false}
+      else{e.x=tx;e.y=ty;e.vx=e.vy=0;e.face=face;e.tkPose=[pose,0]}};
+    for(const s of S)go(s.e,s.x,s.y,s.pose,-1,s.e===c?'carry':'run');
+    if(ph)go(ph,110.2,C.ly,'catch',1,'run');
+    if(all||t>3.4){C.posed=t;G.deadT=Math.max(G.deadT||0,2.4+3.4);for(const s of S){s.e.x=s.x;s.e.y=s.y}if(ph){ph.x=110.2;ph.y=C.ly}}return}
   const k=t-C.posed;
   for(const s of S){s.e.faceLock=true;s.e.face=-1;s.e.vx=s.e.vy=0;
     if(!C.snapT||k<C.snapT-C.posed+.5)s.e.tkPose=[s.pose,0];else{const b=k-(C.snapT-C.posed)-.5;s.e.tkPose=['celebrate',Math.floor(b*6+s.x)%2];s.e.z=Math.abs(Math.sin(b*8+s.y))*7}}
   c.face=-1;
   if(ph){ph.faceLock=true;ph.face=1;ph.vx=ph.vy=0;ph.tkPose=['catch',0]}
   C.count=k<.4?0:k<2.2?3-Math.floor((k-.4)/.6):0;G.zoomT=2.1;C.cam={x:113.4,y:C.ly,z:0};
-  if(!C.snapT&&k>=2.2){C.snapT=t;flash();try{SND.flip&&SND.flip();SND.cheer(1.6)}catch(_){}G.cheer=5;C.photo=photoMake(C,S)}}
+  if(!C.snapT&&k>=2.2){C.snapT=t;G.deadT=Math.max(G.deadT||0,3.4);flash();try{SND.flip&&SND.flip();SND.cheer(1.6)}catch(_){}G.cheer=5;C.photo=photoMake(C,S)}}
 function photoMake(C,S){const PW=232,PH=150,cv=document.createElement('canvas');cv.width=PW;cv.height=PH;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;
   const U=G.userT,O=G.oppT,hh=(a,b)=>{const x=Math.sin(a*127.1+b*311.7)*43758.5453;return x-Math.floor(x)};
   g.fillStyle='#0a0e1f';g.fillRect(0,0,PW,PH);
@@ -1842,13 +1846,13 @@ function photoMake(C,S){const PW=232,PH=150,cv=document.createElement('canvas');
   g.fillStyle='#0b0f20';g.fillRect(0,68,PW,10);for(let x=0;x<PW;x+=58){g.fillStyle=U.c1;g.fillRect(x+2,70,54,6);g.fillStyle=U.c2;g.fillRect(x+24,72,10,2)}
   g.fillStyle=O.c1;g.fillRect(0,78,PW,PH-78);g.fillStyle=shade(O.c1,-.16);for(let x=-80;x<PW;x+=12)for(let y=78;y<PH;y++)g.fillRect(Math.round(x+(y-78)*.5),y,5,1);
   g.fillStyle='rgba(255,255,255,.85)';g.fillRect(0,79,PW,2);
-  const back=S.filter(s=>s.pose!=='kneel'),front=S.filter(s=>s.pose==='kneel');const sc=2;
+  const back=S.filter(s=>!s.front),front=S.filter(s=>s.front);const sc=2;
   const put=(s,cx,base,face)=>{const img=sprite(Object.assign({},s.e,{face}),s.pose,0,!!s.ball);g.fillStyle='rgba(0,0,0,.35)';g.fillRect(cx-14,base-2,28,4);g.drawImage(img,Math.round(cx-AX*sc),Math.round(base-AY*sc),SPW*sc,SPH*sc)};
   back.forEach((s,i)=>put(s,PW/2+(i-(back.length-1)/2)*44,108,i<back.length/2?1:-1));
   const fo=[front.find(s=>s.e===C.c),...front.filter(s=>s.e!==C.c)].filter(Boolean),fx=[0,-52,52];
-  fo.forEach((s,i)=>put(s,PW/2+fx[i],146,fx[i]<0?1:fx[i]>0?-1:1));
+  fo.forEach((s,i)=>put(s,PW/2+fx[i],i?146:142,fx[i]<0?1:fx[i]>0?-1:1));
   {const L=g.createRadialGradient(PW/2,100,10,PW/2,100,150);L.addColorStop(0,'rgba(255,250,235,.28)');L.addColorStop(1,'rgba(0,0,0,.25)');g.fillStyle=L;g.fillRect(0,0,PW,PH)}
-  g.fillStyle='#ffd23f';const cx=PW/2;for(const [dx,dy,w,h] of [[-7,82,14,3],[-7,79,3,3],[-1,77,3,5],[5,79,3,3]])g.fillRect(cx+dx,dy,w,h);
+  g.fillStyle='#ffd23f';const cx=PW/2;for(const [dx,dy,w,h] of [[-7,86,14,3],[-7,83,3,3],[-1,81,3,5],[5,83,3,3]])g.fillRect(cx+dx,dy,w,h);
   return cv}
 function photoDraw(ctx,C){if(!C.photo||!C.snapT)return;const k=C.t-C.snapT;
   if(k<.18){ctx.fillStyle=`rgba(255,255,255,${1-k/.18})`;ctx.fillRect(0,0,W,H)}
@@ -1948,6 +1952,10 @@ function poseData(pose,fr){
     case'putt':wide();P.dy=1;P.ef=[13,15];P.hf=[13,19];P.eb=[11,15];P.hb=[12,19];break;
     case'kneel':P.dy=3;P.kf=[14,20];P.ff=[16,25];P.kb=[9,24];P.fb=[5,25];P.ef=[13,15];P.hf=[14,18];P.eb=[8,15];P.hb=[9,18];break;
     case'kneelt':P.dy=3;P.kf=[14,20];P.ff=[16,25];P.kb=[9,24];P.fb=[5,25];P.ef=[16,15];P.hf=[19,17];P.eb=[8,15];P.hb=[9,18];break;
+    case'pcross':P.ff=[15,25];P.fb=[5,25];P.kf=[13,21];P.kb=[7,21];P.ef=[14,14];P.hf=[7,13];P.eb=[6,14];P.hb=[13,12];break;
+    case'pballup':wide();P.ef=[15,8];P.hf=[16,3];P.ball=[16,1];P.eb=[4,12];P.hb=[2,9];break;
+    case'pkpoint':P.dy=3;P.kf=[14,20];P.ff=[16,25];P.kb=[9,24];P.fb=[5,25];P.ef=[15,11];P.hf=[18,7];P.eb=[8,15];P.hb=[9,18];break;
+    case'pdbl':wide();P.ef=[16,9];P.hf=[16,4];P.eb=[4,9];P.hb=[4,4];break;
     case'salute':wide();P.ef=[16,8];P.hf=[14,4];P.eb=[7,14];P.hb=[7,17];break;
     case'cover':wide();P.ef=[15,8];P.hf=[15,5];P.eb=[12,8];P.hb=[14,5];break;
     case'sign':wide();P.ef=[14,13];P.hf=[16,12];P.eb=[9,13];P.hb=[12,12];P.ball=[11,10];break;
@@ -6805,7 +6813,7 @@ try{const R=JSON.parse(localStorage.getItem('gr_resume')||'null');if(R&&Date.now
 <script>
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 // update check: when the app comes back to the front, fetch the newest page and reload if it changed (never mid-game)
-const BUILD='20261106103704';
+const BUILD='20261106104848';
 (()=>{let busy=0;const chk=()=>{if(busy||location.protocol!=='https:')return;busy=1;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const BUILD='(\d+)'/);if(m&&m[1]>BUILD){const ok=()=>!(typeof G!=='undefined'&&G&&!G.demo)&&!(typeof PK!=='undefined'&&PK)&&!(typeof RV!=='undefined'&&RV);let tried='';try{tried=sessionStorage.getItem('gr_upd')||''}catch(_){}if(tried===m[1])return;if(ok()){try{sessionStorage.setItem('gr_upd',m[1])}catch(_){}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(g=>g&&g.update())}catch(_){}location.reload()}}}).catch(()=>{}).finally(()=>{busy=0})};document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});addEventListener('pageshow',chk);setTimeout(chk,4000)})();
 </script>
 </body>
