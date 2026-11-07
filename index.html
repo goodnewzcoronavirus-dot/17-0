@@ -6375,7 +6375,7 @@ function ac(){if(AC)return AC;try{const C=window.AudioContext||window.webkitAudi
   const len=AC.sampleRate*2,nb=AC.createBuffer(1,len,AC.sampleRate),d=nb.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;NOISE=nb;
   if(G&&!G.demo&&!$('#game').classList.contains('hidden'))SND.crowdOn()}catch(e){AC=null}return AC}
 const CRB={buf:new Map(),loading:false};
-async function crowdLoad(){if(CRB.loading)return;CRB.loading=true;try{const [j,bin]=await Promise.all([fetch('vo/crowd.json').then(r=>r.json()),fetch('vo/crowd.mp3').then(r=>r.arrayBuffer())]);const c=ac();if(!c)return;
+async function crowdLoad(){if(CRB.loading)return;CRB.loading=true;try{const [j,bin]=await Promise.all([fetch('vo/crowd.json?v=20261107').then(r=>r.json()),fetch('vo/crowd.mp3?v=20261107').then(r=>r.arrayBuffer())]);const c=ac();if(!c)return;
   for(const k in j){const [o,l]=j[k];try{CRB.buf.set(k,await c.decodeAudioData(bin.slice(o,o+l)))}catch(e){}}SND.crowdSmp()}catch(e){}}
 const audWake=()=>{const c=ac();if(c&&c.state==='suspended')c.resume();if(c&&!VO.bank&&!VO.loading)voLoad();if(c&&!CRB.loading)crowdLoad()};
 addEventListener('pointerdown',audWake,{capture:true,passive:true});addEventListener('keydown',audWake,{capture:true});
@@ -6443,8 +6443,8 @@ const BUSED=[];
 const VO={bank:null,buf:new Map(),names:new Map(),q:[],cur:null,endT:0,prio:-1,status:'not loaded',ids:[],recent:[],pl:{said:{}},kq:[],kqSet:new Set(),kkStatus:'off'};
 const bLast=p=>{if(!p||!p.name)return'';const w=p.name.trim().split(/\s+/).filter(x=>!/^(jr|sr|ii|iii|iv|v)\.?$/i.test(x));return(w.slice(-1)[0]||'').replace(/[^A-Za-z'\-]/g,'')};
 async function voLoad(){if(VO.bank||VO.loading)return;VO.loading=1;VO.status='loading';
-  VO.nbP=(async()=>{try{const nj=await (await fetch('vo/names.json')).json(),nb=await (await fetch('vo/names.mp3')).arrayBuffer();VO.nb={j:nj.n||{},bin:nb}}catch(e){VO.nb=null}})();
-  try{const j=await (await fetch('vo/bank.json')).json(),bin=await (await fetch('vo/bank.mp3')).arrayBuffer();VO.bank=j;VO.ids=Object.keys(j.clips);VO.status='decoding';
+  VO.nbP=(async()=>{try{const nj=await (await fetch('vo/names.json?v=20261107')).json(),nb=await (await fetch('vo/names.mp3?v=20261107')).arrayBuffer();VO.nb={j:nj.n||{},bin:nb}}catch(e){VO.nb=null}})();
+  try{const j=await (await fetch('vo/bank.json?v=20261107')).json(),bin=await (await fetch('vo/bank.mp3?v=20261107')).arrayBuffer();VO.bank=j;VO.ids=Object.keys(j.clips);VO.status='decoding';
     const c=ac();let n=0;const pri=id=>/^(in_|inh_|ina_|cad_|mp_snap|dd_1|sp_own2)/.test(id)?0:1;for(const id of VO.ids.slice().sort((a,b)=>pri(a)-pri(b))){const [o,l,,,en]=j.clips[id];try{const ab=await c.decodeAudioData(bin.slice(o,o+l));ab._end=en||'';VO.buf.set(id,ab)}catch(e){}if(++n%40===0)await new Promise(r=>setTimeout(r,0))}
     VO.status='ready'}catch(e){VO.status='unavailable ('+(e&&e.message||e)+')'}
   await VO.nbP;if(!VO.nb)kkStart()}
@@ -6826,9 +6826,19 @@ try{const R=JSON.parse(localStorage.getItem('gr_resume')||'null');if(R&&Date.now
 </script>
 <script>
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-// update check: when the app comes back to the front, fetch the newest page and reload if it changed (never mid-game)
-const BUILD='20261107122500';
-(()=>{let busy=0;const chk=()=>{if(busy||location.protocol!=='https:')return;busy=1;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const BUILD='(\d+)'/);if(m&&m[1]>BUILD){const ok=()=>!(typeof G!=='undefined'&&G&&!G.demo)&&!(typeof PK!=='undefined'&&PK)&&!(typeof RV!=='undefined'&&RV);let tried='';try{tried=sessionStorage.getItem('gr_upd')||''}catch(_){}if(tried===m[1])return;if(ok()){try{sessionStorage.setItem('gr_upd',m[1])}catch(_){}try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(g=>g&&g.update())}catch(_){}location.reload()}}}).catch(()=>{}).finally(()=>{busy=0})};document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});addEventListener('pageshow',chk);setTimeout(chk,4000)})();
+// update check: when a newer build is on the server, show a banner; tapping it wipes the cache and loads the new version
+const BUILD='20261107123000';
+(()=>{let busy=0,shown=0;
+const doUpdate=async btn=>{if(btn){btn.disabled=true;btn.textContent='Updating...'}
+ try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}}catch(_){}
+ try{if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch(_){}
+ location.replace(location.pathname+'?u='+Date.now())};
+const banner=()=>{if(shown)return;shown=1;const d=document.createElement('div');d.id='updBar';
+ d.style.cssText='position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:99999;display:flex;gap:10px;align-items:center;padding:10px 12px;background:var(--panel,#111);color:var(--ink,#fff);border:3px solid var(--edge,#fff);box-shadow:3px 3px 0 var(--shadow,#000);font-size:10px;max-width:calc(100vw - 32px)';
+ d.innerHTML='<span>Good news! Update available.</span><button class="btn primary" id="updGo">Update</button><button class="btn" id="updX">Later</button>';
+ document.body.appendChild(d);d.querySelector('#updGo').onclick=e=>doUpdate(e.currentTarget);d.querySelector('#updX').onclick=()=>{d.remove();shown=0}};
+const chk=()=>{if(busy||shown||location.protocol!=='https:')return;busy=1;fetch('index.html?v='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const BUILD='(\d+)'/);if(m&&m[1]>BUILD)banner()}).catch(()=>{}).finally(()=>{busy=0})};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});addEventListener('pageshow',chk);addEventListener('focus',chk);setTimeout(chk,3000);setInterval(chk,90000)})();
 </script>
 </body>
 </html>
