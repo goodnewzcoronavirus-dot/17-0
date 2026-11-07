@@ -4332,7 +4332,7 @@ const aImg=(e,pose,fr,ball,face)=>sprite({side:e.side,skin:e.skin,face:face??e.f
 const aCur=e=>{const [p,f]=e.fxPose?[e.fxPose,e.fxFr||0]:poseOf(e);return aImg(e,p,f,e===G.carrier||(e===G.qb&&e.hasBall))};
 const aSX=e=>sxW(e.x),aSY=e=>syW(e.y);
 const aTeam=e=>e&&e.side==='D'?G.oppT:G.userT;
-function abFX(type,A,D,o={}){const def=AFX[type];if(!G||!A||!def)return false;if(type==='toetap'&&A.y>3.5&&A.y<49.8)return false;try{if(A.side!=='D')boothAB(type)}catch(e){}
+function abFX(type,A,D,o={}){const def=AFX[type];if(!G||!A||!def)return false;if(type==='toetap'&&A.y>3.5&&A.y<49.8)return false;try{if(A.side!=='D')boothAB(type,A)}catch(e){}
   const f={k:type,A,D:D||null,R:o.R||null,t:0,dur:def.dur,xf:type.startsWith('x_'),d:{},fl:[],touched:new Set()};
   f.own=e=>{if(e){e.fx=1;f.touched.add(e)}return e};
   try{def.init&&def.init(f)}catch(err){console.error(err)}
@@ -6375,7 +6375,7 @@ function ac(){if(AC)return AC;try{const C=window.AudioContext||window.webkitAudi
   const len=AC.sampleRate*2,nb=AC.createBuffer(1,len,AC.sampleRate),d=nb.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;NOISE=nb;
   if(G&&!G.demo&&!$('#game').classList.contains('hidden'))SND.crowdOn()}catch(e){AC=null}return AC}
 const CRB={buf:new Map(),loading:false};
-async function crowdLoad(){if(CRB.loading)return;CRB.loading=true;try{const [j,bin]=await Promise.all([fetch('vo/crowd.json?v=20261107').then(r=>r.json()),fetch('vo/crowd.mp3?v=20261107').then(r=>r.arrayBuffer())]);const c=ac();if(!c)return;
+async function crowdLoad(){if(CRB.loading)return;CRB.loading=true;try{const [j,bin]=await Promise.all([fetch('vo/crowd.json?v=20261107n').then(r=>r.json()),fetch('vo/crowd.mp3?v=20261107n').then(r=>r.arrayBuffer())]);const c=ac();if(!c)return;
   for(const k in j){const [o,l]=j[k];try{CRB.buf.set(k,await c.decodeAudioData(bin.slice(o,o+l)))}catch(e){}}SND.crowdSmp()}catch(e){}}
 const audWake=()=>{const c=ac();if(c&&c.state==='suspended')c.resume();if(c&&!VO.bank&&!VO.loading)voLoad();if(c&&!CRB.loading)crowdLoad()};
 addEventListener('pointerdown',audWake,{capture:true,passive:true});addEventListener('keydown',audWake,{capture:true});
@@ -6443,8 +6443,8 @@ const BUSED=[];
 const VO={bank:null,buf:new Map(),names:new Map(),q:[],cur:null,endT:0,prio:-1,status:'not loaded',ids:[],recent:[],pl:{said:{}},kq:[],kqSet:new Set(),kkStatus:'off'};
 const bLast=p=>{if(!p||!p.name)return'';const w=p.name.trim().split(/\s+/).filter(x=>!/^(jr|sr|ii|iii|iv|v)\.?$/i.test(x));return(w.slice(-1)[0]||'').replace(/[^A-Za-z'\-]/g,'')};
 async function voLoad(){if(VO.bank||VO.loading)return;VO.loading=1;VO.status='loading';
-  VO.nbP=(async()=>{try{const nj=await (await fetch('vo/names.json?v=20261107')).json(),nb=await (await fetch('vo/names.mp3?v=20261107')).arrayBuffer();VO.nb={j:nj.n||{},bin:nb}}catch(e){VO.nb=null}})();
-  try{const j=await (await fetch('vo/bank.json?v=20261107')).json(),bin=await (await fetch('vo/bank.mp3?v=20261107')).arrayBuffer();VO.bank=j;VO.ids=Object.keys(j.clips);VO.status='decoding';
+  VO.nbP=(async()=>{try{const nj=await (await fetch('vo/names.json?v=20261107n')).json(),nb=await (await fetch('vo/names.mp3?v=20261107n')).arrayBuffer();VO.nb={j:nj.n||{},bin:nb}}catch(e){VO.nb=null}})();
+  try{const j=await (await fetch('vo/bank.json?v=20261107n')).json(),bin=await (await fetch('vo/bank.mp3?v=20261107n')).arrayBuffer();VO.bank=j;VO.ids=Object.keys(j.clips);VO.status='decoding';
     const c=ac();let n=0;const pri=id=>/^(in_|inh_|ina_|cad_|mp_snap|dd_1|sp_own2)/.test(id)?0:1;for(const id of VO.ids.slice().sort((a,b)=>pri(a)-pri(b))){const [o,l,,,en]=j.clips[id];try{const ab=await c.decodeAudioData(bin.slice(o,o+l));ab._end=en||'';VO.buf.set(id,ab)}catch(e){}if(++n%40===0)await new Promise(r=>setTimeout(r,0))}
     VO.status='ready'}catch(e){VO.status='unavailable ('+(e&&e.message||e)+')'}
   await VO.nbP;if(!VO.nb)kkStart()}
@@ -6452,6 +6452,9 @@ async function nbLoad(text,h){const B=VO.nb;if(!B)return false;const id=h&&B.j[t
   try{const ab=await ac().decodeAudioData(B.bin.slice(r[0],r[0]+r[1]));ab._end=h?'!':',';VO.names.set(k,ab);return true}catch(e){return false}}
 const vv=(...pre)=>{const ok=VO.ids.filter(i=>pre.some(p=>i===p||(i.startsWith(p)&&/^\d+$/.test(i.slice(p.length))))&&VO.buf.has(i));if(!ok.length)return null;const fresh=ok.filter(i=>!VO.recent.includes(i));const id=pick(fresh.length?fresh:ok);VO.recent.push(id);if(VO.recent.length>40)VO.recent.shift();return id};
 const nKey=(sp,h,t)=>sp+(h?'!':'')+'|'+t;
+const nmP=(p,h)=>{if(!p||!p.name)return null;const t=h?String(p.name).trim():bLast(p);if(!t)return null;if(h&&VO.nb&&!VO.nb.j[t+'!'])return nmP(p,0);const k=nKey('A',h?1:0,t);if(VO.names.has(k))return{name:t,h:h?1:0};voName(t,'A',h?1:0,5);return null};
+const vf=(...g)=>{for(const x of g){const id=Array.isArray(x)?vv(...x):vv(x);if(id)return id}return null};
+const sideOf=e=>!e?'m':Math.abs(e.y-MID)<5?'m':e.y>MID?'r':'l';
 function voParts(parts){const out=[];for(let p of parts){if(p==null)continue;let b=null;if(typeof p==='object'&&p.sp&&p.sp!=='A')p=Object.assign({},p,{sp:'A'});
   if(typeof p==='string')b=VO.buf.get(p);else if(p.name!=null){if(!p.name)return null;b=VO.names.get(nKey(p.sp||'A',p.h,p.name));if(!b){voName(p.name,p.sp||'A',p.h,1);return null}}else if(p.n!=null)b=VO.buf.get('n'+(p.sp||'A')+clamp(Math.round(p.n),0,99));
   if(!b)return null;out.push(b)}return out}
@@ -6492,7 +6495,7 @@ function voQueueNames(){if(!G)return;const U=G.userT,O=G.oppT,sk=['QB','RB','WR1
   sk.forEach((k,i)=>{const p=U.roster[k];if(!p)return;voName(bLast(p),'A',0,8-i*.5);voName(String(p.name||'').trim(),'A',1,7-i*.5)})}
 // ---------- the director ----------
 const VO_STAR=()=>{const R=G.userT.roster;return ['QB','RB','WR1','WR2','TE'].map(k=>R[k]).filter(Boolean).sort((a,b)=>(b.ovr||0)-(a.ovr||0))[0]};
-function boothAI(){if(!G||G.demo)return;audWake();voLoad();voQueueNames();VO.pl={said:{}};VO.kicked=false;VO.abN={};VO.abT={};VO.hot=new Set();VO.big=new Map();
+function boothAI(){if(!G||G.demo)return;audWake();voLoad();voQueueNames();VO.pl={said:{}};VO.kicked=false;VO.abN={};VO.abT={};VO.hot=new Set();VO.big=new Map();VO.sit={};VO.halfBack=0;
   const home=G.userHome?G.userT:G.oppT,away=G.userHome?G.oppT:G.userT,star=VO_STAR();
   const go=(n=0)=>{if(!G||G.demo)return;if(!VO.bank&&n<20)return setTimeout(()=>go(n+1),400);
     say([vv('in_welcome')],{prio:2});
@@ -6502,7 +6505,7 @@ function boothAI(){if(!G||G.demo)return;audWake();voLoad();voQueueNames();VO.pl=
 function booth(cat){if(!G||G.demo)return;
   if(cat==='kickoff'){if(VO.kicked)return;VO.kicked=true;say([vv('in_kick')],{prio:2,cut:true});return}
   if(cat==='tmw'){say(['tmw'],{prio:2,cut:true});return}
-  if(cat==='half'){say(['half'],{prio:2,cut:true});sayLater(['half_r']);return}
+  if(cat==='half'){VO.halfBack=1;say(['half'],{prio:2,cut:true});sayLater(['half_r']);return}
   if(cat==='fg_good'||cat==='fg_miss'){say(['fg_up'],{prio:2,cut:true,pause:120});sayLater([cat],{prio:2,delay:.5});return}
   if(cat==='punt'){say(['punt'],{prio:1});return}
   if(cat.startsWith('final_')){say([cat],{prio:3,cut:true});if(cat==='final_win'&&VO.buf.has('win_'+G.userT.abbr))sayLater(['win_'+G.userT.abbr],{prio:2});sayLater([cat==='final_win'?'win_r':cat==='final_loss'?'loss_r':'q_r0']);return}}
@@ -6511,27 +6514,37 @@ function downParts(){const d=Math.round(G.fd-G.yard),goal=G.fd>=100,n=G.down;
 function posParts(){const y=Math.round(G.yard);return y<50?[`sp_own${Math.max(1,y)}`]:y===50?['sp_mid']:[`sp_opp${Math.max(1,100-y)}`]}
 const scoreId=diff=>diff===0?'sc_tie':Math.abs(diff)>28?null:diff<0?`sc_dn${-diff}`:`sc_up${diff}`;
 function voHotPlayer(){if(!G||!G.gst||!VO.hot)return null;const R=G.userT.roster;for(const k of ['QB','RB','WR1','WR2','WR3','TE']){const p=R[k];if(!p||VO.hot.has(p))continue;const o=G.gst.get(p)||{},yd=k==='QB'?(o.py||0)/3:(o.ry||0)+(o.cy||0),td=(o.rtd||0)+(o.ctd||0)+(k==='QB'?(o.ptd||0)/2:0);if(yd>=100||td>=2)return p}return null}
+function voSit(q,cl,diff){const S=VO.sit||(VO.sit={});
+  if(!S.open){S.open=1;return vv('nl_p_open')}
+  if(VO.halfBack){VO.halfBack=0;return vv('nl_p_half')}
+  const late=(q===4&&cl<=150)||q>=5,last=(q===4&&cl<=25)||(q>=5&&cl<=25);
+  if(late&&diff<0){const k=last?'nl_p_last':diff>=-2&&G.yard>=55?'nl_p_fgwin':diff===-3&&G.yard>=55?'nl_p_fgtie':diff<=-4&&diff>=-8&&G.yard>=60?'nl_p_td':'nl_p_score';if(S.k!==k||S.n++>=3){S.k=k;S.n=0;return vv(k)}return null}
+  if(late&&diff>0&&diff<=8){const k=G.yard>=75?'nl_p_ball':'nl_p_burn';if(S.k!==k||S.n++>=3){S.k=k;S.n=0;return vv(k)}return null}
+  if(q>=3&&!late){const a=Math.abs(diff),k=a>=9&&a<=16?'nl_p_two':a>=1&&a<=8?'nl_p_one':null;if(k&&S.k!==k){S.k=k;S.n=0;return vv(k)}}
+  return null}
 function boothPre(){if(!G||G.demo)return;VO.pl={said:{}};
   if(G.twoPt){say(['ps_twopt'],{prio:1,queue:true});return}
   const q=G.c.q,cl=G.c.clock,diff=G.su-G.so,late=(q===4||q===2||q>=5)&&cl<=120,d=G.fd-G.yard;
   sayLater([...downParts(),...posParts()],{prio:1});
   {const sid=scoreId(diff);if(late&&sid)sayLater([cl<=30?'ps_30s':cl<=60?'ps_1min':'ps_2min',sid],{prio:1});else if(sid&&q>=3&&diff!==0&&chance(.3))sayLater([sid],{prio:1})}
+  {const sit=voSit(q,cl,diff);if(sit){sayLater([sit],{prio:1});return}}
   {const hot=voHotPlayer();if(hot&&chance(.6)){VO.hot.add(hot);sayLater([{name:bLast(hot)},'rs_hot'],{prio:1});return}}
   if(!chance(.6))return;const R=G.recent||[],last2=R.slice(-2);let rob=null;
   const xf=G.ents&&G.ents.find(e=>e.side==='O'&&e.p&&e.p.sig&&G.zone&&G.zone.get(e.p)&&!G.zone.get(e.p).on&&G.zone.get(e.p).m>=.5);
   if(xf&&chance(.6))rob=[{name:bLast(xf.p)},'rs_nearzone'];
   else if(G.down===4)rob=[vv('rs_4th')];else if(late&&diff<0)rob=[vv('rs_trail_late','rs_2min')];else if(late&&diff>0)rob=['rs_lead_late'];
-  else if(G.down===3)rob=[d>=7?vv('rs_3long'):d<=3?vv('rs_3short'):vv('rs_3long','rs_3short')];else if(G.yard>=80)rob=[vv('rs_rz')];
-  else if(last2.length===2&&last2.every(x=>x.g>=8))rob=[vv('rs_mom_good')];else if(last2.length===2&&last2.every(x=>x.g<=1))rob=[vv('rs_mom_bad')];else if(chance(.5))rob=[vv('rs_early')];
+  else if(G.down===3)rob=[d>=7?vv('rs_3long'):d<=3?vv('rs_3short'):null];else if(G.yard>=80&&chance(.5))rob=[vv('rs_rz')];
+  else if(last2.length===2&&last2.every(x=>x.g>=8))rob=[vv('rs_mom_good')];else if(last2.length===2&&last2.every(x=>x.g<=1))rob=[vv('rs_mom_bad')];
   if(rob)sayLater(rob,{prio:1})}
 function voEv(type,x={}){if(!G||G.demo||!VO.bank)return;const P=VO.pl||(VO.pl={said:{}}),S=P.said,U=G.userT;
   switch(type){
     case'snap':{VO.pl={said:{},marks:new Set(),t0:performance.now()};const hut=chance(.6)&&vv('cad_hut');if(hut&&AC&&BOOTH.on){const s2=AC.createBufferSource(),g2=AC.createGain();s2.buffer=VO.buf.get(hut);g2.gain.value=.55;s2.connect(g2);g2.connect(BUS.sfx);s2.start()}
       setTimeout(()=>{if(!G||G.phase==='dead')return;const id=voHeat()?vv('mp_snap2','mp_snap3'):vv('mp_snap0','mp_snap1','mp_snap3');if(chance(.7))say([id],{prio:2,cut:true})},hut?650:30);return}
-    case'handoff':{if(chance(.9))say(x.c&&x.c.p&&chance(.85)?[{name:bLast(x.c.p)},'mp_hand1']:['mp_hand0'],{prio:2,queue:true,until:performance.now()+900});return}
-    case'scramble':say([vv('mp_scram')],{prio:2,cut:true});return
-    case'throw':{const d=x.d||0,id=x.tt==='lob'&&d>15?'mp_throw_lob':d>=30?vv('mp_throw_d'):d>=18?vv('mp_throw_d0','mp_throw_m'):d>=9?vv('mp_throw_m'):vv('mp_throw_s');S.throwD=d;say([id],{prio:2,cut:true});return}
+    case'handoff':{const n=x.c&&nmP(x.c.p,0),h=vv('nl_hand');say(n&&h?[h,n]:n?[n,'mp_hand1']:['mp_hand0'],{prio:2,queue:true,until:performance.now()+900});return}
+    case'scramble':say([G.qb&&nmP(G.qb.p,0),vv('mp_scram')],{prio:2,cut:true});return
+    case'throw':{const d=x.d||0,sd=sideOf(x.rec),id=d>=30?vf('nl_thr_all','mp_throw_d'):d>=18?vf(sd==='m'?'nl_thr_m':'nl_thr_d'+sd,'mp_throw_d0'):d>=9?vf(sd==='m'?'nl_thr_m':'nl_thr_'+sd,'mp_throw_m'):d<4?vf('nl_dump','mp_throw_s'):vf(sd==='m'?'nl_thr_m':'nl_thr_'+sd,'mp_throw_s');S.throwD=d;say([id],{prio:2,cut:true});return}
     case'catch':{const n=bLast(x.rec.p),ct=x.ct,big=(ct&&ct.m>=0)||S.throwD>=20;S.caught=1;
+      {const sd=sideOf(x.rec),cid=vv('nl_c_'+sd),fn=nmP(x.rec.p,1),ln=nmP(x.rec.p,0);if(big&&fn&&say([fn,vf('nl_grab',['mp_catch1','mp_catch0'])],{prio:2,cut:true}))return;if(!big&&cid&&ln&&say([cid,ln],{prio:2,cut:true}))return}
       if(big){if(!say([{name:String(x.rec.p.name||'').trim(),h:1},vv('mp_catch1','mp_catch0')],{prio:2,cut:true}))say([vv('mp_catch2','mp_got')],{prio:2,cut:true})}
       else if(chance(.85)){if(!(chance(.8)&&say([{name:n},vv('mp_catch0','mp_catch1')],{prio:2,cut:true})))say([vv('mp_caught','mp_got')],{prio:2,cut:true})}return}
     case'tackle':{if(x.type==='bighit'){say([vv('mp_bighit')],{prio:3,cut:true});SND.crunch(true);SND.ooh()}else{SND.crunch(false);if(chance(.3))say([vv('mp_down')],{prio:1})}return}
@@ -6539,29 +6552,33 @@ function voEv(type,x={}){if(!G||G.demo||!VO.bank)return;const P=VO.pl||(VO.pl={s
     case'two':say([x.ok?'two_good':'two_fail'],{prio:2,cut:true});if(x.ok)SND.cheer(1);else SND.groan(.7);return}}
 function voTick(dt){if(!G||G.demo||!VO.bank||!AC)return;const P=VO.pl;if(!P||!P.said)return;const S=P.said,ph=G.phase;
   if(ph==='live'&&G.play&&G.play.kind==='pass'&&G.qb&&G.qb.hasBall){
-    if(!S.drop&&G.t>.5){S.drop=1;if(chance(.6))say(chance(.7)?[{name:bLast(G.qb.p)},'mp_drop0']:['mp_drop1'],{prio:1})}
+    if(!S.drop&&G.t>.5){S.drop=1;const qn=nmP(G.qb.p,0);if(chance(.8))say(qn?[qn,'mp_drop0']:['mp_drop1'],{prio:1})}
     if(!S.press){const fr=freeRushers();if(fr.length&&Math.min(...fr.map(r=>dist(r,G.qb)))<2.6&&G.t>.9){S.press=1;say([vv('mp_press')],{prio:2,cut:true})}}
-    if(!S.look&&G.t>1.7&&!S.press){S.look=1;if(chance(.45))say([vv('mp_look')],{prio:1})}}
+    if(!S.press){
+      if(!S.look&&G.t>1.5){S.look=1;say([vf(['nl_look0','nl_look2'],'mp_look')],{prio:1})}
+      else if(S.look===1&&!S.open&&G.t>2.6){S.look=2;say([vf('nl_look1','nl_look2')],{prio:1})}
+      if(!S.open){const op=RCV.map(k=>G.R&&G.R[k]).filter(r=>r&&r.open);if(op.length){S.open=1;const r=op.sort((a,b)=>b.x-a.x)[0],deep=r.x-G.los>=16,sd=sideOf(r);if(chance(.75))say([deep?vv('nl_open_deep'):vf('nl_open_'+sd,'nl_open')],{prio:2,cut:G.t>1})}}
+      if(!S.none&&!S.open&&G.t>3.3){S.none=1;say([vv('nl_none')],{prio:1})}}}
   if(ph==='air'&&G.ball&&!S.air&&G.ball.T>.95&&G.ball.t>G.ball.T*.4){S.air=1;const b=G.ball,cv=G.ents.filter(d=>d.side==='D'&&!d.rush);if(cv.some(d=>Math.hypot(d.x-b.x1,d.y-b.y1)<3))say([vv('mp_air')],{prio:2})}
   if(ph==='run'&&G.carrier){const c=G.carrier,g=110-c.x,gain=c.x-10-G.yard;
-    if(!S.hole&&G.play&&G.play.kind==='run'&&c.x>G.los+.6&&G.runT<1.8){S.hole=1;if(chance(.55))say([Math.abs(c.y-MID)>8?'mp_bounce':vv('mp_hole')],{prio:1})}
+    if(!S.hole&&G.play&&G.play.kind==='run'&&c.x>G.los+.6&&G.runT<1.8){S.hole=1;const dy=c.y-MID,a=Math.abs(dy),sd=dy>0?'r':'l';say([a<4.5?vf('nl_mid',['mp_hole']):a<10?vf('nl_'+sd+'t',['mp_hole']):vf('nl_'+sd+'e','mp_bounce')],{prio:1})}
     const ahead=G.ents.filter(d=>d.side==='D'&&d.down<=0&&!d.eng&&d.x>c.x-.5&&dist(d,c)<7).length;
-    if(!S.room&&ahead===0&&gain>=6&&Math.hypot(c.vx,c.vy)>5){S.room=1;P.open=true;say([vv('mp_room')],{prio:2,cut:true,gain:1.1});SND.cheer(.8);SND.crowdLevel(1)}
+    if(!S.room&&ahead===0&&gain>=6&&Math.hypot(c.vx,c.vy)>5){S.room=1;P.open=true;say([nmP(c.p,0),vv('mp_room')],{prio:2,cut:true,gain:1.1});SND.cheer(.8);SND.crowdLevel(1)}
     if(P.open&&ahead>1)P.open=false;
-    if(P.open){for(const m of [50,40,30,20,10]){if(g<=m+.5&&g>m-3&&!P.marks.has(m)&&m<110-G.los-10){P.marks.add(m);if(m===10&&!S.score){S.score=1;say([chance(.5)?'mp_y10':'mp_score0'],{prio:2,cut:true,gain:1.15})}else say(['mp_y'+m],{prio:2,cut:true,gain:1.15});break}}}
+    if(P.open){for(const m of [50,40,30,20,10]){if(g<=m+.5&&g>m-3&&!P.marks.has(m)&&m<110-G.los-10){P.marks.add(m);if(m===10&&!S.score){S.score=1;say(chance(.5)?['mp_y10']:[nmP(c.p,1),'mp_score0'],{prio:2,cut:true,gain:1.15})}else say(['mp_y'+m],{prio:2,cut:true,gain:1.15});break}}}
     if(G.ts>=1&&!P.stepT||performance.now()-(P.stepT||0)>220){if(Math.hypot(c.vx,c.vy)>3){P.stepT=performance.now();SND.step()}}}}
 function boothMove(type,c,d){if(!G||G.demo)return;const P=VO.pl||(VO.pl={said:{}});P.mv=P.mv||[];P.mv.push({type,c,d});SND.squeak();SND.cheer(.35);
   const ch=G.mv&&G.mv.chain&&G.mv.q==='perfect',now=performance.now();if(!ch&&now-(P.mvT||0)<900)return;P.mvT=now;if(ch&&P.chSaid)return;if(ch)P.chSaid=1;const id=ch?'mp_chain':{juke:vv('mp_juke'),spin:'mp_spin',hurdle:'mp_hurdle',stiff:'mp_stiff',broken:vv('mp_broke')}[type];if(id)say([id],{prio:2,cut:true})}
 const AB_OFTEN=new Set(['laser','glitchroute','afterburner','pinball','toetap','pancake']);
 function abOK(type){const now=performance.now(),T=VO.abT||(VO.abT={}),N=VO.abN||(VO.abN={}),n=N[type]||0,big=type.startsWith('x_')||type==='fire'||type==='zone';
   const cd=n===0?0:n===1?(big?30000:45000):(big?60000:120000),p=n===0?1:n===1?(big?.6:.45):(big?.3:.12);if(now-(T[type]||-1e9)<cd||!chance(p))return false;T[type]=now;N[type]=n+1;return true}
-function boothAB(type){if(!G||G.demo||!VO.bank)return;if(!abOK(type))return;
+function boothAB(type,A){if(!G||G.demo||!VO.bank)return;if(!abOK(type))return;const rep=(VO.abN[type]||0)>=2,nm=A&&A.p?nmP(A.p,1):null;
   const id=type==='fire'?vv('xf_on'):type.startsWith('x_')?vv('xf_'+type.slice(2)):vv('ab_'+type);if(!id)return;const big=type.startsWith('x_')||type==='fire';
-  SND.cheer(big?1.8:1.1);setTimeout(()=>say([id],{prio:3,cut:true,gain:big?1.35:1.2}),big?150:250)}
-function boothHL(type,a,b){if(!G||G.demo||!abOK('hl_'+type))return;const id={ankle:vv('ab_ankle'),truck:vv('ab_truck'),moss:vv('ab_moss'),matrix:vv('ab_matrix'),superman:vv('ab_superman'),onehand:vv('ab_spidey'),zone:vv('xf_on')}[type];if(!id)return;SND.cheer(1.6);if(type!=='zone')SND.crowdLevel(1.2);setTimeout(()=>say([id],{prio:3,cut:true,gain:1.2}),type==='zone'?200:500)}
+  SND.cheer(big?1.8:1.1);const again=rep&&vv('nl_again');setTimeout(()=>say([nm,again||id],{prio:3,cut:true,gain:big?1.35:1.2}),big?150:250)}
+function boothHL(type,a,b){if(!G||G.demo||!abOK('hl_'+type))return;const id={ankle:vv('ab_ankle'),truck:vv('ab_truck'),moss:vv('ab_moss'),matrix:vv('ab_matrix'),superman:vv('ab_superman'),onehand:vv('ab_spidey'),zone:vv('xf_on')}[type];if(!id)return;const nm=a&&a.p?nmP(a.p,1):null,again=(VO.abN['hl_'+type]||0)>=2&&vv('nl_again');SND.cheer(1.6);if(type!=='zone')SND.crowdLevel(1.2);setTimeout(()=>say([nm,again||id],{prio:3,cut:true,gain:1.2}),type==='zone'?200:500)}
 function robTake(kind,gain,pass,ct){const P=VO.pl||{},mv=(P.mv||[]).slice(-1)[0],c=G.carrier,rp=c&&c.p;
   if(mv&&mv.c&&mv.c.p&&chance(.7)){const n=bLast(mv.c.p),k=mv.type==='stiff'?'str':mv.type==='hurdle'?'spd':'agi',v=Rt(mv.c.p,k),tk=Rt(mv.d&&mv.d.p,'tak');
-    if(v>=85&&(k!=='agi'||v-tk>=4))return[{name:n},`rt_${k}${Math.min(99,v)}`,`rtt_${k}`];return[vv('c_move')]}
+    if(v>=85&&(k!=='agi'||v-tk>=4))return[{name:n},`rt_${k}${Math.min(99,v)}`,`rtt_${k}`];return[nmP(mv.c.p,0),vv('c_move')]}
   if(ct&&kind!=='inc'&&ct.m>=0){const dh=ct.R.ht-ct.D.ht;if(dh>=2){const ft=h=>h>=72?'ht_6':'ht_5',inch=h=>h%12;return[`htr_${clamp(ct.R.ht,68,78)}`,`htd_${clamp(ct.D.ht,68,78)}`,'ht_def']}return['c_contest_win']}
   if(ct&&kind==='inc'&&ct.m<0){const dh=ct.D.ht-ct.R.ht,dc=Rt(ct.d.p,'cov')-Rt(ct.rec.p,'hnd');return[dh>=2?'c_contest_size':dc>=6?'c_contest_cov':ct.D.jmp-ct.R.jmp>=6?'c_contest_jump':'c_contest_even']}
   if(kind==='td')return[vv('c_td')];if(kind==='int')return['c_int'];if(kind==='sack')return['c_sack'];
@@ -6578,13 +6595,25 @@ function roastFor(kind,gain,label){const L=String(label||'').toUpperCase();let p
   else if(kind==='sack'){p=G.qb&&G.qb.p;id='roast_sack'}
   else if(kind==='tackle'&&gain<0&&G.play&&G.play.kind==='run'){p=G.carrier&&G.carrier.p;id='roast_loss'}
   G.voRec=null;if(!p||(p.ovr||99)>=ROAST_OVR)return null;
-  const F=G.voFail||(G.voFail=new Map()),n=(F.get(p)||0)+1;F.set(p,n);return n>=2?vv('roastx'):vv(id)}
+  const F=G.voFail||(G.voFail=new Map()),n=(F.get(p)||0)+1;F.set(p,n);const nm=nmP(p,0);if(n>=2){const rn=nm&&vv('roastn');return rn?[nm,rn]:[nm,vv('roastx')]}return[nm,vv(id)]}
+function voWrap(kind,gain,fd){if(!G||['inc','int','sack','fumlost','safety','td','dpi'].includes(kind))return null;
+  const q=G.c.q,cl=G.c.clock,diff=G.su-G.so,late=(q>=4&&cl<=300)||q>=5,close=Math.abs(diff)<=8,y0=G.yard,y1=G.yard+gain,R=G.recent||[],prev=R[R.length-2];
+  if(fd&&G.down===4)return vv('nl_w_4th');
+  if(late&&diff>0&&diff<=8&&fd&&gain>=10)return vv('nl_w_dagger');
+  if(late&&close&&gain>=20)return vv('nl_w_late');
+  if(fd&&G.down===3)return chance(.5)&&late&&diff<0?vv('nl_w_had'):vv('nl_w_3rd');
+  if(gain>=15&&prev&&prev.g>=15)return vv('nl_w_b2b');
+  if(y0<80&&y1>=80&&y1<100)return vv('nl_w_rz');
+  if(y0<63&&y1>=63&&y1<80)return vv('nl_w_fg');
+  if(late&&diff<0&&fd)return vf('nl_w_need','nl_w_had');
+  if(!fd&&G.down===3&&y1<G.fd)return chance(.6)?vv('nl_w_stall'):null;
+  return null}
 function boothPlay(kind,gain,label){if(!G||G.demo)return;const P=VO.pl||{},pl=G.play||{},pass=!!pl.rec||(pl.kind==='pass'&&kind!=='sack'),ct=G.lastCT&&G.lastCT.sn===G.snapN?G.lastCT:null,L=String(label||'').toUpperCase();
   const td=kind==='td';if(td){SND.horn();SND.cheer(2.2);SND.crowdLevel(1.3);setTimeout(()=>SND.crowdLevel(.7),6000)}else if(kind!=='safety')setTimeout(()=>SND.whistle(),120);
   if(kind==='int'){SND.groan(1.2)}else if(kind==='sack'){SND.crunch(true);SND.groan(.5)}else if(kind==='inc'){SND.ground();if(/BROKEN|TIPPED/.test(L))SND.ooh()}else if(kind==='fumlost')SND.groan(1.3);
   const firstDown=!td&&G.yard+gain>=G.fd&&kind!=='inc'&&kind!=='sack'&&kind!=='int';if(firstDown&&gain>=6)SND.cheer(.6);if(!P.open)SND.crowdLevel(.6+voHeat()*.3);
   let al=null,o={prio:2,delay:.25};
-  if(td){const mx=voHeat()&&vv('tdx');al=[mx||vv('td')];o={prio:3,cut:true,gain:mx?1.35:1.25};{const tid=vv('tdt_'+G.userT.abbr);if(tid)setTimeout(()=>sayLater([tid],{prio:2,gain:1.2}),30)}const was=G.su<=G.so,now=G.su+6;setTimeout(()=>{if(was&&now>G.so)sayLater(['td_lead'],{prio:2});else if(now===G.so)sayLater(['td_tie'],{prio:2})},50)}
+  if(td){const mx=voHeat()&&vv('tdx'),sc=G.carrier&&G.carrier.side==='O'?nmP(G.carrier.p,1):null;al=[sc,mx||vv('td')];o={prio:3,cut:true,gain:mx?1.35:1.25};{const tid=vv('tdt_'+G.userT.abbr);if(tid)setTimeout(()=>sayLater([tid],{prio:2,gain:1.2}),30)}const was=G.su<=G.so,now=G.su+6;setTimeout(()=>{if(was&&now>G.so)sayLater(['td_lead'],{prio:2});else if(now===G.so)sayLater(['td_tie'],{prio:2})},50)}
   else if(kind==='int'){al=[vv('r_int')];o={prio:3,cut:true}}
   else if(kind==='sack'){const sd=G.ents.find(e=>e.side==='D'&&e.flexT>0);al=[vv('r_sack')];o={prio:2,cut:true}}
   else if(kind==='safety')al=['r_saf'];else if(kind==='fumlost'){al=['r_fum'];o={prio:3,cut:true}}else if(kind==='dpi')al=['r_dpi'];
@@ -6592,7 +6621,8 @@ function boothPlay(kind,gain,label){if(!G||G.demo)return;const P=VO.pl||{},pl=G.
   else{const g=Math.abs(gain);al=gain>0?[g<=70?`g_${g}`:'g_big']:gain===0?['r_nogain']:[`l_${Math.min(20,g)}`];o={prio:1,queue:true,until:performance.now()+2500}}
   if(al)say(al,o);
   if(firstDown&&chance(.75))sayLater([gain>=15&&chance(.5)?'r_first0':vv('r_first')],{prio:1});else if(!td&&G.down>=3&&kind!=='inc'&&G.fd-(G.yard+gain)<=2&&G.fd-(G.yard+gain)>0)sayLater(['r_short'],{prio:1});
-  const ro=roastFor(kind,gain,label);if(ro&&chance(.85)){sayLater([ro],{prio:2});return}
+  const ro=roastFor(kind,gain,label);if(ro&&ro[1]&&chance(.85)){sayLater(ro,{prio:2});return}
+  {const w=voWrap(kind,gain,firstDown);if(w){sayLater([w],{prio:2});return}}
   {const bp=pass?(pl.rec&&pl.rec.p):(G.carrier&&G.carrier.p);if(bp&&gain>=15&&VO.big){const n=(VO.big.get(bp)||0)+1;VO.big.set(bp,n);if(n===2||n===4){sayLater([{name:bLast(bp)},'nm_problem'],{prio:1});return}}}
   const rob=chance(td?.7:kind==='int'||kind==='sack'||(ct&&ct.m>=0)?.7:.55)?robTake(kind,gain,pass,ct):null;if(rob)sayLater(rob,{prio:1})}
 function boothOpp(r){if(!G||G.demo)return;const res=String(r.result||'');let id,c=null;
@@ -6832,7 +6862,7 @@ try{const R=JSON.parse(localStorage.getItem('gr_resume')||'null');if(R&&Date.now
 <script>
 if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 // update check: when a newer build is on the server, show a banner; tapping it wipes the cache and loads the new version
-const BUILD='20261107130500';
+const BUILD='20261107140000';
 (()=>{let busy=0,shown=0;
 const doUpdate=async btn=>{if(btn){btn.disabled=true;btn.textContent='Updating...'}
  try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}}catch(_){}
